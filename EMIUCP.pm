@@ -9,6 +9,7 @@ use MooseX::Declare;
 namespace Protocol::EMIUCP;
 
 
+# Factory class
 class Protocol::EMIUCP {
     sub new_message {
         my ($class, %args) = @_;
@@ -24,6 +25,9 @@ class Protocol::EMIUCP {
             confess 'Both ACK and NACK are defined' if defined $args{ack};
             $new_class .= '_N';
         };
+
+        $args{amsg} = Protocol::EMIUCP::Util::str2hex($args{amsg_str})
+            if defined $args{amsg_str};
 
         Class::MOP::load_class($new_class);
         $new_class->new(%args);
@@ -44,6 +48,12 @@ class ::Types {
     coerce  Hex2 => from Int => via { sprintf "%02X", $_ % 16**2 };
 
     enum O_R => [qw( O R )];
+
+    enum   ACK  => [qw( A )];
+    coerce ACK  => from Bool => via { $_ ? 'A' : '' };
+
+    enum   NACK => [qw( N )];
+    coerce NACK => from Bool => via { $_ ? 'N' : '' };
 
     subtype Num16  => as Str => where { $_ =~ /^\d{0,16}$/ };
     subtype Num160 => as Str => where { $_ =~ /^\d{0,160}$/ };
@@ -78,6 +88,7 @@ class ::Util {
 }
 
 
+# Base class
 class ::Message {
     has trn      => (is => 'ro', isa => 'Int2', coerce => 1, default => 0);
     has len      => (is => 'ro', isa => 'Int5', coerce => 1, writer => '_set_len', predicate => 'has_len');
@@ -137,8 +148,7 @@ class ::Message::O_01 extends ::Message {
     has ac       => (is => 'ro', isa => 'Str');
     has mt       => (is => 'ro', isa => 'MT23',   required => 1);
     has nmsg     => (is => 'ro', isa => 'Num160', predicate => 'has_nmsg');
-    has amsg     => (is => 'ro', isa => 'Str', predicate => 'has_amsg', reader => '_get_amsg', trigger => \&_trigger_amsg);
-    has amsg_hex => (is => 'ro', isa => 'Hex640', reader => '_get_amsg_hex', writer => '_set_amsg_hex');
+    has amsg     => (is => 'ro', isa => 'Hex640', predicate => 'has_amsg');
 
     sub BUILD {
         my ($self) = @_;
@@ -152,14 +162,9 @@ class ::Message::O_01 extends ::Message {
         [ qw( adc oadc ac mt ), $self->mt == 2 ? 'nmsg' : 'amsg' ]
     };
 
-    sub _trigger_amsg {
-        my ($self, $str) = @_;
-        return $self->_set_amsg_hex(Protocol::EMIUCP::Util::str2hex($str));
-    };
-
-    sub amsg {
+    sub amsg_str {
         my ($self) = @_;
-        return Protocol::EMIUCP::Util::hex2str($self->_get_amsg_hex);
+        return Protocol::EMIUCP::Util::hex2str($self->amsg);
     };
 }
 
@@ -170,7 +175,7 @@ class ::Message::R_01 extends ::Message {
 
 
 class ::Message::R_01_A extends ::Message::R_01 {
-    has ack      => (is => 'ro');
+    has ack      => (is => 'ro', isa => 'ACK', coerce => 1, default => 'A');
 
     sub data_fields {
         [ qw( ack sm ) ]
@@ -179,16 +184,17 @@ class ::Message::R_01_A extends ::Message::R_01 {
 
 
 class ::Message::R_01_N extends ::Message::R_01 {
-    has nack     => (is => 'ro');
+    has nack     => (is => 'ro', isa => 'NACK', coerce => 1, default => 'N');
     has ec       => (is => 'ro');
 
     sub data_fields {
-        [ qw( ack ec sm ) ]
+        [ qw( nack ec sm ) ]
     };
 }
 
 
 package main;
+use YAML::XS;
 
 my $o_01 = Protocol::EMIUCP->new_message(
     o_r => 'O',
@@ -196,7 +202,14 @@ my $o_01 = Protocol::EMIUCP->new_message(
     adc => 507998000,
     oadc => 6644,
     mt => 3,
-    amsg => 'TEST',
+    amsg_str => 'TEST',
 );
-use YAML::XS;
-print Dump $o_01->to_string, $o_01->amsg, $o_01;
+print Dump $o_01->to_string, $o_01->amsg_str, $o_01;
+
+my $r_01 = Protocol::EMIUCP->new_message(
+    o_r => 'R',
+    ot => 1,
+    nack => 1,
+    ec => $o_01->amsg_str,
+);
+print Dump $r_01->to_string, $r_01;
