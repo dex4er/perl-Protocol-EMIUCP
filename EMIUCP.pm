@@ -169,9 +169,10 @@ BEGIN {
         return qw( trn len o_r ot ), $self->data_fields, qw( checksum );
     };
 
-    sub parse_fields {
-        my ($class, @fields) = @_;
-        my %args = ();
+    sub parse_fields { };
+    around parse_fields => sub {
+        my ($orig, $class, @fields) = @_;
+        my %args = $class->$orig(@fields);
         @args{qw( trn len o_r ot )} = @fields[0..4];
         $args{checksum} = $fields[-1];
         return %args;
@@ -182,12 +183,13 @@ BEGIN {
 
         my @fields = split Protocol::EMIUCP::Util::SEP, $str;
         my %args = $class->parse_fields(@fields);
-        die YAML::XS::Dump \%args;
+        #die __PACKAGE__, YAML::XS::Dump \%args;
+        $class->new(%args);
     };
 
     sub to_string {
         my ($self) = @_;
-        join Protocol::EMIUCP::Util::SEP,
+        join Protocol::EMIUCP::Util::SEP, # TODO use Util
              map { my $field = $self->$_; defined $field ? $field : '' } $self->fields;
     };
 }
@@ -248,11 +250,21 @@ BEGIN {
         return qw( adc oadc ac mt ), $self->mt == 2 ? 'nmsg' : 'amsg';
     };
 
-    sub parse_fields { };
-    around parse_fields => sub {
-        my ($orig, $self, @fields) = @_;
-        my %args = $self->$orig(@fields);
-        $args{adc} = $fields[4];
+    sub parse_fields {
+        my ($self, @fields) = @_;
+        my %args = ();
+
+        my %fields = map { qw( adc oadc ac mt )[$_-4] => $_ }
+                     grep { $fields[$_] ne '' } 4..7;
+        $args{$_} = $fields[$fields{$_}] foreach keys %fields;
+
+        no warnings 'numeric';
+        if ($args{mt} == 2) {
+            $args{nmsg} = $fields[8];
+        }
+        elsif ($args{mt} == 3) {
+            $args{amsg} = $fields[8];
+        };
         return %args;
     };
 
