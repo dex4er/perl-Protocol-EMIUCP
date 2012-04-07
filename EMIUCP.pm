@@ -5,11 +5,9 @@ use YAML::XS;
 
 our $VERSION = '0.01';
 
-use MooseX::Declare;
 
-
-class Protocol::EMIUCP::Util {
-    use Method::Signatures::Simple function_keyword => 'func';
+BEGIN {
+    package Protocol::EMIUCP::Util;
 
     use constant {
         STX => "\x02",
@@ -18,6 +16,9 @@ class Protocol::EMIUCP::Util {
     };
 
     use Encode;
+
+    our @EXPORT_OK = qw( STX ETX SEP str2hex hex2str );
+    *import = \&Exporter::import;
 
     # Encode UTF-8 string as ESTI GSM 03.38 hex string
     sub str2hex ($) {
@@ -31,10 +32,16 @@ class Protocol::EMIUCP::Util {
         return encode "UTF-8", decode "GSM0338", pack "H*", $hex;
     };
 }
+$INC{'Protocol/EMIUCP/Util.pm'} = __FILE__;
 
 
 # Factory class
-class Protocol::EMIUCP {
+
+BEGIN {
+    package Protocol::EMIUCP;
+
+    use Moose;
+
     sub _find_new_class {
         my ($class, %args) = @_;
 
@@ -79,10 +86,12 @@ class Protocol::EMIUCP {
 
         $class->_find_new_class(%args)->new_from_string($str);
     };
-};
+}
 
 
-class Protocol::EMIUCP::Types {
+BEGIN {
+    package Protocol::EMIUCP::Types;
+
     use Moose::Util::TypeConstraints;
 
     subtype Int2 => as Str => where { $_ =~ /^\d{2}$/ };
@@ -111,14 +120,19 @@ class Protocol::EMIUCP::Types {
 
 
 # Base class
-role Protocol::EMIUCP::Message {
+
+BEGIN {
+    package Protocol::EMIUCP::Message;
+
+    use Moose::Role;
+
     has trn      => (is => 'ro', isa => 'Int2', coerce => 1, default => 0);
     has len      => (is => 'ro', isa => 'Int5', coerce => 1, writer => '_set_len', predicate => 'has_len');
     has checksum => (is => 'ro', isa => 'Hex2', coerce => 1, writer => '_set_checksum', predicate => 'has_checksum', clearer => '_clear_checksum');
 
     sub BUILD { };
-    after BUILD {
-        #my ($self) = @_;
+    after BUILD => sub {
+        my ($self) = @_;
         confess 'LEN mismatch' if $self->has_len and $self->len != $self->calculate_len;
         confess 'checksum mismatch' if $self->has_checksum and $self->checksum != $self->calculate_checksum;
 
@@ -179,26 +193,42 @@ role Protocol::EMIUCP::Message {
 }
 
 
-role Protocol::EMIUCP::Message::O
-with Protocol::EMIUCP::Message {
+BEGIN {
+    package Protocol::EMIUCP::Message::O;
+
+    use Moose::Role;
+    with 'Protocol::EMIUCP::Message';
+
     has o_r      => (is => 'ro', isa => 'O_R', default => 'O', required => 1);
 }
 
 
-role Protocol::EMIUCP::Message::R
-with Protocol::EMIUCP::Message {
+BEGIN {
+    package Protocol::EMIUCP::Message::R;
+
+    use Moose::Role;
+    with 'Protocol::EMIUCP::Message';
+
     has o_r      => (is => 'ro', isa => 'O_R', default => 'R', required => 1);
 }
 
 
-role Protocol::EMIUCP::Message::OT_01 {
+BEGIN {
+    package Protocol::EMIUCP::Message::OT_01;
+
+    use Moose::Role;
+
     has ot       => (is => 'ro', isa => 'Int2', default => '01', required => 1, coerce => 1);
 }
 
 
-class Protocol::EMIUCP::Message::O_01
-with Protocol::EMIUCP::Message::O
-with Protocol::EMIUCP::Message::OT_01 {
+BEGIN {
+    package Protocol::EMIUCP::Message::O_01;
+
+    use Moose;
+    with 'Protocol::EMIUCP::Message::O';
+    with 'Protocol::EMIUCP::Message::OT_01';
+
     has adc      => (is => 'ro', isa => 'Num16');
     has oadc     => (is => 'ro', isa => 'Num16');
     has ac       => (is => 'ro', isa => 'Str');
@@ -219,12 +249,12 @@ with Protocol::EMIUCP::Message::OT_01 {
     };
 
     sub parse_fields { };
-    around parse_fields (@fields) {
-        #my ($orig, $self, @fields) = @_;
+    around parse_fields => sub {
+        my ($orig, $self, @fields) = @_;
         my %args = $self->$orig(@fields);
         $args{adc} = $fields[4];
         return %args;
-    }
+    };
 
     sub amsg_str {
         my ($self) = @_;
@@ -233,15 +263,23 @@ with Protocol::EMIUCP::Message::OT_01 {
 }
 
 
-role Protocol::EMIUCP::Message::R_01
-with Protocol::EMIUCP::Message::R
-with Protocol::EMIUCP::Message::OT_01 {
+BEGIN {
+    package Protocol::EMIUCP::Message::R_01;
+
+    use Moose::Role;
+    with 'Protocol::EMIUCP::Message::R';
+    with 'Protocol::EMIUCP::Message::OT_01';
+
     has sm       => (is => 'ro');
 }
 
 
-class Protocol::EMIUCP::Message::R_01_A
-with Protocol::EMIUCP::Message::R_01 {
+BEGIN {
+    package Protocol::EMIUCP::Message::R_01_A;
+
+    use Moose;
+    with 'Protocol::EMIUCP::Message::R_01';
+
     has ack      => (is => 'ro', isa => 'ACK', coerce => 1, default => 'A');
 
     sub data_fields {
@@ -250,8 +288,12 @@ with Protocol::EMIUCP::Message::R_01 {
 }
 
 
-class Protocol::EMIUCP::Message::R_01_N
-with Protocol::EMIUCP::Message::R_01 {
+BEGIN {
+    package Protocol::EMIUCP::Message::R_01_N;
+
+    use Moose;
+    with 'Protocol::EMIUCP::Message::R_01';
+
     has nack     => (is => 'ro', isa => 'NACK', coerce => 1, default => 'N');
     has ec       => (is => 'ro');
 
