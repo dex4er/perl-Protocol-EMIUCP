@@ -162,11 +162,11 @@ BEGIN {
         return sprintf "%02X", $c % 16**2;
     };
 
-    requires 'data_fields';
+    requires 'list_data_fields';
 
-    sub fields {
+    sub list_fields {
         my ($self) = @_;
-        return qw( trn len o_r ot ), $self->data_fields, qw( checksum );
+        return qw( trn len o_r ot ), $self->list_data_fields, qw( checksum );
     };
 
     sub parse_fields { };
@@ -183,14 +183,13 @@ BEGIN {
 
         my @fields = split Protocol::EMIUCP::Util::SEP, $str;
         my %args = $class->parse_fields(@fields);
-        #die __PACKAGE__, YAML::XS::Dump \%args;
         $class->new(%args);
     };
 
     sub to_string {
         my ($self) = @_;
         join Protocol::EMIUCP::Util::SEP, # TODO use Util
-             map { my $field = $self->$_; defined $field ? $field : '' } $self->fields;
+             map { my $field = $self->$_; defined $field ? $field : '' } $self->list_fields;
     };
 }
 
@@ -245,7 +244,7 @@ BEGIN {
         confess 'amsg for MT=2' if $self->mt == 2 and $self->has_amsg;
     };
 
-    sub data_fields {
+    sub list_data_fields {
         my ($self) = @_;
         return qw( adc oadc ac mt ), $self->mt == 2 ? 'nmsg' : 'amsg';
     };
@@ -294,7 +293,7 @@ BEGIN {
 
     has ack      => (is => 'ro', isa => 'ACK', coerce => 1, default => 'A');
 
-    sub data_fields {
+    sub list_data_fields {
         return qw( ack sm )
     };
 }
@@ -309,7 +308,7 @@ BEGIN {
     has nack     => (is => 'ro', isa => 'NACK', coerce => 1, default => 'N');
     has ec       => (is => 'ro');
 
-    sub data_fields {
+    sub list_data_fields {
         return qw( nack ec sm );
     };
 }
