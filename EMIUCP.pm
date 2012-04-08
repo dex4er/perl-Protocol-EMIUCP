@@ -172,13 +172,13 @@ BEGIN {
         return sprintf "%02X", $c % 16**2;
     };
 
-    requires 'list_data_fields';
+    requires 'list_data_field_names';
 
-    sub list_fields {
+    sub list_field_names {
         my ($self, @fields) = @_;
         my @names = (
             qw( trn len o_r ot ),
-            $self->list_data_fields(@fields),
+            $self->list_data_field_names(@fields),
             qw( checksum )
         );
         return wantarray ? @names : \@names;
@@ -188,13 +188,12 @@ BEGIN {
     around parse_fields => sub {
         my ($orig, $class, @fields) = @_;
         my %args = $class->$orig(@fields);
-        @args{$class->list_fields(@fields)} = @fields;
+        @args{$class->list_field_names(@fields)} = @fields;
         return %args;
     };
 
     sub new_from_string {
         my ($class, $str) = @_;
-
         my @fields = split SEP, $str;
         my %args = $class->parse_fields(@fields);
         $class->new(%args);
@@ -203,7 +202,7 @@ BEGIN {
     sub to_string {
         my ($self) = @_;
         join SEP, map { my $field = $self->$_; defined $field ? $field : '' }
-            $self->list_fields;
+            $self->list_field_names;
     };
 }
 
@@ -261,14 +260,14 @@ BEGIN {
         confess 'amsg for MT=2' if $self->mt == 2 and $self->has_amsg;
     };
 
-    sub list_data_fields {
+    sub list_data_field_names {
         my ($self, @fields) = @_;
-        my $mt = (ref $self ? $self->mt : $fields[7]) || 0;
+        my $mt = (exists $fields[7] ? $fields[7] : $self->mt) || '';
         no warnings 'numeric';
         return qw( adc oadc ac mt ), $mt == 2 ? 'nmsg' : 'amsg';
     };
 
-    sub amsg_str {
+    sub amsg_to_string {
         my ($self) = @_;
         return hex2str($self->amsg);
     };
@@ -294,7 +293,7 @@ BEGIN {
 
     has ack      => (is => 'ro', isa => 'ACK', coerce => 1, default => 'A');
 
-    sub list_data_fields {
+    sub list_data_field_names {
         return qw( ack sm )
     };
 }
@@ -309,7 +308,7 @@ BEGIN {
     has nack     => (is => 'ro', isa => 'NACK', coerce => 1, default => 'N');
     has ec       => (is => 'ro');
 
-    sub list_data_fields {
+    sub list_data_field_names {
         return qw( nack ec sm );
     };
 }
@@ -325,24 +324,24 @@ do {
         adc => 507998000,
         oadc => 6644,
         mt => 3,
-        amsg_str => 'TEST',
+        amsg_from_string => 'TEST',
     );
-    print Dump $o_01->to_string, $o_01->amsg_str, $o_01;
+    print Dump $o_01->to_string, $o_01->amsg_to_string, $o_01;
 
     my $r_01 = Protocol::EMIUCP->new_message(
         o_r => 'R',
         ot => 1,
         nack => 1,
-        ec => $o_01->amsg_str,
+        ec => $o_01->amsg_to_string,
     );
     print Dump $r_01->to_string, $r_01;
-} if 0;
+};
 
 do {
     my $o_01 = Protocol::EMIUCP->new_message_from_string(
         '00/00043/O/01/507998000/6644//3/54455354/2E'
     );
-    print Dump $o_01->to_string, $o_01->amsg_str, $o_01;
+    print Dump $o_01->to_string, $o_01->amsg_to_string, $o_01;
 
     my $r_01 = Protocol::EMIUCP->new_message_from_string(
         '00/00019/R/01/A//68'
