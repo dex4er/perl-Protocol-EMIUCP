@@ -36,10 +36,6 @@ sub _find_new_class {
 
 sub new_message {
     my ($class, %args) = @_;
-
-    $args{amsg} = encode_hex($args{amsg_from_string})
-        if defined $args{amsg_from_string};
-
     $class->_find_new_class(%args)->new(%args);
 };
 
