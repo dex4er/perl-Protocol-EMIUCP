@@ -133,8 +133,10 @@ BEGIN {
     sub BUILD { };
     after BUILD => sub {
         my ($self) = @_;
-        confess 'LEN mismatch' if $self->has_len and $self->len != $self->calculate_len;
-        confess 'checksum mismatch' if $self->has_checksum and $self->checksum != $self->calculate_checksum;
+        confess sprintf 'LEN mismatch, should be ' . $self->calculate_len
+            if $self->has_len and $self->len ne $self->calculate_len;
+        confess 'checksum mismatch, should be ' . $self->calculate_checksum
+            if $self->has_checksum and $self->checksum ne $self->calculate_checksum;
 
         if (not $self->has_len) {
             $self->_set_checksum(0);
@@ -150,7 +152,7 @@ BEGIN {
 
     sub calculate_len {
         my ($self) = @_;
-        return length $self->to_string;
+        return sprintf "%05d", length $self->to_string;
     };
 
     use List::Util 'sum';
@@ -165,16 +167,20 @@ BEGIN {
     requires 'list_data_fields';
 
     sub list_fields {
-        my ($self) = @_;
-        return qw( trn len o_r ot ), $self->list_data_fields, qw( checksum );
+        my ($self, @fields) = @_;
+        my @names = (
+            qw( trn len o_r ot ),
+            $self->list_data_fields(@fields),
+            qw( checksum )
+        );
+        return wantarray ? @names : \@names;
     };
 
     sub parse_fields { };
     around parse_fields => sub {
         my ($orig, $class, @fields) = @_;
         my %args = $class->$orig(@fields);
-        @args{qw( trn len o_r ot )} = @fields[0..4];
-        $args{checksum} = $fields[-1];
+        @args{$class->list_fields(@fields)} = @fields;
         return %args;
     };
 
@@ -245,26 +251,10 @@ BEGIN {
     };
 
     sub list_data_fields {
-        my ($self) = @_;
-        return qw( adc oadc ac mt ), $self->mt == 2 ? 'nmsg' : 'amsg';
-    };
-
-    sub parse_fields {
         my ($self, @fields) = @_;
-        my %args = ();
-
-        my %fields = map { qw( adc oadc ac mt )[$_-4] => $_ }
-                     grep { $fields[$_] ne '' } 4..7;
-        $args{$_} = $fields[$fields{$_}] foreach keys %fields;
-
+        my $mt = (ref $self ? $self->mt : $fields[7]) || 0;
         no warnings 'numeric';
-        if ($args{mt} == 2) {
-            $args{nmsg} = $fields[8];
-        }
-        elsif ($args{mt} == 3) {
-            $args{amsg} = $fields[8];
-        };
-        return %args;
+        return qw( adc oadc ac mt ), $mt == 2 ? 'nmsg' : 'amsg';
     };
 
     sub amsg_str {
@@ -342,4 +332,9 @@ do {
         '00/00043/O/01/507998000/6644//3/54455354/2E'
     );
     print Dump $o_01->to_string, $o_01->amsg_str, $o_01;
+
+    my $r_01 = Protocol::EMIUCP->new_message_from_string(
+        '00/00019/R/01/A//68'
+    );
+    print Dump $r_01->to_string, $r_01;
 };
