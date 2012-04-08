@@ -17,20 +17,20 @@ BEGIN {
 
     use Encode;
 
-    our @EXPORT_OK = qw( STX ETX SEP str2hex hex2str );
+    our @EXPORT_OK = qw( STX ETX SEP encode_hex decode_hex );
     our %EXPORT_TAGS = (all => [@EXPORT_OK]);
     sub import {
         goto \&Exporter::import;
     };
 
     # Encode UTF-8 string as ESTI GSM 03.38 hex string
-    sub str2hex ($) {
+    sub encode_hex ($) {
         my ($str) = @_;
         return uc unpack "H*", encode "GSM0338", decode "UTF-8", $str;
     };
 
     # Decode ESTI GSM 03.38 hex string to UTF-8 string
-    sub hex2str ($) {
+    sub decode_hex ($) {
         my ($hex) = @_;
         return encode "UTF-8", decode "GSM0338", pack "H*", $hex;
     };
@@ -46,7 +46,7 @@ BEGIN {
 
     use Moose;
 
-    use Protocol::EMIUCP::Util qw(SEP str2hex);
+    use Protocol::EMIUCP::Util qw(SEP encode_hex);
 
     sub _find_new_class {
         my ($class, %args) = @_;
@@ -72,7 +72,7 @@ BEGIN {
     sub new_message {
         my ($class, %args) = @_;
 
-        $args{amsg} = str2hex($args{amsg_str})
+        $args{amsg} = encode_hex($args{amsg_str})
             if defined $args{amsg_str};
 
         $class->_find_new_class(%args)->new(%args);
@@ -244,7 +244,7 @@ BEGIN {
     with 'Protocol::EMIUCP::Message::O';
     with 'Protocol::EMIUCP::Message::OT_01';
 
-    use Protocol::EMIUCP::Util qw(hex2str);
+    use Protocol::EMIUCP::Util qw(decode_hex);
 
     has adc      => (is => 'ro', isa => 'Num16');
     has oadc     => (is => 'ro', isa => 'Num16');
@@ -269,7 +269,7 @@ BEGIN {
 
     sub amsg_to_string {
         my ($self) = @_;
-        return hex2str($self->amsg);
+        return decode_hex($self->amsg);
     };
 }
 
