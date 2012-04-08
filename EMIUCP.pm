@@ -18,7 +18,10 @@ BEGIN {
     use Encode;
 
     our @EXPORT_OK = qw( STX ETX SEP str2hex hex2str );
-    *import = \&Exporter::import;
+    our %EXPORT_TAGS = (all => [@EXPORT_OK]);
+    sub import {
+        goto \&Exporter::import;
+    };
 
     # Encode UTF-8 string as ESTI GSM 03.38 hex string
     sub str2hex ($) {
@@ -31,8 +34,9 @@ BEGIN {
         my ($hex) = @_;
         return encode "UTF-8", decode "GSM0338", pack "H*", $hex;
     };
+
+    $INC{'Protocol/EMIUCP/Util.pm'} = __FILE__;
 }
-$INC{'Protocol/EMIUCP/Util.pm'} = __FILE__;
 
 
 # Factory class
@@ -41,6 +45,8 @@ BEGIN {
     package Protocol::EMIUCP;
 
     use Moose;
+
+    use Protocol::EMIUCP::Util qw(SEP str2hex);
 
     sub _find_new_class {
         my ($class, %args) = @_;
@@ -66,7 +72,7 @@ BEGIN {
     sub new_message {
         my ($class, %args) = @_;
 
-        $args{amsg} = Protocol::EMIUCP::Util::str2hex($args{amsg_str})
+        $args{amsg} = str2hex($args{amsg_str})
             if defined $args{amsg_str};
 
         $class->_find_new_class(%args)->new(%args);
@@ -74,7 +80,7 @@ BEGIN {
 
     sub new_message_from_string {
         my ($class, $str) = @_;
-        my @fields = split Protocol::EMIUCP::Util::SEP, $str;
+        my @fields = split SEP, $str;
         my %args = (
             o_r => $fields[2],
             ot  => $fields[3],
@@ -125,6 +131,8 @@ BEGIN {
     package Protocol::EMIUCP::Message;
 
     use Moose::Role;
+
+    use Protocol::EMIUCP::Util qw(SEP);
 
     has trn      => (is => 'ro', isa => 'Int2', coerce => 1, default => 0);
     has len      => (is => 'ro', isa => 'Int5', coerce => 1, writer => '_set_len', predicate => 'has_len');
@@ -187,15 +195,15 @@ BEGIN {
     sub new_from_string {
         my ($class, $str) = @_;
 
-        my @fields = split Protocol::EMIUCP::Util::SEP, $str;
+        my @fields = split SEP, $str;
         my %args = $class->parse_fields(@fields);
         $class->new(%args);
     };
 
     sub to_string {
         my ($self) = @_;
-        join Protocol::EMIUCP::Util::SEP, # TODO use Util
-             map { my $field = $self->$_; defined $field ? $field : '' } $self->list_fields;
+        join SEP, map { my $field = $self->$_; defined $field ? $field : '' }
+            $self->list_fields;
     };
 }
 
@@ -233,8 +241,11 @@ BEGIN {
     package Protocol::EMIUCP::Message::O_01;
 
     use Moose;
+
     with 'Protocol::EMIUCP::Message::O';
     with 'Protocol::EMIUCP::Message::OT_01';
+
+    use Protocol::EMIUCP::Util qw(hex2str);
 
     has adc      => (is => 'ro', isa => 'Num16');
     has oadc     => (is => 'ro', isa => 'Num16');
@@ -259,7 +270,7 @@ BEGIN {
 
     sub amsg_str {
         my ($self) = @_;
-        return Protocol::EMIUCP::Util::hex2str($self->amsg);
+        return hex2str($self->amsg);
     };
 }
 
