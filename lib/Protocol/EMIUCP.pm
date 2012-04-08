@@ -9,7 +9,7 @@ our $VERSION = '0.01';
 
 use Moose;
 
-use Protocol::EMIUCP::Util qw(SEP encode_hex);
+use Protocol::EMIUCP::Util qw(SEP);
 
 
 sub _find_new_class {
