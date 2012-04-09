@@ -11,7 +11,7 @@ with 'Protocol::EMIUCP::Message::R_01';
 use Protocol::EMIUCP::Types;
 
 has nack     => (is => 'ro', isa => 'NACK', coerce => 1, default => 'N');
-has ec       => (is => 'ro');
+has ec       => (is => 'ro'); # TODO isa
 
 sub list_data_field_names {
     return qw( nack ec sm );

@@ -9,8 +9,8 @@ use Moose;
 
 with 'Protocol::EMIUCP::Message::O';
 with 'Protocol::EMIUCP::Message::OT_01';
+with 'Protocol::EMIUCP::Message::amsg';
 
-use Protocol::EMIUCP::Util qw(decode_hex encode_hex);
 use Protocol::EMIUCP::Types;
 
 has adc      => (is => 'ro', isa => 'Num16');
@@ -18,14 +18,6 @@ has oadc     => (is => 'ro', isa => 'Num16');
 has ac       => (is => 'ro', isa => 'Str');
 has mt       => (is => 'ro', isa => 'MT23', required => 1);
 has nmsg     => (is => 'ro', isa => 'Num160', predicate => 'has_nmsg');
-has amsg     => (is => 'ro', isa => 'Hex640', predicate => 'has_amsg');
-
-around BUILDARGS => sub {
-    my ($orig, $class, %args) = @_;
-    $args{amsg} = encode_hex(delete $args{amsg_from_string})
-        if defined $args{amsg_from_string};
-    return $class->$orig(%args);
-};
 
 sub BUILD {
     my ($self) = @_;
@@ -41,10 +33,6 @@ sub list_data_field_names {
     return qw( adc oadc ac mt ), $mt == 2 ? 'nmsg' : 'amsg';
 };
 
-sub amsg_to_string {
-    my ($self) = @_;
-    return decode_hex($self->amsg);
-};
 
 
 1;

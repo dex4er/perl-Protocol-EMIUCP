@@ -11,7 +11,7 @@ with 'Protocol::EMIUCP::Message::OT_01';
 
 use Protocol::EMIUCP::Types;
 
-has sm       => (is => 'ro');
+has sm       => (is => 'ro'); # TODO isa
 
 
 1;
