@@ -5,12 +5,11 @@ use 5.008;
 our $VERSION = '0.01';
 
 
-# Factory class through proxy
+# Factory class through proxy class
 
 use Moose;
 
 use Protocol::EMIUCP::Message;
-use Protocol::EMIUCP::Util qw(SEP);
 
 
 sub new_message {
