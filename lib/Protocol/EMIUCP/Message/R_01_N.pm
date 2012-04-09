@@ -6,11 +6,11 @@ our $VERSION = '0.01';
 
 
 use Moose;
+with 'Protocol::EMIUCP::Message::Role::nack';
 with 'Protocol::EMIUCP::Message::Role::R_01';
 
 use Protocol::EMIUCP::Types;
 
-has nack     => (is => 'ro', isa => 'NACK', coerce => 1, default => 'N');
 has ec       => (is => 'ro'); # TODO isa
 
 sub list_data_field_names {
