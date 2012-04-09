@@ -17,4 +17,6 @@ sub list_data_field_names {
 };
 
 
+__PACKAGE__->meta->make_immutable();
+
 1;

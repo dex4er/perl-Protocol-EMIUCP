@@ -31,4 +31,6 @@ sub as_string {
 };
 
 
+__PACKAGE__->meta->make_immutable();
+
 1;
