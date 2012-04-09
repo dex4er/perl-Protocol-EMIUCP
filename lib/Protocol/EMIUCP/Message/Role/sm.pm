@@ -9,6 +9,7 @@ use Moose::Role;
 
 use Protocol::EMIUCP::Types;
 use Protocol::EMIUCP::Util qw(decode_hex encode_hex);
+use Protocol::EMIUCP::Field::sm;
 
 has sm => (
     is        => 'ro',
@@ -39,7 +40,7 @@ around as_hashref => sub {
     if (defined $hashref->{sm}) {
         $hashref->{sm}      = $self->sm_as_string;
         $hashref->{sm_adc}  = $self->sm_adc;
-        $hashref->{sm_scts} = $self->sm_scts;
+        $hashref->{sm_scts} = $self->sm_scts->as_string;
     };
     return $hashref;
 };
