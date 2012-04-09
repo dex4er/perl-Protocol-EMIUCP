@@ -14,12 +14,15 @@ has amsg => (is => 'ro', isa => 'Protocol::EMIUCP::Field::amsg', coerce => 1, pr
 
 around BUILDARGS => sub {
     my ($orig, $class, %args) = @_;
-    $args{value} = encode_hex(delete $args{amsg_encode})
-        if defined $args{amsg_encode};
+    if (defined $args{amsg_utf8}) {
+        $args{amsg} = Protocol::EMIUCP::Field::amsg->new(
+            utf8 => $args{amsg_utf8},
+        );
+    };
     return $class->$orig(%args);
 };
 
-sub amsg_string {
+sub amsg_utf8 {
     my ($self) = @_;
     return decode_hex($self->amsg);
 };
@@ -27,9 +30,9 @@ sub amsg_string {
 around as_hashref => sub {
     my ($orig, $self) = @_;
     my $hashref = $self->$orig();
-    if ($self->has_amsg) {
+    if (defined $hashref->{amsg}) {
         $hashref->{amsg} = $self->amsg->as_string;
-        $hashref->{amsg_encode} = $self->amsg->decode;
+        $hashref->{amsg_utf8} = $self->amsg->utf8;
     };
     return $hashref;
 };

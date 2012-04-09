@@ -29,6 +29,7 @@ coerce  NACK   => from Bool => via   { $_ ? 'N' : '' };
 
 subtype SM     => as Str    => where { $_ =~ /^\d{0,16}:\d{12}$/ };
 
+subtype Num12  => as Str    => where { $_ =~ /^\d{12}$/ };
 subtype Num16  => as Str    => where { $_ =~ /^\d{0,16}$/ };
 subtype Num160 => as Str    => where { $_ =~ /^\d{0,160}$/ };
 subtype Hex640 => as Str    => where { $_ =~ /^[0-9A-F]{0,640}$/ and length($_) % 2 == 0 };
@@ -38,5 +39,10 @@ enum    MT23   => [qw( 2 3 )];
 require Protocol::EMIUCP::Field::amsg;
 coerce 'Protocol::EMIUCP::Field::amsg' => from Str
     => via { Protocol::EMIUCP::Field::amsg->new( value => $_ ) };
+
+require Protocol::EMIUCP::Field::sm;
+coerce 'Protocol::EMIUCP::Field::sm' => from Str
+    => via { Protocol::EMIUCP::Field::sm->new( value => $_ ) };
+
 
 1;
