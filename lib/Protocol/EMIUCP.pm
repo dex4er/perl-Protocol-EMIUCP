@@ -5,7 +5,7 @@ use 5.008;
 our $VERSION = '0.01';
 
 
-# Factory class
+# Factory class through proxy
 
 use Moose;
 

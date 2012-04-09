@@ -52,7 +52,7 @@ sub _find_new_class_from_string {
 
 sub new {
     my ($class, %args) = @_;
-    $class->_find_new_class_from_args(%args)->new(%args);
+    return $class->_find_new_class_from_args(%args)->new(%args);
 };
 
 
