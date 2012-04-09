@@ -14,12 +14,12 @@ has amsg     => (is => 'ro', isa => 'Hex640', predicate => 'has_amsg');
 
 around BUILDARGS => sub {
     my ($orig, $class, %args) = @_;
-    $args{amsg} = encode_hex(delete $args{amsg_from_string})
-        if defined $args{amsg_from_string};
+    $args{amsg} = encode_hex(delete $args{amsg_string})
+        if defined $args{amsg_string};
     return $class->$orig(%args);
 };
 
-sub amsg_to_string {
+sub amsg_string {
     my ($self) = @_;
     return decode_hex($self->amsg);
 };

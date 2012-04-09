@@ -46,12 +46,12 @@ do {
     );
     test_message 'Protocol::EMIUCP::Message::O_01', $str, \%fields, \%fields, sub {
         my ($class, $str, $args, $obj, $msg) = @_;
-        is $msg->amsg_to_string, 'Short Message', "amsg_to_string for $args->{amsg}";
+        is $msg->amsg_string, 'Short Message', "amsg_to_string for $args->{amsg}";
     };
     do {
         my %args = %fields;
         delete $args{amsg};
-        $args{amsg_from_string} = 'Short Message';
+        $args{amsg_string} = 'Short Message';
         test_message 'Protocol::EMIUCP::Message::O_01', $str, \%args, \%fields;
     };
 };
