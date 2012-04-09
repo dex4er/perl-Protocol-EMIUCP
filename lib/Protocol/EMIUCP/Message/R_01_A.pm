@@ -9,8 +9,6 @@ use Moose;
 with 'Protocol::EMIUCP::Message::Role::ack';
 with 'Protocol::EMIUCP::Message::Role::R_01';
 
-use Protocol::EMIUCP::Types;
-
 sub list_data_field_names {
     return qw( ack sm )
 };
