@@ -6,7 +6,7 @@ our $VERSION = '0.01';
 
 
 use Moose::Role;
-with 'Protocol::EMIUCP::Message::Role';
+with 'Protocol::EMIUCP::Message::Role::Base';
 
 use Protocol::EMIUCP::Types;
 
