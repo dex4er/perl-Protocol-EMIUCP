@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+use lib 'lib', '../lib';
+
 use Protocol::EMIUCP;
 use Data::Dumper ();
 
