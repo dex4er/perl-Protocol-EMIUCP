@@ -24,10 +24,10 @@ has sm => (
 
 around BUILDARGS => sub {
     my ($orig, $class, %args) = @_;
-    if (defined $args{sm_adc} and defined $args{sm_scts}) {
+    if (defined $args{sm_adc}) {
         $args{sm} = Protocol::EMIUCP::Field::sm->new(
             adc  => $args{sm_adc},
-            scts => $args{sm_scts},
+            #defined $args{sm_scts} ? (scts => $args{sm_scts}) : (),
         );
     };
     return $class->$orig(%args);

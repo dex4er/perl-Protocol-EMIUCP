@@ -13,9 +13,10 @@ use overload (
 );
 
 use Protocol::EMIUCP::Types;
+use DateTime;
 
 has adc  => (is => 'ro', isa => 'Num16', required => 1);
-has scts => (is => 'ro', isa => 'Num12', required => 1);
+has scts => (is => 'ro', isa => 'SCTS', coerce => 1, required => 1, default => sub { DateTime->now });
 
 around BUILDARGS => sub {
     my ($orig, $class, %args) = @_;
