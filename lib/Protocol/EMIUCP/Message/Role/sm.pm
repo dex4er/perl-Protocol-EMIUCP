@@ -28,7 +28,7 @@ around BUILDARGS => sub {
     if (defined $args{sm_adc}) {
         $args{sm} = Protocol::EMIUCP::Field::sm->new(
             adc  => $args{sm_adc},
-            #defined $args{sm_scts} ? (scts => $args{sm_scts}) : (),
+            defined $args{sm_scts} ? (scts => $args{sm_scts}) : (),
         );
     };
     return $class->$orig(%args);
