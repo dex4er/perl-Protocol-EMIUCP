@@ -7,26 +7,26 @@ use Carp ();
 
 $SIG{__WARN__} = sub { local $Carp::CarpLevel = 1; Carp::confess("Warning: ", @_) };
 
-use Test::More tests => 33;
+use Test::More tests => 25;
 
 BEGIN { use_ok 'Protocol::EMIUCP' };
 
 sub test_message ($$$;$$) {
-    my ($class, $str, $args, $fields, $code) = @_;
-    $fields = $args unless defined $fields;
+    my ($class, $str, $fields, $args, $code) = @_;
+    $args = $fields unless defined $args;
     do {
         my $msg = Protocol::EMIUCP->new_message_from_string($str);
         isa_ok $msg, $class;
-        is_deeply $msg, $fields, "$str is parsed";
-        is $msg->to_string, $str, "$str is serialized";
-        $code->($class, $str, $args, $fields, $msg) if $code;
+        is_deeply $msg->as_hashref, $fields, "$str fields matched";
+        is $msg->as_string, $str, "$str as string matched";
+        $code->($class, $str, $fields, $args, $msg) if $code;
     };
     do {
         my $msg = Protocol::EMIUCP->new_message(%$args);
         isa_ok $msg, $class;
-        is_deeply $msg, $fields, "$str is parsed";
-        is $msg->to_string, $str, "$str is serialized";
-        $code->($class, $str, $args, $fields, $msg) if $code;
+        is_deeply $msg->as_hashref, $fields, "$str fields matched";
+        is $msg->as_string, $str, "$str as string matched";
+        $code->($class, $str, $fields, $args, $msg) if $code;
     };
 }
 
@@ -34,26 +34,20 @@ sub test_message ($$$;$$) {
 do {
     my $str = '00/00070/O/01/01234567890/09876543210//3/53686F7274204D657373616765/D9';
     my %fields = (
-        trn      => '00',
-        len      => '00070',
-        o_r      => 'O',
-        ot       => '01',
-        adc      => '01234567890',
-        oadc     => '09876543210',
-        mt       => 3,
-        amsg     => '53686F7274204D657373616765',
-        checksum => 'D9',
+        trn       => '00',
+        len       => '00070',
+        o_r       => 'O',
+        ot        => '01',
+        adc       => '01234567890',
+        oadc      => '09876543210',
+        mt        => 3,
+        amsg      => '53686F7274204D657373616765',
+        amsg_utf8 => 'Short Message',
+        checksum  => 'D9',
     );
-    test_message 'Protocol::EMIUCP::Message::O_01', $str, \%fields, \%fields, sub {
-        my ($class, $str, $args, $obj, $msg) = @_;
-        is $msg->amsg->decode, 'Short Message', "amsg decode for $args->{amsg}";
-    };
-    do {
-        my %args = %fields;
-        delete $args{amsg};
-        $args{amsg_encode} = 'Short Message';
-        test_message 'Protocol::EMIUCP::Message::O_01', $str, \%args, \%fields;
-    };
+    my %args = %fields;
+    delete $args{amsg};
+    test_message 'Protocol::EMIUCP::Message::O_01', $str, \%fields, \%args;
 };
 
 # 4.2 Call input Operation -01 (p.22)
@@ -82,12 +76,13 @@ do {
         ot       => '01',
         ack      => 'A',
         sm       => '01234567890:090196103258',
+        sm_adc   => '01234567890',
+        sm_scts  => '090196103258',
         checksum => '4E',
     );
-    test_message 'Protocol::EMIUCP::Message::R_01_A', $str, \%fields, \%fields, sub {
-        my ($class, $str, $args, $obj, $msg) = @_;
-        is $msg->sm_string, 'Short Message', "amsg_to_string for $args->{amsg}";
-    };;
+    my %args = %fields;
+    delete $args{sm};
+    test_message 'Protocol::EMIUCP::Message::R_01_A', $str, \%fields, \%args;
 };
 
 # 4.2.2 Call Input Operation (Negative Result) (p.23)
