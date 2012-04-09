@@ -7,7 +7,7 @@ use Carp ();
 
 $SIG{__WARN__} = sub { local $Carp::CarpLevel = 1; Carp::confess("Warning: ", @_) };
 
-use Test::More tests => 25;
+use Test::More tests => 93;
 
 BEGIN { use_ok 'Protocol::EMIUCP' };
 
@@ -19,6 +19,9 @@ sub test_message ($$$;$$) {
         isa_ok $msg, $class;
         is_deeply $msg->as_hashref, $fields, "$str fields matched";
         is $msg->as_string, $str, "$str as string matched";
+        foreach (grep { defined $fields->{$_} } keys %$fields) {
+            is $msg->$_, $fields->{$_}, $_
+        };
         $code->($class, $str, $fields, $args, $msg) if $code;
     };
     do {
@@ -26,6 +29,9 @@ sub test_message ($$$;$$) {
         isa_ok $msg, $class;
         is_deeply $msg->as_hashref, $fields, "$str fields matched";
         is $msg->as_string, $str, "$str as string matched";
+        foreach (grep { defined $fields->{$_} } keys %$fields) {
+            is $msg->$_, $fields->{$_}, $_
+        };
         $code->($class, $str, $fields, $args, $msg) if $code;
     };
 }
