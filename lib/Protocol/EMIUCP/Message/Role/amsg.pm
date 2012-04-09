@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::amsg;
+package Protocol::EMIUCP::Message::Role::amsg;
 
 use 5.008;
 

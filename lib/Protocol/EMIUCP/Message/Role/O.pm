@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::O;
+package Protocol::EMIUCP::Message::Role::O;
 
 use 5.008;
 
@@ -6,7 +6,7 @@ our $VERSION = '0.01';
 
 
 use Moose::Role;
-with 'Protocol::EMIUCP::Message';
+with 'Protocol::EMIUCP::Message::Role';
 
 use Protocol::EMIUCP::Types;
 

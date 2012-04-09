@@ -7,9 +7,9 @@ our $VERSION = '0.01';
 
 use Moose;
 
-with 'Protocol::EMIUCP::Message::O';
-with 'Protocol::EMIUCP::Message::OT_01';
-with 'Protocol::EMIUCP::Message::amsg';
+with 'Protocol::EMIUCP::Message::Role::O';
+with 'Protocol::EMIUCP::Message::Role::OT_01';
+with 'Protocol::EMIUCP::Message::Role::amsg';
 
 use Protocol::EMIUCP::Types;
 

@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::sm;
+package Protocol::EMIUCP::Message::Role::sm;
 
 use 5.008;
 
