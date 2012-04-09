@@ -8,10 +8,7 @@ our $VERSION = '0.01';
 use Moose::Role;
 with 'Protocol::EMIUCP::Message::R';
 with 'Protocol::EMIUCP::Message::OT_01';
-
-use Protocol::EMIUCP::Types;
-
-has sm       => (is => 'ro'); # TODO isa
+with 'Protocol::EMIUCP::Message::sm';
 
 
 1;
