@@ -35,5 +35,8 @@ subtype Hex640 => as Str    => where { $_ =~ /^[0-9A-F]{0,640}$/ and length($_) 
 
 enum    MT23   => [qw( 2 3 )];
 
+require Protocol::EMIUCP::Field::amsg;
+coerce 'Protocol::EMIUCP::Field::amsg' => from Str
+    => via { Protocol::EMIUCP::Field::amsg->new( value => $_ ) };
 
 1;

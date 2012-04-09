@@ -46,12 +46,12 @@ do {
     );
     test_message 'Protocol::EMIUCP::Message::O_01', $str, \%fields, \%fields, sub {
         my ($class, $str, $args, $obj, $msg) = @_;
-        is $msg->amsg_string, 'Short Message', "amsg_to_string for $args->{amsg}";
+        is $msg->amsg->decode, 'Short Message', "amsg decode for $args->{amsg}";
     };
     do {
         my %args = %fields;
         delete $args{amsg};
-        $args{amsg_string} = 'Short Message';
+        $args{amsg_encode} = 'Short Message';
         test_message 'Protocol::EMIUCP::Message::O_01', $str, \%args, \%fields;
     };
 };
@@ -84,7 +84,10 @@ do {
         sm       => '01234567890:090196103258',
         checksum => '4E',
     );
-    test_message 'Protocol::EMIUCP::Message::R_01_A', $str, \%fields;
+    test_message 'Protocol::EMIUCP::Message::R_01_A', $str, \%fields, \%fields, sub {
+        my ($class, $str, $args, $obj, $msg) = @_;
+        is $msg->sm_string, 'Short Message', "amsg_to_string for $args->{amsg}";
+    };;
 };
 
 # 4.2.2 Call Input Operation (Negative Result) (p.23)

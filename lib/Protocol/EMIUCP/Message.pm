@@ -36,14 +36,14 @@ after BUILD => sub {
 
 sub calculate_len {
     my ($self) = @_;
-    return sprintf "%05d", length $self->to_string;
+    return sprintf "%05d", length $self->as_string;
 };
 
 use List::Util 'sum';
 
 sub calculate_checksum {
     my ($self) = @_;
-    my $s = $self->to_string =~ s{[^/]*$}{}r;
+    my $s = $self->as_string =~ s{[^/]*$}{}r;
     my $c += sum unpack "C*", $s;
     return sprintf "%02X", $c % 16**2;
 };
@@ -76,10 +76,15 @@ sub new_from_string {
     $class->new(%args);
 };
 
-sub to_string {
+sub as_string {
     my ($self) = @_;
     join SEP, map { my $field = $self->$_; defined $field ? $field : '' }
         $self->list_field_names;
+};
+
+sub as_hashref {
+    my ($self) = @_;
+    return { %$self };
 };
 
 
