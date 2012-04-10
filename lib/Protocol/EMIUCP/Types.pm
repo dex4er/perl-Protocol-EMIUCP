@@ -36,26 +36,28 @@ subtype Hex640 => as Str    => where { $_ =~ /^[0-9A-F]{0,640}$/ and length($_) 
 
 enum    MT23   => [qw( 2 3 )];
 
-use DateTime::Format::SCTS;
+use MooseX::Types::DateTime;
+use DateTime::Format::EMIUCP;
 
-class_type 'DateTime';
+subtype SCTS       => as 'Num12';
+coerce  SCTS       => from 'DateTime' => via { DateTime::Format::EMIUCP->format_datetime($_) };
+coerce  'DateTime' => from SCTS       => via { DateTime::Format::EMIUCP->parse_datetime($_) };
 
-subtype SCTS   => as 'Num12';
-coerce  SCTS   => from 'DateTime' => via { DateTime::Format::SCTS->format_datetime($_) };
-coerce  'DateTime' => from SCTS   => via { DateTime::Format::SCTS->parse_datetime($_) };
-
+require Protocol::EMIUCP::Field::amsg;
 class_type 'Protocol::EMIUCP::Field::amsg';
 
 coerce 'Protocol::EMIUCP::Field::amsg'
     => from Str
     => via { Protocol::EMIUCP::Field::amsg->new( value => $_ ) };
 
+require Protocol::EMIUCP::Field::sm;
 class_type 'Protocol::EMIUCP::Field::sm';
 
 coerce 'Protocol::EMIUCP::Field::sm'
     => from Str
     => via { Protocol::EMIUCP::Field::sm->new( value => $_ ) };
 
+require Protocol::EMIUCP::Field::scts;
 class_type 'Protocol::EMIUCP::Field::scts';
 
 coerce 'Protocol::EMIUCP::Field::scts'
