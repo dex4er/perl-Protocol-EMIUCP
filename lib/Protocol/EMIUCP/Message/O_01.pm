@@ -4,7 +4,6 @@ use 5.008;
 
 our $VERSION = '0.01';
 
-
 use Moose;
 
 with 'Protocol::EMIUCP::Message::Role::O';

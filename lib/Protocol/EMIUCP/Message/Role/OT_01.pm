@@ -9,7 +9,10 @@ use Moose::Role;
 
 use Protocol::EMIUCP::Field;
 
-has_field ot => (default => '01');
+has_field ot => (
+    default       => '01',
+    documentation => 'Call Input Operation',
+);
 
 
 1;
