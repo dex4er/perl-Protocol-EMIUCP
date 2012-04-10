@@ -10,11 +10,11 @@ use Moose::Util::TypeConstraints;
 subtype Nul    => as Str    => where { $_ eq '' };
 coerce  Nul    => from Str  => via   { '' };
 
-subtype Int2   => as Str    => where { $_ =~ /^\d{2}$/ };
-coerce  Int2   => from Int  => via   { sprintf "%02d", $_ % 1e2 };
+subtype Num2   => as Str    => where { $_ =~ /^\d{2}$/ };
+coerce  Num2   => from Int  => via   { sprintf "%02d", $_ % 1e2 };
 
-subtype Int5   => as Str    => where { $_ =~ /^\d{5}$/ };
-coerce  Int5   => from Int  => via   { sprintf "%05d", $_ % 1e5 };
+subtype Num5   => as Str    => where { $_ =~ /^\d{5}$/ };
+coerce  Num5   => from Int  => via   { sprintf "%05d", $_ % 1e5 };
 
 subtype Hex2   => as Str    => where { $_ =~ /^[0-9A-F]{2}$/ };
 coerce  Hex2   => from Int  => via   { sprintf "%02X", $_ % 16**2 };

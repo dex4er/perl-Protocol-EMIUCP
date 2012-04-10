@@ -59,7 +59,7 @@ use constant fields => {
 
     len      => {
         is        => 'ro',
-        isa       => 'Int5',
+        isa       => 'Num5',
         coerce    => 1,
         writer    => '_set_len',
         predicate => 'has_len',
@@ -98,7 +98,7 @@ use constant fields => {
 
     ot       => {
         is        => 'ro',
-        isa       => 'Int2',
+        isa       => 'Num2',
         coerce    => 1,
         required  => 1,
     },
@@ -117,7 +117,7 @@ use constant fields => {
 
     trn      => {
         is        => 'ro',
-        isa       => 'Int2',
+        isa       => 'Num2',
         coerce    => 1,
         default   => '00',
     },
