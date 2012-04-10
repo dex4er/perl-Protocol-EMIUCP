@@ -17,13 +17,18 @@ use Protocol::EMIUCP::Field::scts;
 
 use DateTime;
 
-has adc  => (is => 'ro', isa => 'Num16', required => 1);
-has scts => (
-    is => 'ro',
-    isa => 'Protocol::EMIUCP::Field::scts',
-    coerce => 1,
+has adc  => (
+    is       => 'ro',
+    isa      => 'Num16',
     required => 1,
-    default => sub { DateTime->now }
+);
+
+has scts => (
+    is       => 'ro',
+    isa      => 'Protocol::EMIUCP::Field::scts',
+    coerce   => 1,
+    required => 1,
+    default  => sub { DateTime->now },
 );
 
 around BUILDARGS => sub {
