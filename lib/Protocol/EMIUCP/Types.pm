@@ -43,21 +43,18 @@ subtype SCTS       => as 'Num12';
 coerce  SCTS       => from 'DateTime' => via { DateTime::Format::EMIUCP->format_datetime($_) };
 coerce  'DateTime' => from SCTS       => via { DateTime::Format::EMIUCP->parse_datetime($_) };
 
-require Protocol::EMIUCP::Field::amsg;
 class_type 'Protocol::EMIUCP::Field::amsg';
 
 coerce 'Protocol::EMIUCP::Field::amsg'
     => from Str
     => via { Protocol::EMIUCP::Field::amsg->new( value => $_ ) };
 
-require Protocol::EMIUCP::Field::sm;
 class_type 'Protocol::EMIUCP::Field::sm';
 
 coerce 'Protocol::EMIUCP::Field::sm'
     => from Str
     => via { Protocol::EMIUCP::Field::sm->new( value => $_ ) };
 
-require Protocol::EMIUCP::Field::scts;
 class_type 'Protocol::EMIUCP::Field::scts';
 
 coerce 'Protocol::EMIUCP::Field::scts'

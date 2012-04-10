@@ -13,7 +13,7 @@ use overload (
 );
 
 use Protocol::EMIUCP::Types;
-use DateTime::Format::SCTS;
+use DateTime::Format::EMIUCP;
 
 has value => (is => 'ro', isa => 'SCTS', coerce => 1, required => 1);
 
@@ -24,7 +24,7 @@ sub as_string {
 
 sub as_datetime {
     my ($self) = @_;
-    return DateTime::Format::SCTS->parse_datetime($self->value);
+    return DateTime::Format::EMIUCP->parse_datetime($self->value);
 };
 
 
