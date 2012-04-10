@@ -7,7 +7,6 @@ our $VERSION = '0.01';
 
 use Moose::Role;
 
-use Protocol::EMIUCP::Util qw( decode_hex encode_hex );
 use Protocol::EMIUCP::Field;
 use Protocol::EMIUCP::Field::sm;
 

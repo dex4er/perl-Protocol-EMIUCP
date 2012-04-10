@@ -6,12 +6,9 @@ our $VERSION = '0.01';
 
 
 use Moose;
-with 'Protocol::EMIUCP::Message::Role::nack';
 with 'Protocol::EMIUCP::Message::Role::R_01';
-
-use Protocol::EMIUCP::Field;
-
-has_field 'ec';
+with 'Protocol::EMIUCP::Message::Role::nack';
+with 'Protocol::EMIUCP::Message::Role::ec';
 
 sub list_data_field_names {
     return qw( nack ec sm );

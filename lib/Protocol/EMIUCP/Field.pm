@@ -53,9 +53,12 @@ use constant fields => {
 
     ec       => {
         is        => 'ro',
-        isa       => 'Num2',
+        isa       => 'Protocol::EMIUCP::Field::ec',
         coerce    => 1,
         required  => 1,
+        handles   => {
+            ec_as_string => 'value',
+        },
     },
 
     len      => {

@@ -49,11 +49,11 @@ coerce 'Protocol::EMIUCP::Field::amsg'
     => from Str
     => via { Protocol::EMIUCP::Field::amsg->new( value => $_ ) };
 
-class_type 'Protocol::EMIUCP::Field::sm';
+class_type 'Protocol::EMIUCP::Field::ec';
 
-coerce 'Protocol::EMIUCP::Field::sm'
-    => from Str
-    => via { Protocol::EMIUCP::Field::sm->new( value => $_ ) };
+coerce 'Protocol::EMIUCP::Field::ec'
+    => from Int
+    => via { Protocol::EMIUCP::Field::ec->new( value => $_ ) };
 
 class_type 'Protocol::EMIUCP::Field::scts';
 
@@ -62,6 +62,12 @@ coerce 'Protocol::EMIUCP::Field::scts'
     => via { Protocol::EMIUCP::Field::scts->new( value => $_ ) },
     => from 'DateTime'
     => via { Protocol::EMIUCP::Field::scts->new( value => $_ ) };
+
+class_type 'Protocol::EMIUCP::Field::sm';
+
+coerce 'Protocol::EMIUCP::Field::sm'
+    => from Str
+    => via { Protocol::EMIUCP::Field::sm->new( value => $_ ) };
 
 
 1;
