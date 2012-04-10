@@ -13,7 +13,7 @@ use overload (
 );
 
 use Protocol::EMIUCP::Types;
-use Protocol::EMIUCP::Util qw(decode_hex encode_hex);
+use Protocol::EMIUCP::Util qw( decode_hex encode_hex );
 
 has value => (is => 'ro', isa => 'Hex640', required => 1);
 
