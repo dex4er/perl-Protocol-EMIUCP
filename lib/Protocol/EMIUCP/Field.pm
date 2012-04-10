@@ -57,7 +57,8 @@ use constant fields => {
         coerce    => 1,
         required  => 1,
         handles   => {
-            ec_as_string => 'value',
+            ec_as_string  => 'value',
+            ec_message    => 'as_message',
         },
     },
 

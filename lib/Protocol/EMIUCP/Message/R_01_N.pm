@@ -14,6 +14,9 @@ sub list_data_field_names {
     return qw( nack ec sm );
 };
 
+sub list_ec_codes {
+    return qw( 01 02 03 04 05 06 07 08 24 23 26 );
+};
 
 __PACKAGE__->meta->make_immutable();
 

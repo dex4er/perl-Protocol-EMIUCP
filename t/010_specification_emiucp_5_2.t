@@ -7,7 +7,7 @@ use Carp ();
 
 $SIG{__WARN__} = sub { local $Carp::CarpLevel = 1; Carp::confess("Warning: ", @_) };
 
-use Test::More tests => 93;
+use Test::More tests => 95;
 
 BEGIN { use_ok 'Protocol::EMIUCP' };
 
@@ -95,13 +95,14 @@ do {
 do {
     my $str = '12/00022/R/01/N/02//03';
     my %fields = (
-        trn      => '12',
-        len      => '00022',
-        o_r      => 'R',
-        ot       => '01',
-        nack     => 'N',
-        ec       => '02',
-        checksum => '03',
+        trn        => '12',
+        len        => '00022',
+        o_r        => 'R',
+        ot         => '01',
+        nack       => 'N',
+        ec         => '02',
+        ec_message => 'Syntax error',
+        checksum   => '03',
     );
     test_message 'Protocol::EMIUCP::Message::R_01_N', $str, \%fields;
 };
