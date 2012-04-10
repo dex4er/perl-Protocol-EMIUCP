@@ -21,12 +21,14 @@ use constant fields => {
         is        => 'ro',
         isa       => 'ACK',
         coerce    => 1,
+        required  => 1,
         default   => 'A',
     },
 
     adc      => {
         is        => 'ro',
         isa       => 'Num16',
+        required  => 1,
     },
 
     amsg     => {
@@ -51,7 +53,8 @@ use constant fields => {
 
     ec        => {
         is        => 'ro',
-        # TODO isa
+        isa       => 'Num2',
+        required  => 1,
     },
 
     len      => {
@@ -72,6 +75,7 @@ use constant fields => {
         is        => 'ro',
         isa       => 'NACK',
         coerce    => 1,
+        required  => 1,
         default   => 'N',
     },
 
