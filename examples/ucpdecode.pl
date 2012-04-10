@@ -9,4 +9,13 @@ my $str = $ARGV[0] || die "Usage: $0 ucp_string\n";
 
 my $msg = Protocol::EMIUCP->new_message_from_string($str);
 
-print Data::Dumper->new([ $msg->as_hashref ])->Quotekeys(0)->Sortkeys(1)->Terse(1)->Dump;
+my $dump = Data::Dumper->new([ $msg->as_hashref ])
+    ->Indent(1)
+    ->Pair('=')
+    ->Quotekeys(0)
+    ->Sortkeys(1)
+    ->Terse(1)
+    ->Dump;
+$dump =~ s/^{\n(.*)\n}$/$1/s;
+$dump =~ s/^\s\s(.*?),?$/$1/mg;
+print $dump;
