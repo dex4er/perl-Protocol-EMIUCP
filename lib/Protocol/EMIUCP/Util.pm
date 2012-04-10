@@ -5,6 +5,13 @@ use 5.008;
 our $VERSION = '0.01';
 
 
+our @EXPORT_OK = qw( STX ETX SEP encode_hex decode_hex );
+our %EXPORT_TAGS = (all => [@EXPORT_OK]);
+sub import {
+    goto \&Exporter::import;
+};
+
+
 use constant {
     STX => "\x02",
     ETX => "\x03",
@@ -13,13 +20,6 @@ use constant {
 
 
 use Encode;
-
-our @EXPORT_OK = qw( STX ETX SEP encode_hex decode_hex );
-our %EXPORT_TAGS = (all => [@EXPORT_OK]);
-sub import {
-    goto \&Exporter::import;
-};
-
 
 # Encode UTF-8 string as ESTI GSM 03.38 hex string
 sub encode_hex ($) {
