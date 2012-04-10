@@ -51,9 +51,10 @@ use constant fields => {
         clearer   => '_clear_checksum',
     },
 
-    ec        => {
+    ec       => {
         is        => 'ro',
         isa       => 'Num2',
+        coerce    => 1,
         required  => 1,
     },
 
