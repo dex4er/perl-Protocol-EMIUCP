@@ -5,7 +5,8 @@ use 5.008;
 our $VERSION = '0.01';
 
 
-our @EXPORT_OK = qw( STX ETX SEP encode_hex decode_hex );
+use Exporter ();
+our @EXPORT_OK = qw( STX ETX SEP encode_hex decode_hex has_field );
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 sub import {
     goto \&Exporter::import;
@@ -32,6 +33,23 @@ sub encode_hex ($) {
 sub decode_hex ($) {
     my ($hex) = @_;
     return encode "UTF-8", decode "GSM0338", pack "H*", $hex;
+};
+
+
+use Protocol::EMIUCP::Field;
+
+sub has_field ($;@) {
+    my ($name, @props) = @_;
+    if (ref $name and ref $name eq 'ARRAY') {
+        caller()->meta->add_attribute(
+            $_ => %{ Protocol::EMIUCP::Field::fields->{$_} }, @props
+        ) foreach @$name;
+    }
+    else {
+        caller()->meta->add_attribute(
+            $name => %{ Protocol::EMIUCP::Field::fields->{$name} }, @props
+        );
+    };
 };
 
 

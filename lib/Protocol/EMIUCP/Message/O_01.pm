@@ -11,13 +11,9 @@ with 'Protocol::EMIUCP::Message::Role::O';
 with 'Protocol::EMIUCP::Message::Role::OT_01';
 with 'Protocol::EMIUCP::Message::Role::amsg';
 
-use Protocol::EMIUCP::Types;
+use Protocol::EMIUCP::Field;
 
-has adc      => (is => 'ro', isa => 'Num16');
-has oadc     => (is => 'ro', isa => 'Num16');
-has ac       => (is => 'ro', isa => 'Str');
-has mt       => (is => 'ro', isa => 'MT23', required => 1);
-has nmsg     => (is => 'ro', isa => 'Num160', predicate => 'has_nmsg');
+has_field [qw( adc oadc ac mt nmsg )];
 
 sub BUILD {
     my ($self) = @_;

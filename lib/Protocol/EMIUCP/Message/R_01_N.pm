@@ -9,9 +9,9 @@ use Moose;
 with 'Protocol::EMIUCP::Message::Role::nack';
 with 'Protocol::EMIUCP::Message::Role::R_01';
 
-use Protocol::EMIUCP::Types;
+use Protocol::EMIUCP::Field;
 
-has ec       => (is => 'ro'); # TODO isa
+has_field 'ec';
 
 sub list_data_field_names {
     return qw( nack ec sm );

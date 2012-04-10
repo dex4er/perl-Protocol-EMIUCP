@@ -8,11 +8,9 @@ our $VERSION = '0.01';
 use Moose::Role;
 
 use Protocol::EMIUCP::Util qw(SEP);
-use Protocol::EMIUCP::Types;
+use Protocol::EMIUCP::Field;
 
-has trn      => (is => 'ro', isa => 'Int2', coerce => 1, default => 0);
-has len      => (is => 'ro', isa => 'Int5', coerce => 1, writer => '_set_len', predicate => 'has_len');
-has checksum => (is => 'ro', isa => 'Hex2', coerce => 1, writer => '_set_checksum', predicate => 'has_checksum', clearer => '_clear_checksum');
+has_field [qw( trn len checksum )];
 
 sub BUILD { };
 after BUILD => sub {

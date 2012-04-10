@@ -7,9 +7,9 @@ our $VERSION = '0.01';
 
 use Moose::Role;
 
-use Protocol::EMIUCP::Types;
+use Protocol::EMIUCP::Field;
 
-has ot       => (is => 'ro', isa => 'Int2', default => '01', required => 1, coerce => 1);
+has_field ot => (default => '01');
 
 
 1;

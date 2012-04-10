@@ -8,9 +8,9 @@ our $VERSION = '0.01';
 use Moose::Role;
 with 'Protocol::EMIUCP::Message::Role::Base';
 
-use Protocol::EMIUCP::Types;
+use Protocol::EMIUCP::Field;
 
-has o_r      => (is => 'ro', isa => 'O_R', default => 'R', required => 1);
+has_field o_r => (default => 'R');
 
 
 1;

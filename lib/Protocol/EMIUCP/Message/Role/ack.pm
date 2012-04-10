@@ -7,9 +7,9 @@ our $VERSION = '0.01';
 
 use Moose::Role;
 
-use Protocol::EMIUCP::Types;
+use Protocol::EMIUCP::Field;
 
-has ack => (is => 'ro', isa => 'ACK', coerce => 1, default => 'A');
+has_field 'ack';
 
 
 1;
