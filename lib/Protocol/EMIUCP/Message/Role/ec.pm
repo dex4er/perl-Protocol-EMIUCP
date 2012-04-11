@@ -14,6 +14,12 @@ has_field 'ec';
 
 requires 'list_ec_codes';
 
+before BUILD => sub {
+    my ($self) = @_;
+    my $ec = $self->ec;
+    confess 'wrong EC' unless grep { $_ == $ec } $self->list_ec_codes;
+};
+
 around as_hashref => sub {
     my ($orig, $self) = @_;
     my $hashref = $self->$orig();

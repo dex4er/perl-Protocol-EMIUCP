@@ -49,11 +49,15 @@ coerce 'Protocol::EMIUCP::Field::amsg'
     => from Str
     => via { Protocol::EMIUCP::Field::amsg->new( value => $_ ) };
 
+subtype EC_Const   => as Str    => where { $_ =~ /^EC_/ };
+
 class_type 'Protocol::EMIUCP::Field::ec';
 
 coerce 'Protocol::EMIUCP::Field::ec'
     => from Int
-    => via { Protocol::EMIUCP::Field::ec->new( value => $_ ) };
+    => via { Protocol::EMIUCP::Field::ec->new( value => $_ ) }
+    => from EC_Const
+    => via { Protocol::EMIUCP::Field::ec->new( value => Protocol::EMIUCP::Field::ec->$_ ) };
 
 class_type 'Protocol::EMIUCP::Field::scts';
 
