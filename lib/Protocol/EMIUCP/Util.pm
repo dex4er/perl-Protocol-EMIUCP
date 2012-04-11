@@ -8,9 +8,7 @@ our $VERSION = '0.01';
 use Exporter ();
 our @EXPORT_OK = qw( STX ETX SEP encode_hex decode_hex );
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
-sub import {
-    goto \&Exporter::import;
-};
+*import = \&Exporter::import;
 
 
 use constant {
