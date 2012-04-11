@@ -12,7 +12,7 @@ use overload (
     fallback => 1
 );
 
-use constant messages => {
+our %EC_To_Message = (
     '01' => 'Checksum error',
     '02' => 'Syntax error',
     '03' => 'Operation not supported by system',
@@ -24,7 +24,25 @@ use constant messages => {
     '23' => 'Message type not supported by system',
     '24' => 'Message too long',
     '26' => 'Message type not valid for the pager type',
+);
+
+our %Message_To_EC = reverse %EC_To_Message;
+
+use constant ();
+
+my @ec_constants;
+foreach (keys %Message_To_EC) {
+    my $name = 'EC_' . $_;
+    $name =~ tr/a-z/A-Z/;
+    $name =~ s/[()]//g;
+    $name =~ s/\W+/_/g;
+    push @ec_constants, $name;
+    constant->import($name => $Message_To_EC{$_});
 };
+
+use Exporter ();
+our @EXPORT = @ec_constants;
+*import = \&Exporter::import;
 
 use Protocol::EMIUCP::Types;
 
@@ -37,7 +55,7 @@ sub as_string {
 
 sub as_message {
     my ($self) = @_;
-    return messages->{$self->value};
+    return $EC_To_Message{$self->value};
 };
 
 
