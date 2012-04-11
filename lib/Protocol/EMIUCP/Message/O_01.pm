@@ -16,7 +16,7 @@ has_field [qw( adc oadc ac mt nmsg )];
 
 sub BUILD {
     my ($self) = @_;
-    confess 'OT != 1' if $self->ot != 1;
+    confess 'OT != "01"' if $self->ot != 1;
     confess 'nmsg for MT=3' if $self->mt == 3 and $self->has_nmsg;
     confess 'amsg for MT=2' if $self->mt == 2 and $self->has_amsg;
 };
