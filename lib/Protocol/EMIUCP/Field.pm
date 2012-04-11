@@ -110,9 +110,13 @@ use constant fields => {
 
     pid      => {
         is        => 'ro',
-        isa       => 'PID',
+        isa       => 'Protocol::EMIUCP::Field::pid',
         coerce    => 1,
         required  => 1,
+        handles   => {
+            pid_as_string => 'value',
+            pid_message   => 'as_message',
+        },
     },
 
     sm       => {
