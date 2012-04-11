@@ -46,7 +46,7 @@ our @EXPORT = @ec_constants;
 
 use Protocol::EMIUCP::Types;
 
-has value => (is => 'ro', isa => 'Num2', coerce => 1, required => 1);
+has value => (is => 'ro', isa => 'EC', coerce => 1, required => 1);
 
 sub as_string {
     my ($self) = @_;

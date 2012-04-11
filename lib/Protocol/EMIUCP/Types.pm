@@ -13,6 +13,9 @@ coerce  Nul    => from Str  => via   { '' };
 subtype Num2   => as Str    => where { $_ =~ /^\d{2}$/ };
 coerce  Num2   => from Int  => via   { sprintf "%02d", $_ % 1e2 };
 
+subtype Num4   => as Str    => where { $_ =~ /^\d{4}$/ };
+coerce  Num4   => from Int  => via   { sprintf "%04d", $_ % 1e4 };
+
 subtype Num5   => as Str    => where { $_ =~ /^\d{5}$/ };
 coerce  Num5   => from Int  => via   { sprintf "%05d", $_ % 1e5 };
 
@@ -34,7 +37,19 @@ subtype Num16  => as Str    => where { $_ =~ /^\d{0,16}$/ };
 subtype Num160 => as Str    => where { $_ =~ /^\d{0,160}$/ };
 subtype Hex640 => as Str    => where { $_ =~ /^[0-9A-F]{0,640}$/ and length($_) % 2 == 0 };
 
+subtype EC         => as 'Num2';
+subtype EC_Const   => as Str    => where { $_ =~ /^EC_/ };
+coerce  EC
+    => from EC_Const
+    => via { Protocol::EMIUCP::Field::ec->$_ };
+
 enum    MT23   => [qw( 2 3 )];
+
+enum    PID    => [qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 )];
+subtype PID_Const  => as Str    => where { $_ =~ /^PID_/ };
+coerce  PID
+    => from PID_Const
+    => via { Protocol::EMIUCP::Field::pid->$_ };
 
 use MooseX::Types::DateTime;
 use DateTime::Format::EMIUCP;
@@ -49,15 +64,11 @@ coerce 'Protocol::EMIUCP::Field::amsg'
     => from Str
     => via { Protocol::EMIUCP::Field::amsg->new( value => $_ ) };
 
-subtype EC_Const   => as Str    => where { $_ =~ /^EC_/ };
-
 class_type 'Protocol::EMIUCP::Field::ec';
 
 coerce 'Protocol::EMIUCP::Field::ec'
-    => from Int
-    => via { Protocol::EMIUCP::Field::ec->new( value => $_ ) }
-    => from EC_Const
-    => via { Protocol::EMIUCP::Field::ec->new( value => Protocol::EMIUCP::Field::ec->$_ ) };
+    => from Str
+    => via { Protocol::EMIUCP::Field::ec->new( value => $_ ) };
 
 class_type 'Protocol::EMIUCP::Field::scts';
 

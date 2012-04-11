@@ -7,8 +7,10 @@ our $VERSION = '0.01';
 
 use Moose;
 with 'Protocol::EMIUCP::Message::Role::R_01';
+
 with 'Protocol::EMIUCP::Message::Role::nack';
 with 'Protocol::EMIUCP::Message::Role::ec';
+with 'Protocol::EMIUCP::Message::Role::sm';
 
 sub list_data_field_names {
     return qw( nack ec sm );

@@ -8,11 +8,11 @@ use Moose;
 
 with 'Protocol::EMIUCP::Message::Role::O';
 with 'Protocol::EMIUCP::Message::Role::OT_01';
-with 'Protocol::EMIUCP::Message::Role::amsg';
 
 use Protocol::EMIUCP::Field;
 
 has_field [qw( adc oadc ac mt nmsg )];
+with 'Protocol::EMIUCP::Message::Role::amsg';
 
 sub BUILD {
     my ($self) = @_;

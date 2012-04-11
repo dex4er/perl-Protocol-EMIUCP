@@ -9,7 +9,5 @@ use Moose::Role;
 with 'Protocol::EMIUCP::Message::Role::R';
 with 'Protocol::EMIUCP::Message::Role::OT_01';
 
-with 'Protocol::EMIUCP::Message::Role::sm';
-
 
 1;

@@ -108,6 +108,13 @@ use constant fields => {
         required  => 1,
     },
 
+    pid      => {
+        is        => 'ro',
+        isa       => 'PID',
+        coerce    => 1,
+        required  => 1,
+    },
+
     sm       => {
         is        => 'ro',
         isa       => 'Protocol::EMIUCP::Field::sm',
