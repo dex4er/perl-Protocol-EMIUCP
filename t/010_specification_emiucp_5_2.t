@@ -7,7 +7,7 @@ use Carp ();
 
 $SIG{__WARN__} = sub { local $Carp::CarpLevel = 1; Carp::confess("Warning: ", @_) };
 
-use Test::More tests => 117;
+use Test::More tests => 137;
 
 BEGIN { use_ok 'Protocol::EMIUCP' };
 
@@ -120,5 +120,24 @@ do {
         pid_message => 'PC via PSTN',
         checksum    => 'A0',
     );
-    test_message 'Protocol::EMIUCP::Message::O_31', $str, \%fields;
+    my %args = %fields;
+    delete $args{pid_message};
+    $args{pid} = 'PID_PC_VIA_PSTN';
+    test_message 'Protocol::EMIUCP::Message::O_31', $str, \%fields, \%args;
+};
+
+# 4.6.1 MT Alert Operation (Positive Result) (p.19)
+do {
+    my $str = '04/00023/R/31/A/0003/2D';
+    my %fields = (
+        trn      => '04',
+        len      => '00023',
+        o_r      => 'R',
+        ot       => '31',
+        ack      => 'A',
+        sm       => '0003',
+        checksum => '2D',
+    );
+    my %args = %fields;
+    test_message 'Protocol::EMIUCP::Message::R_31_A', $str, \%fields, \%args;
 };
