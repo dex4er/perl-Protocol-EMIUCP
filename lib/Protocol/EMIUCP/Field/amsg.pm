@@ -13,13 +13,13 @@ use overload (
 );
 
 use Protocol::EMIUCP::Types;
-use Protocol::EMIUCP::Util qw( decode_hex encode_hex );
+use Protocol::EMIUCP::Util qw( decode_hex encode_hex decode_utf8 encode_utf8 );
 
 has value => (is => 'ro', isa => 'Hex640', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, %args) = @_;
-    $args{value} = encode_hex($args{utf8}) if defined $args{utf8};
+    $args{value} = encode_hex decode_utf8 $args{utf8} if defined $args{utf8};
     return $class->$orig(%args);
 };
 
@@ -30,7 +30,7 @@ sub as_string {
 
 sub utf8 {
     my ($self) = @_;
-    return decode_hex($self->value);
+    return encode_utf8 decode_hex $self->value;
 };
 
 
