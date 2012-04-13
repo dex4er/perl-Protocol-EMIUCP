@@ -7,7 +7,7 @@ use Carp ();
 
 $SIG{__WARN__} = sub { local $Carp::CarpLevel = 1; Carp::confess("Warning: ", @_) };
 
-use Test::More tests => 137;
+use Test::More tests => 159;
 
 BEGIN { use_ok 'Protocol::EMIUCP' };
 
@@ -104,7 +104,10 @@ do {
         ec_message => 'Syntax error',
         checksum   => '03',
     );
-    test_message 'Protocol::EMIUCP::Message::R_01_N', $str, \%fields;
+    my %args = %fields;
+    delete $args{ec_message};
+    $args{ec} = 'EC_SYNTAX_ERROR';
+    test_message 'Protocol::EMIUCP::Message::R_01_N', $str, \%fields, \%args;
 };
 
 # 4.6 MT Alert Operation -31 (p.18)
@@ -138,6 +141,24 @@ do {
         sm       => '0003',
         checksum => '2D',
     );
+    test_message 'Protocol::EMIUCP::Message::R_31_A', $str, \%fields;
+};
+
+# 4.6.2 MT Alert Operation (Negative Result) (p.19)
+do {
+    my $str = '00/00022/R/31/N/06//07';
+    my %fields = (
+        trn        => '00',
+        len        => '00022',
+        o_r        => 'R',
+        ot         => '31',
+        nack       => 'N',
+        ec         => '06',
+        ec_message => 'AdC invalid',
+        checksum   => '07',
+    );
     my %args = %fields;
-    test_message 'Protocol::EMIUCP::Message::R_31_A', $str, \%fields, \%args;
+    delete $args{ec_message};
+    $args{ec} = 'EC_ADC_INVALID';
+    test_message 'Protocol::EMIUCP::Message::R_31_N', $str, \%fields, \%args;
 };
