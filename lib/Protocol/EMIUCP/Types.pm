@@ -82,11 +82,11 @@ coerce 'Protocol::EMIUCP::Types::scts'
     => from Any
     => via { Protocol::EMIUCP::Types::scts->new( value => $_ ) };
 
-class_type 'Protocol::EMIUCP::Types::sm';
+class_type 'Protocol::EMIUCP::Types::sm_scts';
 
-coerce 'Protocol::EMIUCP::Types::sm'
+coerce 'Protocol::EMIUCP::Types::sm_scts'
     => from Any
-    => via { Protocol::EMIUCP::Types::sm->new( value => $_ ) };
+    => via { Protocol::EMIUCP::Types::sm_scts->new( value => $_ ) };
 
 
 1;

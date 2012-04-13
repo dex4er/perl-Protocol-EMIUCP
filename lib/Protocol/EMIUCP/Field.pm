@@ -121,18 +121,6 @@ my %fields = (
         },
     },
 
-    sm       => {
-        is        => 'ro',
-        isa       => 'Protocol::EMIUCP::Types::sm',
-        coerce    => 1,
-        predicate => 'has_sm',
-        handles   => {
-            sm_as_string => 'as_string',
-            sm_adc       => 'adc',
-            sm_scts      => 'scts',
-        },
-    },
-
     trn      => {
         is        => 'ro',
         isa       => 'Num2',

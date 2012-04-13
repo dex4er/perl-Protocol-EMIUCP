@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Types::sm;
+package Protocol::EMIUCP::Types::sm_scts;
 
 use 5.008;
 

@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Field::sm;
+package Protocol::EMIUCP::Field::sm_scts;
 
 use 5.008;
 
@@ -7,15 +7,25 @@ our $VERSION = '0.01';
 
 use Moose::Role;
 
-use Protocol::EMIUCP::Types::sm;
+use Protocol::EMIUCP::Types::sm_scts;
 use Protocol::EMIUCP::Field;
 
-has_field 'sm';
+has sm => (
+    is        => 'ro',
+    isa       => 'Protocol::EMIUCP::Types::sm_scts',
+    coerce    => 1,
+    predicate => 'has_sm',
+    handles   => {
+        sm_as_string => 'as_string',
+        sm_adc       => 'adc',
+        sm_scts      => 'scts',
+    },
+);
 
 around BUILDARGS => sub {
     my ($orig, $class, %args) = @_;
     if (defined $args{sm_adc}) {
-        $args{sm} = Protocol::EMIUCP::Types::sm->new(
+        $args{sm} = Protocol::EMIUCP::Types::sm_scts->new(
             adc  => $args{sm_adc},
             defined $args{sm_scts} ? (scts => $args{sm_scts}) : (),
         );
