@@ -7,56 +7,60 @@ our $VERSION = '0.01';
 
 use Moose::Util::TypeConstraints;
 
-subtype Nul    => as Str    => where { $_ eq '' };
-coerce  Nul    => from Str  => via   { '' };
+subtype EMIUCP_Nul    => as   Str  => where { $_ eq '' };
+coerce  EMIUCP_Nul    => from Str  => via   { '' };
 
-subtype Num2   => as Str    => where { $_ =~ /^\d{2}$/ };
-coerce  Num2   => from Int  => via   { sprintf "%02d", $_ % 1e2 };
+subtype EMIUCP_Num2   => as   Str  => where { $_ =~ /^\d{2}$/ };
+coerce  EMIUCP_Num2   => from Int  => via   { sprintf "%02d", $_ % 1e2 };
 
-subtype Num4   => as Str    => where { $_ =~ /^\d{4}$/ };
-coerce  Num4   => from Int  => via   { sprintf "%04d", $_ % 1e4 };
+subtype EMIUCP_Num4   => as   Str  => where { $_ =~ /^\d{4}$/ };
+coerce  EMIUCP_Num4   => from Int  => via   { sprintf "%04d", $_ % 1e4 };
 
-subtype Num5   => as Str    => where { $_ =~ /^\d{5}$/ };
-coerce  Num5   => from Int  => via   { sprintf "%05d", $_ % 1e5 };
+subtype EMIUCP_Num5   => as   Str  => where { $_ =~ /^\d{5}$/ };
+coerce  EMIUCP_Num5   => from Int  => via   { sprintf "%05d", $_ % 1e5 };
 
-subtype Hex2   => as Str    => where { $_ =~ /^[0-9A-F]{2}$/ };
-coerce  Hex2   => from Int  => via   { sprintf "%02X", $_ % 16**2 };
+subtype EMIUCP_Hex2   => as   Str  => where { $_ =~ /^[0-9A-F]{2}$/ };
+coerce  EMIUCP_Hex2   => from Int  => via   { sprintf "%02X", $_ % 16**2 };
 
-enum    O_R    => [qw( O R )];
+enum    EMIUCP_O_R    => [qw( O R )];
 
-enum    ACK    => [qw( A )];
-coerce  ACK    => from Bool => via   { $_ ? 'A' : '' };
+enum    EMIUCP_ACK    => [qw( A )];
+coerce  EMIUCP_ACK    => from Bool => via   { $_ ? 'A' : '' };
 
-enum    NACK   => [qw( N )];
-coerce  NACK   => from Bool => via   { $_ ? 'N' : '' };
+enum    EMIUCP_NACK   => [qw( N )];
+coerce  EMIUCP_NACK   => from Bool => via   { $_ ? 'N' : '' };
 
-subtype SM     => as Str    => where { $_ =~ /^\d{0,16}:\d{12}$/ };
+subtype EMIUCP_SM     => as   Str  => where { $_ =~ /^\d{0,16}:\d{12}$/ };
 
-subtype Num12  => as Str    => where { $_ =~ /^\d{12}$/ };
-subtype Num16  => as Str    => where { $_ =~ /^\d{0,16}$/ };
-subtype Num160 => as Str    => where { $_ =~ /^\d{0,160}$/ };
-subtype Hex640 => as Str    => where { $_ =~ /^[0-9A-F]{0,640}$/ and length($_) % 2 == 0 };
+subtype EMIUCP_Num12  => as   Str  => where { $_ =~ /^\d{12}$/ };
+subtype EMIUCP_Num16  => as   Str  => where { $_ =~ /^\d{0,16}$/ };
+subtype EMIUCP_Num160 => as   Str  => where { $_ =~ /^\d{0,160}$/ };
+subtype EMIUCP_Hex640 => as   Str  => where { $_ =~ /^[0-9A-F]{0,640}$/ and length($_) % 2 == 0 };
 
-subtype EC         => as 'Num2';
-subtype EC_Const   => as Str    => where { $_ =~ /^EC_/ };
-coerce  EC
-    => from EC_Const
+subtype EMIUCP_EC       => as 'EMIUCP_Num2';
+subtype EMIUCP_EC_Const => as Str    => where { $_ =~ /^EC_/ };
+coerce  EMIUCP_EC
+    => from EMIUCP_EC_Const
     => via { Protocol::EMIUCP::Types::ec->$_ };
 
-enum    MT23   => [qw( 2 3 )];
+enum    EMIUCP_MT23   => [qw( 2 3 )];
 
-enum    PID    => [qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 )];
-subtype PID_Const  => as Str    => where { $_ =~ /^PID_/ };
-coerce  PID
-    => from PID_Const
+enum    EMIUCP_PID    => [qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 )];
+subtype EMIUCP_PID_Const  => as Str    => where { $_ =~ /^PID_/ };
+coerce  EMIUCP_PID
+    => from EMIUCP_PID_Const
     => via { Protocol::EMIUCP::Types::pid->$_ };
 
 use MooseX::Types::DateTime;
 use DateTime::Format::EMIUCP;
 
-subtype SCTS       => as 'Num12';
-coerce  SCTS       => from 'DateTime' => via { DateTime::Format::EMIUCP->format_datetime($_) };
-coerce  'DateTime' => from SCTS       => via { DateTime::Format::EMIUCP->parse_datetime($_) };
+subtype EMIUCP_SCTS       => as 'EMIUCP_Num12';
+coerce  EMIUCP_SCTS
+    => from 'DateTime'
+    => via { DateTime::Format::EMIUCP->format_datetime($_) };
+coerce  'DateTime'
+    => from EMIUCP_SCTS
+    => via { DateTime::Format::EMIUCP->parse_datetime($_) };
 
 
 1;

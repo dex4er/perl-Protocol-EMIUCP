@@ -20,7 +20,7 @@ coerce 'Protocol::EMIUCP::Types::scts'
     => from Any
     => via { Protocol::EMIUCP::Types::scts->new( value => $_ ) };
 
-has value => (is => 'ro', isa => 'SCTS', coerce => 1, required => 1);
+has value => (is => 'ro', isa => 'EMIUCP_SCTS', coerce => 1, required => 1);
 
 sub as_string {
     my ($self) = @_;

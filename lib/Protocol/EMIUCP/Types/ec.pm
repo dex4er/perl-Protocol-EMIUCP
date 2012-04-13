@@ -51,7 +51,7 @@ coerce 'Protocol::EMIUCP::Types::ec'
     => from Any
     => via { Protocol::EMIUCP::Types::ec->new( value => $_ ) };
 
-has value => (is => 'ro', isa => 'EC', coerce => 1, required => 1);
+has value => (is => 'ro', isa => 'EMIUCP_EC', coerce => 1, required => 1);
 
 sub as_string {
     my ($self) = @_;

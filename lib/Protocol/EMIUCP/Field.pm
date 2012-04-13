@@ -21,7 +21,7 @@ my %fields = (
 
     ack      => {
         is        => 'ro',
-        isa       => 'ACK',
+        isa       => 'EMIUCP_ACK',
         coerce    => 1,
         required  => 1,
         default   => 'A',
@@ -29,7 +29,7 @@ my %fields = (
 
     adc      => {
         is        => 'ro',
-        isa       => 'Num16',
+        isa       => 'EMIUCP_Num16',
         required  => 1,
     },
 
@@ -46,7 +46,7 @@ my %fields = (
 
     checksum => {
         is        => 'ro',
-        isa       => 'Hex2',
+        isa       => 'EMIUCP_Hex2',
         coerce    => 1,
         writer    => '_set_checksum',
         predicate => 'has_checksum',
@@ -66,7 +66,7 @@ my %fields = (
 
     len      => {
         is        => 'ro',
-        isa       => 'Num5',
+        isa       => 'EMIUCP_Num5',
         coerce    => 1,
         writer    => '_set_len',
         predicate => 'has_len',
@@ -74,13 +74,13 @@ my %fields = (
 
     mt       => {
         is        => 'ro',
-        isa       => 'MT23',
+        isa       => 'EMIUCP_MT23',
         required  => 1,
     },
 
     nack     => {
         is        => 'ro',
-        isa       => 'NACK',
+        isa       => 'EMIUCP_NACK',
         coerce    => 1,
         required  => 1,
         default   => 'N',
@@ -88,24 +88,24 @@ my %fields = (
 
     nmsg     => {
         is        => 'ro',
-        isa       => 'Num160',
+        isa       => 'EMIUCP_Num160',
         predicate => 'has_nmsg',
     },
 
     o_r      => {
         is        => 'ro',
-        isa       => 'O_R',
+        isa       => 'EMIUCP_O_R',
         required  => 1
     },
 
     oadc     => {
         is        => 'ro',
-        isa       => 'Num16',
+        isa       => 'EMIUCP_Num16',
     },
 
     ot       => {
         is        => 'ro',
-        isa       => 'Num2',
+        isa       => 'EMIUCP_Num2',
         coerce    => 1,
         required  => 1,
     },
@@ -123,7 +123,7 @@ my %fields = (
 
     trn      => {
         is        => 'ro',
-        isa       => 'Num2',
+        isa       => 'EMIUCP_Num2',
         coerce    => 1,
         default   => '00',
     },

@@ -20,7 +20,7 @@ coerce 'Protocol::EMIUCP::Types::amsg'
     => from Any
     => via { Protocol::EMIUCP::Types::amsg->new( value => $_ ) };
 
-has value => (is => 'ro', isa => 'Hex640', required => 1);
+has value => (is => 'ro', isa => 'EMIUCP_Hex640', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, %args) = @_;
