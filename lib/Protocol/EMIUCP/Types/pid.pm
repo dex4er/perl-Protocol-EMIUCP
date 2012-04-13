@@ -48,7 +48,7 @@ coerce 'Protocol::EMIUCP::Types::pid'
     => from Any
     => via { Protocol::EMIUCP::Types::pid->new( value => $_ ) };
 
-has value => (is => 'ro', isa => 'PID', coerce => 1, required => 1);
+has value => (is => 'ro', isa => 'EMIUCP_PID', coerce => 1, required => 1);
 
 sub as_string {
     my ($self) = @_;
