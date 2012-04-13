@@ -17,11 +17,9 @@ use Protocol::EMIUCP::Types::scts;
 
 use DateTime;
 
-has adc  => (
-    is       => 'ro',
-    isa      => 'Num16',
-    required => 1,
-);
+use Protocol::EMIUCP::Field;
+
+has_field 'adc';
 
 has scts => (
     is       => 'ro',
