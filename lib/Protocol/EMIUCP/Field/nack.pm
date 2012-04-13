@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Role::ack;
+package Protocol::EMIUCP::Field::nack;
 
 use 5.008;
 
@@ -9,7 +9,7 @@ use Moose::Role;
 
 use Protocol::EMIUCP::Field;
 
-has_field 'ack';
+has_field 'nack';
 
 
 1;

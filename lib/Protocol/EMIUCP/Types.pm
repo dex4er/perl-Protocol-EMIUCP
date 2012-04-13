@@ -41,7 +41,7 @@ subtype EC         => as 'Num2';
 subtype EC_Const   => as Str    => where { $_ =~ /^EC_/ };
 coerce  EC
     => from EC_Const
-    => via { Protocol::EMIUCP::Field::ec->$_ };
+    => via { Protocol::EMIUCP::Types::ec->$_ };
 
 enum    MT23   => [qw( 2 3 )];
 
@@ -49,7 +49,7 @@ enum    PID    => [qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 )];
 subtype PID_Const  => as Str    => where { $_ =~ /^PID_/ };
 coerce  PID
     => from PID_Const
-    => via { Protocol::EMIUCP::Field::pid->$_ };
+    => via { Protocol::EMIUCP::Types::pid->$_ };
 
 use MooseX::Types::DateTime;
 use DateTime::Format::EMIUCP;
@@ -58,35 +58,35 @@ subtype SCTS       => as 'Num12';
 coerce  SCTS       => from 'DateTime' => via { DateTime::Format::EMIUCP->format_datetime($_) };
 coerce  'DateTime' => from SCTS       => via { DateTime::Format::EMIUCP->parse_datetime($_) };
 
-class_type 'Protocol::EMIUCP::Field::amsg';
+class_type 'Protocol::EMIUCP::Types::amsg';
 
-coerce 'Protocol::EMIUCP::Field::amsg'
+coerce 'Protocol::EMIUCP::Types::amsg'
     => from Any
-    => via { Protocol::EMIUCP::Field::amsg->new( value => $_ ) };
+    => via { Protocol::EMIUCP::Types::amsg->new( value => $_ ) };
 
-class_type 'Protocol::EMIUCP::Field::ec';
+class_type 'Protocol::EMIUCP::Types::ec';
 
-coerce 'Protocol::EMIUCP::Field::ec'
+coerce 'Protocol::EMIUCP::Types::ec'
     => from Any
-    => via { Protocol::EMIUCP::Field::ec->new( value => $_ ) };
+    => via { Protocol::EMIUCP::Types::ec->new( value => $_ ) };
 
-class_type 'Protocol::EMIUCP::Field::pid';
+class_type 'Protocol::EMIUCP::Types::pid';
 
-coerce 'Protocol::EMIUCP::Field::pid'
+coerce 'Protocol::EMIUCP::Types::pid'
     => from Any
-    => via { Protocol::EMIUCP::Field::pid->new( value => $_ ) };
+    => via { Protocol::EMIUCP::Types::pid->new( value => $_ ) };
 
-class_type 'Protocol::EMIUCP::Field::scts';
+class_type 'Protocol::EMIUCP::Types::scts';
 
-coerce 'Protocol::EMIUCP::Field::scts'
+coerce 'Protocol::EMIUCP::Types::scts'
     => from Any
-    => via { Protocol::EMIUCP::Field::scts->new( value => $_ ) };
+    => via { Protocol::EMIUCP::Types::scts->new( value => $_ ) };
 
-class_type 'Protocol::EMIUCP::Field::sm';
+class_type 'Protocol::EMIUCP::Types::sm';
 
-coerce 'Protocol::EMIUCP::Field::sm'
+coerce 'Protocol::EMIUCP::Types::sm'
     => from Any
-    => via { Protocol::EMIUCP::Field::sm->new( value => $_ ) };
+    => via { Protocol::EMIUCP::Types::sm->new( value => $_ ) };
 
 
 1;

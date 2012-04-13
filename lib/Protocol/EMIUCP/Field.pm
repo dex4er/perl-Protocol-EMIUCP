@@ -1,16 +1,18 @@
 package Protocol::EMIUCP::Field;
 
+use strict;
+use warnings;
+
 use 5.008;
 
 our $VERSION = '0.01';
 
 use Exporter ();
-our @EXPORT = qw(has_field);
-sub import {
-    goto \&Exporter::import;
-};
+our @EXPORT = qw( has_field with_field );
+*import = \&Exporter::import;
 
-use constant fields => {
+
+my %fields = (
 
     ac       => {
         is        => 'ro',
@@ -33,7 +35,7 @@ use constant fields => {
 
     amsg     => {
         is        => 'ro',
-        isa       => 'Protocol::EMIUCP::Field::amsg',
+        isa       => 'Protocol::EMIUCP::Types::amsg',
         coerce    => 1,
         predicate => 'has_amsg',
         handles   => {
@@ -53,7 +55,7 @@ use constant fields => {
 
     ec       => {
         is        => 'ro',
-        isa       => 'Protocol::EMIUCP::Field::ec',
+        isa       => 'Protocol::EMIUCP::Types::ec',
         coerce    => 1,
         required  => 1,
         handles   => {
@@ -110,7 +112,7 @@ use constant fields => {
 
     pid      => {
         is        => 'ro',
-        isa       => 'Protocol::EMIUCP::Field::pid',
+        isa       => 'Protocol::EMIUCP::Types::pid',
         coerce    => 1,
         required  => 1,
         handles   => {
@@ -121,7 +123,7 @@ use constant fields => {
 
     sm       => {
         is        => 'ro',
-        isa       => 'Protocol::EMIUCP::Field::sm',
+        isa       => 'Protocol::EMIUCP::Types::sm',
         coerce    => 1,
         predicate => 'has_sm',
         handles   => {
@@ -138,24 +140,46 @@ use constant fields => {
         default   => '00',
     },
 
-};
+);
 
 
+use Carp qw(confess);
 use Protocol::EMIUCP::Types;
 
 sub has_field ($;@) {
     my ($name, @props) = @_;
+
+    my $caller = caller();
+    confess "Class ($caller) missing meta method" unless $caller->can('meta');
+
     if (ref $name and ref $name eq 'ARRAY') {
-        caller()->meta->add_attribute(
-            $_ => %{ Protocol::EMIUCP::Field::fields->{$_} }, @props
+        $caller->meta->add_attribute(
+            $_ => %{ $fields{$_} }, @props
         ) foreach @$name;
     }
     else {
-        caller()->meta->add_attribute(
-            $name => %{ Protocol::EMIUCP::Field::fields->{$name} }, @props
+        $caller->meta->add_attribute(
+            $name => %{ $fields{$name} }, @props
         );
     };
 };
 
+
+use Moose::Util ();
+
+sub with_field ($;$) {
+    my ($name, $subclass) = @_;
+    my $caller = caller();
+    if (ref $name and ref $name eq 'ARRAY') {
+        foreach (@$name) {
+            my $role = __PACKAGE__ . '::' . $_;
+            Moose::Util::apply_all_roles($caller, $role);
+        };
+    }
+    else {
+        my $role = __PACKAGE__ . '::' . (defined $subclass ? $subclass : $name);
+        Moose::Util::apply_all_roles($caller, $role);
+    };
+};
 
 1;

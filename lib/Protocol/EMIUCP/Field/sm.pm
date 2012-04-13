@@ -5,46 +5,34 @@ use 5.008;
 our $VERSION = '0.01';
 
 
-use Moose;
+use Moose::Role;
 
-use overload (
-    q{""}    => 'as_string',
-    fallback => 1
-);
+use Protocol::EMIUCP::Types::sm;
+use Protocol::EMIUCP::Field;
 
-use Protocol::EMIUCP::Types;
-use Protocol::EMIUCP::Field::scts;
-
-use DateTime;
-
-has adc  => (
-    is       => 'ro',
-    isa      => 'Num16',
-    required => 1,
-);
-
-has scts => (
-    is       => 'ro',
-    isa      => 'Protocol::EMIUCP::Field::scts',
-    coerce   => 1,
-    required => 1,
-    default  => sub { DateTime->now },
-);
+has_field 'sm';
 
 around BUILDARGS => sub {
     my ($orig, $class, %args) = @_;
-    if (defined $args{value} and $args{value} =~ /^(\d*):(\d*)$/) {
-        @args{qw( adc scts )} = ($1, $2);
+    if (defined $args{sm_adc}) {
+        $args{sm} = Protocol::EMIUCP::Types::sm->new(
+            adc  => $args{sm_adc},
+            defined $args{sm_scts} ? (scts => $args{sm_scts}) : (),
+        );
     };
     return $class->$orig(%args);
 };
 
-sub as_string {
-    my ($self) = @_;
-    return sprintf '%s:%s', $self->adc, $self->scts;
+around as_hashref => sub {
+    my ($orig, $self) = @_;
+    my $hashref = $self->$orig();
+    if (defined $hashref->{sm}) {
+        $hashref->{sm}      = $self->sm_as_string;
+        $hashref->{sm_adc}  = $self->sm_adc;
+        $hashref->{sm_scts} = $self->sm_scts->as_string;
+    };
+    return $hashref;
 };
 
-
-__PACKAGE__->meta->make_immutable();
 
 1;

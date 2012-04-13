@@ -12,7 +12,7 @@ with 'Protocol::EMIUCP::Message::Role::OT_31';
 use Protocol::EMIUCP::Field;
 
 has_field [qw( adc )];
-with 'Protocol::EMIUCP::Message::Role::pid';
+with_field 'pid';
 
 sub BUILD {
     my ($self) = @_;

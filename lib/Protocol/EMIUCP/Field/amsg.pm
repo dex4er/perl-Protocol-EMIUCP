@@ -5,35 +5,38 @@ use 5.008;
 our $VERSION = '0.01';
 
 
-use Moose;
+use Moose::Role;
 
-use overload (
-    q{""}    => 'as_string',
-    fallback => 1
-);
+use Protocol::EMIUCP::Util qw( decode_hex encode_hex );
+use Protocol::EMIUCP::Types::amsg;
+use Protocol::EMIUCP::Field;
 
-use Protocol::EMIUCP::Types;
-use Protocol::EMIUCP::Util qw( decode_hex encode_hex decode_utf8 encode_utf8 );
-
-has value => (is => 'ro', isa => 'Hex640', required => 1);
+has_field 'amsg';
 
 around BUILDARGS => sub {
     my ($orig, $class, %args) = @_;
-    $args{value} = encode_hex decode_utf8 $args{utf8} if defined $args{utf8};
+    if (defined $args{amsg_utf8}) {
+        $args{amsg} = Protocol::EMIUCP::Types::amsg->new(
+            utf8 => $args{amsg_utf8},
+        );
+    };
     return $class->$orig(%args);
 };
 
-sub as_string {
+sub amsg_utf8 {
     my ($self) = @_;
-    return $self->value;
+    return decode_hex($self->amsg);
 };
 
-sub utf8 {
-    my ($self) = @_;
-    return encode_utf8 decode_hex $self->value;
+around as_hashref => sub {
+    my ($orig, $self) = @_;
+    my $hashref = $self->$orig();
+    if (defined $hashref->{amsg}) {
+        $hashref->{amsg}      = $self->amsg->as_string;
+        $hashref->{amsg_utf8} = $self->amsg->utf8;
+    };
+    return $hashref;
 };
 
-
-__PACKAGE__->meta->make_immutable();
 
 1;

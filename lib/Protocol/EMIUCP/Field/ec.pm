@@ -5,60 +5,30 @@ use 5.008;
 our $VERSION = '0.01';
 
 
-use Moose;
+use Moose::Role;
 
-use overload (
-    q{""}    => 'as_string',
-    fallback => 1
-);
+use Protocol::EMIUCP::Types::ec;
+use Protocol::EMIUCP::Field;
 
-our %EC_To_Message = (
-    '01' => 'Checksum error',
-    '02' => 'Syntax error',
-    '03' => 'Operation not supported by system',
-    '04' => 'Operation not allowed (at this point in time)',
-    '05' => 'Call barring active',
-    '06' => 'AdC invalid',
-    '07' => 'Authentication failure',
-    '08' => 'Legitimisation code for all calls, failure',
-    '23' => 'Message type not supported by system',
-    '24' => 'Message too long',
-    '26' => 'Message type not valid for the pager type',
-);
+has_field 'ec';
 
-our %Message_To_EC = reverse %EC_To_Message;
+requires 'list_ec_codes';
 
-use constant ();
-
-my @ec_constants;
-foreach (keys %Message_To_EC) {
-    my $name = 'EC_' . $_;
-    $name =~ tr/a-z/A-Z/;
-    $name =~ s/[()]//g;
-    $name =~ s/\W+/_/g;
-    push @ec_constants, $name;
-    constant->import($name => $Message_To_EC{$_});
-};
-
-use Exporter ();
-our @EXPORT = @ec_constants;
-*import = \&Exporter::import;
-
-use Protocol::EMIUCP::Types;
-
-has value => (is => 'ro', isa => 'EC', coerce => 1, required => 1);
-
-sub as_string {
+before BUILD => sub {
     my ($self) = @_;
-    return $self->value;
+    my $ec = $self->ec;
+    confess 'wrong EC' unless grep { $_ == $ec } $self->list_ec_codes;
 };
 
-sub as_message {
-    my ($self) = @_;
-    return $EC_To_Message{$self->value};
+around as_hashref => sub {
+    my ($orig, $self) = @_;
+    my $hashref = $self->$orig();
+    if (defined $hashref->{ec}) {
+        $hashref->{ec} = $self->ec_as_string;
+        $hashref->{ec_message} = $self->ec_message;
+    };
+    return $hashref;
 };
 
-
-__PACKAGE__->meta->make_immutable();
 
 1;
