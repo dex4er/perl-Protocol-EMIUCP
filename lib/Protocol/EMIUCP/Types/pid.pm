@@ -6,6 +6,7 @@ our $VERSION = '0.01';
 
 
 use Moose;
+use Moose::Util::TypeConstraints;
 
 use overload (
     q{""}    => 'as_string',
@@ -42,6 +43,10 @@ our @EXPORT = @pid_constants;
 *import = \&Exporter::import;
 
 use Protocol::EMIUCP::Types;
+
+coerce 'Protocol::EMIUCP::Types::pid'
+    => from Any
+    => via { Protocol::EMIUCP::Types::pid->new( value => $_ ) };
 
 has value => (is => 'ro', isa => 'PID', coerce => 1, required => 1);
 

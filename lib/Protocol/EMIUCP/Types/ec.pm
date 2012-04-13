@@ -6,6 +6,7 @@ our $VERSION = '0.01';
 
 
 use Moose;
+use Moose::Util::TypeConstraints;
 
 use overload (
     q{""}    => 'as_string',
@@ -45,6 +46,10 @@ our @EXPORT = @ec_constants;
 *import = \&Exporter::import;
 
 use Protocol::EMIUCP::Types;
+
+coerce 'Protocol::EMIUCP::Types::ec'
+    => from Any
+    => via { Protocol::EMIUCP::Types::ec->new( value => $_ ) };
 
 has value => (is => 'ro', isa => 'EC', coerce => 1, required => 1);
 

@@ -6,6 +6,7 @@ our $VERSION = '0.01';
 
 
 use Moose;
+use Moose::Util::TypeConstraints;
 
 use overload (
     q{""}    => 'as_string',
@@ -15,9 +16,13 @@ use overload (
 use Protocol::EMIUCP::Types;
 use Protocol::EMIUCP::Types::scts;
 
+use Protocol::EMIUCP::Field;
+
 use DateTime;
 
-use Protocol::EMIUCP::Field;
+coerce 'Protocol::EMIUCP::Types::sm_scts'
+    => from Any
+    => via { Protocol::EMIUCP::Types::sm_scts->new( value => $_ ) };
 
 has_field 'adc';
 

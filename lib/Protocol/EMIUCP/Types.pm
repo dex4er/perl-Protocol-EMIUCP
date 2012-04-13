@@ -58,35 +58,5 @@ subtype SCTS       => as 'Num12';
 coerce  SCTS       => from 'DateTime' => via { DateTime::Format::EMIUCP->format_datetime($_) };
 coerce  'DateTime' => from SCTS       => via { DateTime::Format::EMIUCP->parse_datetime($_) };
 
-class_type 'Protocol::EMIUCP::Types::amsg';
-
-coerce 'Protocol::EMIUCP::Types::amsg'
-    => from Any
-    => via { Protocol::EMIUCP::Types::amsg->new( value => $_ ) };
-
-class_type 'Protocol::EMIUCP::Types::ec';
-
-coerce 'Protocol::EMIUCP::Types::ec'
-    => from Any
-    => via { Protocol::EMIUCP::Types::ec->new( value => $_ ) };
-
-class_type 'Protocol::EMIUCP::Types::pid';
-
-coerce 'Protocol::EMIUCP::Types::pid'
-    => from Any
-    => via { Protocol::EMIUCP::Types::pid->new( value => $_ ) };
-
-class_type 'Protocol::EMIUCP::Types::scts';
-
-coerce 'Protocol::EMIUCP::Types::scts'
-    => from Any
-    => via { Protocol::EMIUCP::Types::scts->new( value => $_ ) };
-
-class_type 'Protocol::EMIUCP::Types::sm_scts';
-
-coerce 'Protocol::EMIUCP::Types::sm_scts'
-    => from Any
-    => via { Protocol::EMIUCP::Types::sm_scts->new( value => $_ ) };
-
 
 1;

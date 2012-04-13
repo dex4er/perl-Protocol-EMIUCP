@@ -6,6 +6,7 @@ our $VERSION = '0.01';
 
 
 use Moose;
+use Moose::Util::TypeConstraints;
 
 use overload (
     q{""}    => 'as_string',
@@ -14,6 +15,10 @@ use overload (
 
 use Protocol::EMIUCP::Types;
 use Protocol::EMIUCP::Util qw( decode_hex encode_hex decode_utf8 encode_utf8 );
+
+coerce 'Protocol::EMIUCP::Types::amsg'
+    => from Any
+    => via { Protocol::EMIUCP::Types::amsg->new( value => $_ ) };
 
 has value => (is => 'ro', isa => 'Hex640', required => 1);
 
