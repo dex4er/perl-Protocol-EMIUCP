@@ -46,7 +46,7 @@ sub calculate_checksum {
     return sprintf "%02X", $c % 16**2;
 };
 
-requires 'list_data_field_names';
+#requires 'list_data_field_names';  # TODO can't use sub defined in role
 
 sub list_field_names {
     my ($self, @fields) = @_;
