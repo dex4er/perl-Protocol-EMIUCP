@@ -54,6 +54,13 @@ my %fields = (
         clearer   => '_clear_checksum',
     },
 
+    dd       => {
+        is        => 'ro',
+        isa       => 'EMIUCP_Bool',
+        coerce    => 1,
+        predicate => 'has_dd',
+    },
+
     ec       => {
         is        => 'ro',
         isa       => 'Protocol::EMIUCP::Types::ec',
@@ -88,6 +95,7 @@ my %fields = (
     lrad     => {
         is        => 'ro',
         isa       => 'EMIUCP_Num16',
+        predicate => 'has_lrad',
     },
 
     lrq      => {

@@ -25,11 +25,12 @@ with_field oadc => (
         oadc_utf8        => 'utf8',
     },
 );
-has_field [qw( ac nrq nadc )];
+has_field ['ac', 'nrq', 'nadc'];
 with_field 'nt';
 with_field 'npid';
-has_field [qw( lrq lrad )];
+has_field ['lrq', 'lrad'];
 with_field 'lpid';
+has_field  'dd';
 
 sub list_npid_codes {
     return qw( 0100 0122 0131 0138 0139 0339 0439 0539 );
