@@ -11,7 +11,7 @@ use Moose::Util::TypeConstraints;
 use Protocol::EMIUCP::Field;
 
 enum    EMIUCP_OT_31 => [qw( 31 )];
-coerce  EMIUCP_OT_31 => from 'EMIUCP_Num2';
+coerce  EMIUCP_OT_31 => from 'EMIUCP_Num02';
 
 has_field ot => (isa => 'EMIUCP_OT_31', default => '31');
 

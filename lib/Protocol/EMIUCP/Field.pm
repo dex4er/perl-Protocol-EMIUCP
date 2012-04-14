@@ -46,7 +46,7 @@ my %fields = (
 
     checksum => {
         is        => 'ro',
-        isa       => 'EMIUCP_Hex2',
+        isa       => 'EMIUCP_Hex02',
         coerce    => 1,
         writer    => '_set_checksum',
         predicate => 'has_checksum',
@@ -67,7 +67,7 @@ my %fields = (
 
     len      => {
         is        => 'ro',
-        isa       => 'EMIUCP_Num5',
+        isa       => 'EMIUCP_Num05',
         coerce    => 1,
         writer    => '_set_len',
         predicate => 'has_len',
@@ -106,7 +106,7 @@ my %fields = (
 
     ot       => {
         is        => 'ro',
-        isa       => 'EMIUCP_Num2',
+        isa       => 'EMIUCP_Num02',
         coerce    => 1,
         required  => 1,
     },
@@ -124,7 +124,7 @@ my %fields = (
 
     trn      => {
         is        => 'ro',
-        isa       => 'EMIUCP_Num2',
+        isa       => 'EMIUCP_Num02',
         coerce    => 1,
         default   => '00',
     },

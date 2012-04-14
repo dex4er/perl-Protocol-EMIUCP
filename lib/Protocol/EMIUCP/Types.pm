@@ -10,17 +10,17 @@ use Moose::Util::TypeConstraints;
 subtype EMIUCP_Nul    => as   Str  => where { $_ eq '' };
 coerce  EMIUCP_Nul    => from Str  => via   { '' };
 
-subtype EMIUCP_Num2   => as   Str  => where { $_ =~ /^\d{2}$/ };
-coerce  EMIUCP_Num2   => from Int  => via   { sprintf "%02d", $_ % 1e2 };
+subtype EMIUCP_Num02  => as   Str  => where { $_ =~ /^\d{2}$/ };
+coerce  EMIUCP_Num02  => from Int  => via   { sprintf "%02d", $_ % 1e2 };
 
-subtype EMIUCP_Num4   => as   Str  => where { $_ =~ /^\d{4}$/ };
-coerce  EMIUCP_Num4   => from Int  => via   { sprintf "%04d", $_ % 1e4 };
+subtype EMIUCP_Num04  => as   Str  => where { $_ =~ /^\d{4}$/ };
+coerce  EMIUCP_Num04  => from Int  => via   { sprintf "%04d", $_ % 1e4 };
 
-subtype EMIUCP_Num5   => as   Str  => where { $_ =~ /^\d{5}$/ };
-coerce  EMIUCP_Num5   => from Int  => via   { sprintf "%05d", $_ % 1e5 };
+subtype EMIUCP_Num05  => as   Str  => where { $_ =~ /^\d{5}$/ };
+coerce  EMIUCP_Num05  => from Int  => via   { sprintf "%05d", $_ % 1e5 };
 
-subtype EMIUCP_Hex2   => as   Str  => where { $_ =~ /^[0-9A-F]{2}$/ };
-coerce  EMIUCP_Hex2   => from Int  => via   { sprintf "%02X", $_ % 16**2 };
+subtype EMIUCP_Hex02  => as   Str  => where { $_ =~ /^[0-9A-F]{2}$/ };
+coerce  EMIUCP_Hex02  => from Int  => via   { sprintf "%02X", $_ % 16**2 };
 
 enum    EMIUCP_O_R    => [qw( O R )];
 
@@ -37,7 +37,7 @@ subtype EMIUCP_Num16  => as   Str  => where { $_ =~ /^\d{1,16}$/ };
 subtype EMIUCP_Num160 => as   Str  => where { $_ =~ /^\d{1,160}$/ };
 subtype EMIUCP_Hex640 => as   Str  => where { $_ =~ /^[0-9A-F]{2,640}$/ and length($_) % 2 == 0 };
 
-subtype EMIUCP_EC       => as 'EMIUCP_Num2';
+subtype EMIUCP_EC       => as 'EMIUCP_Num02';
 subtype EMIUCP_EC_Const => as Str  => where { $_ =~ /^EC_/ };
 coerce  EMIUCP_EC
     => from EMIUCP_EC_Const

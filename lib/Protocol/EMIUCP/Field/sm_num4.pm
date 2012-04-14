@@ -11,7 +11,7 @@ use Protocol::EMIUCP::Field;
 
 has sm => (
     is        => 'ro',
-    isa       => 'EMIUCP_Num4',
+    isa       => 'EMIUCP_Num04',
     coerce    => 1,
     predicate => 'has_sm',
 );
