@@ -43,7 +43,7 @@ foreach (keys %Message_To_EC) {
 
 use Exporter ();
 our @EXPORT = @ec_constants;
-*import = \&Exporter::import;
+BEGIN { *import = \&Exporter::import; }
 
 use Protocol::EMIUCP::Types;
 

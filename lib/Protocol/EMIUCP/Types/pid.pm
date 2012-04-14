@@ -40,7 +40,7 @@ foreach (keys %Message_To_PID) {
 
 use Exporter ();
 our @EXPORT = @pid_constants;
-*import = \&Exporter::import;
+BEGIN { *import = \&Exporter::import; }
 
 use Protocol::EMIUCP::Types;
 
