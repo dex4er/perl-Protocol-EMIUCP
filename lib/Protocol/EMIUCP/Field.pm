@@ -16,7 +16,7 @@ my %fields = (
 
     ac       => {
         is        => 'ro',
-        isa       => 'Str',
+        isa       => 'EMIUCP_Num4_16',
     },
 
     ack      => {
