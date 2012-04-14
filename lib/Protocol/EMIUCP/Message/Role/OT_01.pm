@@ -10,7 +10,7 @@ use Moose::Util::TypeConstraints;
 
 use Protocol::EMIUCP::Field;
 
-subtype EMIUCP_OT_01 => as    EMIUCP_Num2 => where { $_ == 1 };
+enum    EMIUCP_OT_01 => [qw( 01 )];
 coerce  EMIUCP_OT_01 => from 'EMIUCP_Num2';
 
 has_field ot => (isa => 'EMIUCP_OT_01', default => '01');
