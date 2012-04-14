@@ -6,18 +6,14 @@ our $VERSION = '0.01';
 
 
 use Moose::Role;
+use Moose::Util::TypeConstraints;
 
 use Protocol::EMIUCP::Field;
 
-has_field ot => (
-    default       => '01',
-    documentation => 'Call Input Operation',
-);
+subtype EMIUCP_OT_01 => as    EMIUCP_Num2 => where { $_ == 1 };
+coerce  EMIUCP_OT_01 => from 'EMIUCP_Num2';
 
-before BUILD => sub {
-    my ($self) = @_;
-    confess 'OT != "01"' if $self->ot != 1;
-};
+has_field ot => (isa => 'EMIUCP_OT_01', default => '01');
 
 
 1;

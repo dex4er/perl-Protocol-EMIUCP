@@ -6,18 +6,14 @@ our $VERSION = '0.01';
 
 
 use Moose::Role;
+use Moose::Util::TypeConstraints;
 
 use Protocol::EMIUCP::Field;
 
-has_field ot => (
-    default       => '31',
-    documentation => 'MT Alert Operation',
-);
+subtype EMIUCP_OT_31 => as    EMIUCP_Num2 => where { $_ == 31 };
+coerce  EMIUCP_OT_31 => from 'EMIUCP_Num2';
 
-before BUILD => sub {
-    my ($self) = @_;
-    confess 'OT != 31' if $self->ot != 31;
-};
+has_field ot => (isa => 'EMIUCP_OT_31', default => '31');
 
 
 1;
