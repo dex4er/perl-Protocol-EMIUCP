@@ -16,9 +16,10 @@ has sm => (
     coerce    => 1,
     predicate => 'has_sm',
     handles   => {
-        sm_as_string => 'as_string',
-        sm_adc       => 'adc',
-        sm_scts      => 'scts',
+        sm_as_string      => 'as_string',
+        sm_adc            => 'adc',
+        sm_scts           => 'scts',
+        sm_scts_as_string => 'scts_as_string',
     },
 );
 
@@ -39,7 +40,7 @@ around as_hashref => sub {
     if (defined $hashref->{sm}) {
         $hashref->{sm}      = $self->sm_as_string;
         $hashref->{sm_adc}  = $self->sm_adc;
-        $hashref->{sm_scts} = $self->sm_scts->as_string;
+        $hashref->{sm_scts} = $self->sm_scts_as_string;
     };
     return $hashref;
 };

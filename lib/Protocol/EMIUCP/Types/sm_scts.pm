@@ -32,6 +32,9 @@ has scts => (
     coerce   => 1,
     required => 1,
     default  => sub { DateTime->now },
+    handles  => {
+        scts_as_string => 'as_string',
+    },
 );
 
 around BUILDARGS => sub {

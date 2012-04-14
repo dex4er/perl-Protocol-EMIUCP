@@ -6,13 +6,16 @@ our $VERSION = '0.01';
 
 
 use Moose;
+use Moose::Util::TypeConstraints;
+
 with 'Protocol::EMIUCP::Message::Role::R';
 with 'Protocol::EMIUCP::Message::Role::OT_31';
 
 use Protocol::EMIUCP::Field;
 
-with_field [qw( nack ec )];
-with_field sm => 'sm_str';
+has_field  'nack';
+with_field 'ec';
+with_field  sm     => (role => 'sm_str');
 
 sub list_data_field_names {
     return qw( nack ec sm );

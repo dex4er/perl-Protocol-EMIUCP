@@ -39,8 +39,8 @@ my %fields = (
         coerce    => 1,
         predicate => 'has_amsg',
         handles   => {
-            amsg_as_string => 'value',
-            amsg_utf8      => 'utf8',
+            amsg_string => 'as_string',
+            amsg_utf8   => 'utf8',
         },
     },
 
@@ -59,8 +59,9 @@ my %fields = (
         coerce    => 1,
         required  => 1,
         handles   => {
-            ec_as_string  => 'value',
-            ec_message    => 'as_message',
+            ec_string  => 'as_string',
+            ec_number  => 'as_number',
+            ec_message => 'as_message',
         },
     },
 
@@ -134,20 +135,20 @@ my %fields = (
 use Carp qw(confess);
 use Protocol::EMIUCP::Types;
 
-sub has_field ($;@) {
-    my ($name, @props) = @_;
+sub has_field ($;%) {
+    my ($name, %props) = @_;
 
-    my $caller = caller();
-    confess "Class ($caller) missing meta method" unless $caller->can('meta');
+    my $class = delete $props{class} || caller();
+    confess "Class ($class) missing method (meta)" unless $class->can('meta');
 
     if (ref $name and ref $name eq 'ARRAY') {
-        $caller->meta->add_attribute(
-            $_ => %{ $fields{$_} }, @props
+        $class->meta->add_attribute(
+            $_ => %{ $fields{$_} }, %props
         ) foreach @$name;
     }
     else {
-        $caller->meta->add_attribute(
-            $name => %{ $fields{$name} }, @props
+        $class->meta->add_attribute(
+            $name => %{ $fields{$name} }, %props
         );
     };
 };
@@ -155,19 +156,24 @@ sub has_field ($;@) {
 
 use Moose::Util ();
 
-sub with_field ($;$) {
-    my ($name, $subclass) = @_;
-    my $caller = caller();
+sub with_field ($;%) {
+    my ($name, %props) = @_;
+
+    my $role_name = delete $props{role};
+    my $class = caller();
+
     if (ref $name and ref $name eq 'ARRAY') {
         foreach (@$name) {
             my $role = __PACKAGE__ . '::' . $_;
-            Moose::Util::apply_all_roles($caller, $role);
+            Moose::Util::apply_all_roles($class, $role);
         };
     }
     else {
-        my $role = __PACKAGE__ . '::' . (defined $subclass ? $subclass : $name);
-        Moose::Util::apply_all_roles($caller, $role);
+        my $role = __PACKAGE__ . '::' . ($role_name || $name);
+        Moose::Util::apply_all_roles($class, $role);
     };
+    has_field($name, %props, class => $class) if defined $fields{$name};
 };
+
 
 1;
