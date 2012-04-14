@@ -17,6 +17,7 @@ my %fields = (
     ac       => {
         is        => 'ro',
         isa       => 'EMIUCP_Num4_16',
+        predicate => 'has_ac',
     },
 
     ack      => {
@@ -97,6 +98,7 @@ my %fields = (
         is        => 'ro',
         isa       => 'EMIUCP_Bool',
         coerce    => 1,
+        predicate => 'has_nrq',
     },
 
     o_r      => {
@@ -108,6 +110,7 @@ my %fields = (
     oadc     => {
         is        => 'ro',
         isa       => 'EMIUCP_Num16',
+        predicate => 'has_oadc',
     },
 
     ot       => {
