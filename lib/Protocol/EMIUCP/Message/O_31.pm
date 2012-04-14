@@ -14,11 +14,6 @@ use Protocol::EMIUCP::Field;
 has_field [qw( adc )];
 with_field 'pid';
 
-sub BUILD {
-    my ($self) = @_;
-    confess 'OT != 31' if $self->ot != 31;
-};
-
 sub list_data_field_names {
     return qw( adc pid );
 };

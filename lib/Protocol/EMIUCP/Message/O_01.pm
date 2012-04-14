@@ -16,7 +16,6 @@ with_field 'amsg';
 
 sub BUILD {
     my ($self) = @_;
-    confess 'OT != "01"' if $self->ot != 1;
     confess 'nmsg for MT=3' if $self->mt == 3 and $self->has_nmsg;
     confess 'amsg for MT=2' if $self->mt == 2 and $self->has_amsg;
 };
