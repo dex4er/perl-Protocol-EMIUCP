@@ -15,6 +15,7 @@ use Protocol::EMIUCP::Field;
 has_field  adc  => (required => 1);
 with_field oadc => (
     isa      => 'Protocol::EMIUCP::Types::oadc',
+    coerce   => 1,
     required => 1,
     handles  => {
         oadc_string      => 'as_string',
