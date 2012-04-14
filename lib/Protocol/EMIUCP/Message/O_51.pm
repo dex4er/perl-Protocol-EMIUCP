@@ -23,7 +23,7 @@ with_field oadc => (
         oadc_utf8        => 'utf8',
     },
 );
-has_field [qw( ac )];
+has_field [qw( ac nrq )];
 #has_field [qw( ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid )];
 
 __PACKAGE__->meta->make_immutable();

@@ -10,6 +10,9 @@ use Moose::Util::TypeConstraints;
 subtype EMIUCP_Nul     => as   Str  => where { $_ eq '' };
 coerce  EMIUCP_Nul     => from Str  => via   { '' };
 
+enum    EMIUCP_Bool    => [qw( 0 1 )];
+coerce  EMIUCP_Bool    => from Bool => via   { $_ ? 1 : 0 };
+
 subtype EMIUCP_Num02   => as   Str  => where { $_ =~ /^\d{2}$/ };
 coerce  EMIUCP_Num02   => from Int  => via   { sprintf "%02d", $_ % 1e2 };
 
@@ -33,6 +36,7 @@ coerce  EMIUCP_ACK     => from Bool => via   { $_ ? 'A' : '' };
 enum    EMIUCP_NACK    => [qw( N )];
 coerce  EMIUCP_NACK    => from Bool => via   { $_ ? 'N' : '' };
 
+subtype EMIUCP_Num1    => as   Str  => where { $_ =~ /^\d$/ };
 subtype EMIUCP_Num12   => as   Str  => where { $_ =~ /^\d{12}$/ };
 subtype EMIUCP_Num16   => as   Str  => where { $_ =~ /^\d{1,16}$/ };
 subtype EMIUCP_Num4_16 => as   EMIUCP_Num16 => where { $_ =~ /^\d{4,16}$/ };

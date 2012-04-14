@@ -93,6 +93,12 @@ my %fields = (
         predicate => 'has_nmsg',
     },
 
+    nrq      => {
+        is        => 'ro',
+        isa       => 'EMIUCP_Bool',
+        coerce    => 1,
+    },
+
     o_r      => {
         is        => 'ro',
         isa       => 'EMIUCP_O_R',
