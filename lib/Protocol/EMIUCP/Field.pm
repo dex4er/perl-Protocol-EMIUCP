@@ -74,6 +74,13 @@ my %fields = (
         predicate => 'has_len',
     },
 
+    lrq      => {
+        is        => 'ro',
+        isa       => 'EMIUCP_Bool',
+        coerce    => 1,
+        predicate => 'has_lrq',
+    },
+
     mt       => {
         is        => 'ro',
         isa       => 'EMIUCP_MT23',
@@ -98,6 +105,17 @@ my %fields = (
         is        => 'ro',
         isa       => 'EMIUCP_Num160',
         predicate => 'has_nmsg',
+    },
+
+    npid     => {
+        is        => 'ro',
+        isa       => 'Protocol::EMIUCP::Types::pid',
+        coerce    => 1,
+        predicate => 'has_npid',
+        handles   => {
+            npid_as_string => 'value',
+            npid_message   => 'as_message',
+        },
     },
 
     nrq      => {

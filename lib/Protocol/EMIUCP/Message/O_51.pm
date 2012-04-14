@@ -27,6 +27,12 @@ with_field oadc => (
 );
 has_field [qw( ac nrq nadc )];
 with_field 'nt';
+with_field 'npid';
+has_field 'lrq';
+
+sub list_pid_codes {
+    return qw( 0100 0122 0131 0138 0139 0339 0439 0539 );
+};
 
 __PACKAGE__->meta->make_immutable();
 
