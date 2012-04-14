@@ -30,12 +30,12 @@ coerce  EMIUCP_ACK    => from Bool => via   { $_ ? 'A' : '' };
 enum    EMIUCP_NACK   => [qw( N )];
 coerce  EMIUCP_NACK   => from Bool => via   { $_ ? 'N' : '' };
 
-subtype EMIUCP_SM     => as   Str  => where { $_ =~ /^\d{0,16}:\d{12}$/ };
+subtype EMIUCP_SM     => as   Str  => where { $_ =~ /^\d{2,16}:\d{12}$/ };
 
 subtype EMIUCP_Num12  => as   Str  => where { $_ =~ /^\d{12}$/ };
-subtype EMIUCP_Num16  => as   Str  => where { $_ =~ /^\d{0,16}$/ };
-subtype EMIUCP_Num160 => as   Str  => where { $_ =~ /^\d{0,160}$/ };
-subtype EMIUCP_Hex640 => as   Str  => where { $_ =~ /^[0-9A-F]{0,640}$/ and length($_) % 2 == 0 };
+subtype EMIUCP_Num16  => as   Str  => where { $_ =~ /^\d{1,16}$/ };
+subtype EMIUCP_Num160 => as   Str  => where { $_ =~ /^\d{1,160}$/ };
+subtype EMIUCP_Hex640 => as   Str  => where { $_ =~ /^[0-9A-F]{2,640}$/ and length($_) % 2 == 0 };
 
 subtype EMIUCP_EC       => as 'EMIUCP_Num2';
 subtype EMIUCP_EC_Const => as Str  => where { $_ =~ /^EC_/ };
@@ -54,7 +54,7 @@ coerce  EMIUCP_PID
 use MooseX::Types::DateTime;
 use DateTime::Format::EMIUCP;
 
-subtype EMIUCP_SCTS       => as 'EMIUCP_Num12';
+subtype EMIUCP_SCTS   => as 'EMIUCP_Num12';
 coerce  EMIUCP_SCTS
     => from 'DateTime'
     => via { DateTime::Format::EMIUCP->format_datetime($_) };
