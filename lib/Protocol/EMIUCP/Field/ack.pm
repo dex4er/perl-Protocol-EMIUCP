@@ -1,6 +1,6 @@
 package Protocol::EMIUCP::Field::ack;
 
-use 5.008;
+use 5.006;
 
 our $VERSION = '0.01';
 

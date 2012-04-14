@@ -1,6 +1,6 @@
 package Protocol::EMIUCP::Message::R_01_N;
 
-use 5.008;
+use 5.006;
 
 our $VERSION = '0.01';
 

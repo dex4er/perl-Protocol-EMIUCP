@@ -3,7 +3,7 @@ package Protocol::EMIUCP::Field;
 use strict;
 use warnings;
 
-use 5.008;
+use 5.006;
 
 our $VERSION = '0.01';
 

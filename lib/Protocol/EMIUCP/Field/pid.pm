@@ -1,6 +1,6 @@
 package Protocol::EMIUCP::Field::pid;
 
-use 5.008;
+use 5.006;
 
 our $VERSION = '0.01';
 
