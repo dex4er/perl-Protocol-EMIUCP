@@ -74,6 +74,22 @@ my %fields = (
         predicate => 'has_len',
     },
 
+    lpid     => {
+        is        => 'ro',
+        isa       => 'Protocol::EMIUCP::Types::pid',
+        coerce    => 1,
+        predicate => 'has_lpid',
+        handles   => {
+            lpid_as_string => 'value',
+            lpid_message   => 'as_message',
+        },
+    },
+
+    lrad     => {
+        is        => 'ro',
+        isa       => 'EMIUCP_Num16',
+    },
+
     lrq      => {
         is        => 'ro',
         isa       => 'EMIUCP_Bool',

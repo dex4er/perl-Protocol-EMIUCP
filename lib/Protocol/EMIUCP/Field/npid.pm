@@ -10,12 +10,12 @@ use Moose::Role;
 use Protocol::EMIUCP::Types::pid;
 use Protocol::EMIUCP::Field;
 
-requires 'list_pid_codes';
+requires 'list_npid_codes';
 
 before BUILD => sub {
     my ($self) = @_;
     my $npid = $self->npid;
-    confess "Validation failed for attribute (npid) with value $npid" unless grep { $_ == $npid } $self->list_pid_codes;
+    confess "Validation failed for attribute (npid) with value $npid" unless grep { $_ == $npid } $self->list_npid_codes;
 };
 
 around as_hashref => sub {
