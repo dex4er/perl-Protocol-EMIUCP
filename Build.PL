@@ -15,9 +15,10 @@ my $build = Module::Build->new(
     module_name             => $module,
     license                 => 'perl',
     requires                => {
-        'perl'                     => 5.008,
+        'perl'                     => 5.006,
         'DateTime::Format::EMIUCP' => 0,
-        'Moose'                    => 0,
+        'Exporter'                 => 5.566,  # *import = &Exporter::import
+        'Moose'                    => 2.030,  # enum with 1 value
         'MooseX::Types::DateTime'  => 0,
     },
     build_requires          => {

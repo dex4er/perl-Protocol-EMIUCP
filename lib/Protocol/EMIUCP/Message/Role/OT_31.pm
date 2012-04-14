@@ -14,5 +14,10 @@ has_field ot => (
     documentation => 'MT Alert Operation',
 );
 
+before BUILD => sub {
+    my ($self) = @_;
+    confess 'OT != 31' if $self->ot != 31;
+};
+
 
 1;

@@ -10,7 +10,7 @@ with 'Protocol::EMIUCP::Message::Role::Base';
 
 use Protocol::EMIUCP::Field;
 
-has_field o_r => (default => 'R');
+has_field o_r => (isa => 'EMIUCP_R', default => 'R');
 
 
 1;

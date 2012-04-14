@@ -14,5 +14,10 @@ has_field ot => (
     documentation => 'Call Input Operation',
 );
 
+before BUILD => sub {
+    my ($self) = @_;
+    confess 'OT != "01"' if $self->ot != 1;
+};
+
 
 1;
