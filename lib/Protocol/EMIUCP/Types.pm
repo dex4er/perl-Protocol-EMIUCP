@@ -22,6 +22,9 @@ coerce  EMIUCP_Num05  => from Int  => via   { sprintf "%05d", $_ % 1e5 };
 subtype EMIUCP_Hex02  => as   Str  => where { $_ =~ /^[0-9A-F]{2}$/ };
 coerce  EMIUCP_Hex02  => from Int  => via   { sprintf "%02X", $_ % 16**2 };
 
+subtype EMIUCP_Hex22  => as   Str  => where { $_ =~ /^[0-9A-F]{2,22}$/ };
+coerce  EMIUCP_Hex22  => from Int  => via   { sprintf "%02X", $_ % 16**2 };
+
 enum    EMIUCP_O_R    => [qw( O R )];
 
 enum    EMIUCP_ACK    => [qw( A )];
