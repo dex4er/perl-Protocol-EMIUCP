@@ -88,6 +88,12 @@ my %fields = (
         default   => 'N',
     },
 
+    nadc     => {
+        is        => 'ro',
+        isa       => 'EMIUCP_Num16',
+        predicate => 'has_nadc',
+    },
+
     nmsg     => {
         is        => 'ro',
         isa       => 'EMIUCP_Num160',
