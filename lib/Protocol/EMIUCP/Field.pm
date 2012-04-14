@@ -107,6 +107,20 @@ my %fields = (
         predicate => 'has_nrq',
     },
 
+    nt       => {
+        is        => 'ro',
+        isa       => 'Protocol::EMIUCP::Types::nt',
+        coerce    => 1,
+        predicate => 'has_nt',
+        handles   => {
+            nt_string  => 'as_string',
+            nt_message => 'as_message',
+            nt_is_bn   => 'is_bn',
+            nt_is_dn   => 'is_dn',
+            nt_is_nd   => 'is_nd',
+        },
+    },
+
     o_r      => {
         is        => 'ro',
         isa       => 'EMIUCP_O_R',

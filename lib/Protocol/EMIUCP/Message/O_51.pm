@@ -10,6 +10,7 @@ with 'Protocol::EMIUCP::Message::Role::O';
 with 'Protocol::EMIUCP::Message::Role::OT_51';
 
 use Protocol::EMIUCP::Types::oadc;
+use Protocol::EMIUCP::Types::nt;
 use Protocol::EMIUCP::Field;
 
 has_field  adc  => (required => 1);
@@ -25,6 +26,7 @@ with_field oadc => (
     },
 );
 has_field [qw( ac nrq nadc )];
+with_field 'nt';
 
 __PACKAGE__->meta->make_immutable();
 

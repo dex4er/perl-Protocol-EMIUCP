@@ -51,6 +51,8 @@ coerce  EMIUCP_EC
 
 enum    EMIUCP_MT23    => [qw( 2 3 )];
 
+enum    EMIUCP_NT      => [qw( 0 1 2 3 4 5 6 7 )];
+
 enum    EMIUCP_PID     => [qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 )];
 subtype EMIUCP_PID_Const => as Str    => where { $_ =~ /^PID_/ };
 coerce  EMIUCP_PID
