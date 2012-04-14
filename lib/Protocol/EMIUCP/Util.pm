@@ -2,13 +2,16 @@ package Protocol::EMIUCP::Util;
 
 use 5.006;
 
+use strict;
+use warnings;
+
 our $VERSION = '0.01';
 
 
 use Exporter ();
 our @EXPORT_OK = qw( ETX SEP STX decode_7bit_hex encode_7bit_hex decode_gsm encode_gsm decode_hex encode_hex decode_utf8 encode_utf8 );
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
-*import = \&Exporter::import;
+BEGIN { *import = \&Exporter::import; }
 
 
 use constant {
@@ -37,7 +40,7 @@ sub encode_7bit_hex {
     my ($str) = @_;
 
     my $len = length($str)*2;
-    $len -= $l > 6 ? int($l / 8) : 0;
+    $len -= $len > 6 ? int($len / 8) : 0;
 
     my $bits = unpack 'b*', $str;
     $bits =~ s/(.{7})./$1/g;
@@ -55,7 +58,7 @@ sub decode_7bit_hex {
     $bits =~ s/(.{7})/$1./g;
     $bits = substr $bits, 0, $len;
     $bits = substr $bits, 0, int(length($bits) / 8) * 8;
-    return pack 'b*', $b;
+    return pack 'b*', $bits;
 };
 
 # Encode as strict UTF-8

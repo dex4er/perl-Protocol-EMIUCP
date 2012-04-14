@@ -9,7 +9,7 @@ our $VERSION = '0.01';
 
 use Exporter ();
 our @EXPORT = qw( has_field with_field );
-*import = \&Exporter::import;
+BEGIN { *import = \&Exporter::import; }
 
 
 my %fields = (
