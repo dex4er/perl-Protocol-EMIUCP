@@ -22,8 +22,6 @@ coerce  EMIUCP_Num5   => from Int  => via   { sprintf "%05d", $_ % 1e5 };
 subtype EMIUCP_Hex2   => as   Str  => where { $_ =~ /^[0-9A-F]{2}$/ };
 coerce  EMIUCP_Hex2   => from Int  => via   { sprintf "%02X", $_ % 16**2 };
 
-enum    EMIUCP_O      => [qw( O )];
-enum    EMIUCP_R      => [qw( R )];
 enum    EMIUCP_O_R    => [qw( O R )];
 
 enum    EMIUCP_ACK    => [qw( A )];
@@ -40,7 +38,7 @@ subtype EMIUCP_Num160 => as   Str  => where { $_ =~ /^\d{0,160}$/ };
 subtype EMIUCP_Hex640 => as   Str  => where { $_ =~ /^[0-9A-F]{0,640}$/ and length($_) % 2 == 0 };
 
 subtype EMIUCP_EC       => as 'EMIUCP_Num2';
-subtype EMIUCP_EC_Const => as Str    => where { $_ =~ /^EC_/ };
+subtype EMIUCP_EC_Const => as Str  => where { $_ =~ /^EC_/ };
 coerce  EMIUCP_EC
     => from EMIUCP_EC_Const
     => via { Protocol::EMIUCP::Types::ec->$_ };
