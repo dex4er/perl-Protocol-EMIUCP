@@ -102,6 +102,7 @@ my %fields = (
     oadc     => {
         is        => 'ro',
         isa       => 'EMIUCP_Num16',
+        coerce    => 1,
     },
 
     ot       => {
