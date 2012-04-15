@@ -22,14 +22,22 @@ sub new {
         if not looks_like_number $args{mt};
     confess "Attribute (nmsg) is invalid, should be undefined if mt == 3"
         if $args{mt} == 3 and defined $args{nmsg};
-    confess "Attribute (nmsg) is invalid, should be a number"
-        if $args{mt} == 3 and defined $args{nmsg} and not looks_like_number $args{nmsg};
     confess "Attribute (amsg) is invalid, should be undefined if mt == 2"
         if $args{mt} == 2 and defined $args{amsg};
 
     $args{amsg} = from_utf8_to_hex $args{amsg_utf8} if defined $args{amsg_utf8};
 
     return $class->SUPER::new(%args);
+};
+
+sub validate {
+    my ($self) = @_;
+
+    defined $self->{nmsg} and
+        confess "Attribute (nmsg) is invalid"
+            unless looks_like_number $self->{nmsg} or $self->{nmsg} =~ /^\d{1,160}$/;
+
+    return $self;
 };
 
 sub list_data_field_names {
@@ -49,10 +57,12 @@ sub amsg_utf8 {
 
 sub as_hashref {
     my ($self) = @_;
-    return {
+    return +{
         %{ $self->SUPER::as_hashref },
         defined $self->{amsg} ? (amsg_utf8 => $self->amsg_utf8) : (),
     };
 };
+
+__PACKAGE__->make_accessors( [qw( adc oadc ac mt nmsg amsg )] );
 
 1;

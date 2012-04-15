@@ -16,13 +16,13 @@ sub new {
     $args{trn} = sprintf "%02d", ($args{trn} || 0);
     $args{len} = sprintf "%05d", $args{len} if defined $args{len};
 
-    my $self = {};
+    my $self = +{};
     my @field_names = $class->list_field_names(\%args);
     @{$self}{ @field_names } = @args{ @field_names };
     map { delete $self->{$_} } grep { not defined $self->{$_} or $self->{$_} eq '' } keys %$self;
     bless $self => $class;
 
-    confess sprintf "Attribute (len) has invalid value, should be " . $self->calculate_len
+    confess "Attribute (len) has invalid value, should be " . $self->calculate_len
         if defined $self->{len} and $self->{len} ne $self->calculate_len;
     confess "Attribute (checksum) is invalid, should be " . $self->calculate_checksum
         if defined $self->{checksum} and $self->{checksum} ne $self->calculate_checksum;
@@ -37,6 +37,10 @@ sub new {
     };
 
     return $self;
+};
+
+sub validate {
+    # Base class does nothing
 };
 
 sub calculate_len {
@@ -101,8 +105,18 @@ sub as_string {
 
 sub as_hashref {
     my ($self) = @_;
-    return { %$self };
+    return +{ %$self };
 };
 
+sub make_accessors {
+    my ($class, $attrs) = @_;
+    no strict 'refs';
+    foreach my $name (@$attrs) {
+        *{__PACKAGE__ . "::$name"}     = sub { $_[0]->{$name} };
+        *{__PACKAGE__ . "::has_$name"} = sub { exists $_[0]->{$name} };
+    };
+};
+
+__PACKAGE__->make_accessors( [qw( trn len o_r ot checksum )] );
 
 1;
