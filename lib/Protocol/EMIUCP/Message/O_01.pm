@@ -40,18 +40,18 @@ sub validate {
     my ($self) = @_;
 
     no warnings 'uninitialized';
-    defined $self->{adc}  and confess "Attribute (adc) is invalid"
-        unless $self->{adc}  =~ /^\d{1,16}$/;
-    defined $self->{oadc} and confess "Attribute (oadc) is invalid"
-        unless $self->{oadc} =~ /^\d{1,16}$/;
-    defined $self->{ac}   and confess "Attribute (ac) is invalid"
-        unless $self->{ac}   =~ /^\d{4,16}$/;
-    defined $self->{mt}   and confess "Attribute (mt) is invalid"
-        unless $self->{mt}   =~ /^[23]$/;
-    defined $self->{nmsg} and confess "Attribute (nmsg) is invalid"
-        unless $self->{nmsg} =~ /^\d{1,160}$/;
-    defined $self->{amsg} and confess "Attribute (amsg) is invalid"
-        unless $self->{amsg} =~ /^\d{2,640}$/;
+    confess "Attribute (adc) is invalid"
+        if defined $self->{adc}  and not $self->{adc}  =~ /^\d{1,16}$/;
+    confess "Attribute (oadc) is invalid"
+        if defined $self->{oadc} and not $self->{oadc} =~ /^\d{1,16}$/;
+    confess "Attribute (ac) is invalid"
+        if defined $self->{ac}   and not $self->{ac}   =~ /^\d{4,16}$/;
+    confess "Attribute (mt) is invalid"
+        if defined $self->{mt}   and not $self->{mt}   =~ /^[23]$/;
+    confess "Attribute (nmsg) is invalid"
+        if defined $self->{nmsg} and not $self->{nmsg} =~ /^\d{1,160}$/;
+    confess "Attribute (amsg) is invalid"
+        if defined $self->{amsg} and not $self->{amsg} =~ /^[\dA-F]{2,640}$/;
 
     return $self;
 };

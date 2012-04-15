@@ -17,6 +17,7 @@ sub test_message ($$$;$$) {
     do {
         my $msg = Protocol::EMIUCP->new_message_from_string($str);
         isa_ok $msg, $class;
+        isa_ok $msg->validate, $class, "$str validated";
         is_deeply $msg->as_hashref, $fields, "$str fields matched";
         is $msg->as_string, $str, "$str as string matched";
         my $msg_hashref = $msg->as_hashref;
@@ -29,6 +30,7 @@ sub test_message ($$$;$$) {
     do {
         my $msg = Protocol::EMIUCP->new_message(%$args);
         isa_ok $msg, $class;
+        isa_ok $msg->validate, $class, "$str validated";
         is_deeply $msg->as_hashref, $fields, "$str fields matched";
         is $msg->as_string, $str, "$str as string matched";
         my $msg_hashref = $msg->as_hashref;
