@@ -2,12 +2,13 @@ package Protocol::EMIUCP;
 
 use 5.006;
 
+use strict;
+use warnings;
+
 our $VERSION = '0.01';
 
 
 # Factory class through proxy class
-
-use Moose;
 
 use Protocol::EMIUCP::Message;
 
@@ -23,7 +24,5 @@ sub new_message_from_string {
     Protocol::EMIUCP::Message->new_from_string($str);
 };
 
-
-__PACKAGE__->meta->make_immutable();
 
 1;

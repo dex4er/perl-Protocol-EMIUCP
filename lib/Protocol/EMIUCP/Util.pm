@@ -9,7 +9,13 @@ our $VERSION = '0.01';
 
 
 use Exporter ();
-our @EXPORT_OK = qw( ETX SEP STX decode_7bit_hex encode_7bit_hex decode_gsm encode_gsm decode_hex encode_hex decode_utf8 encode_utf8 );
+our @EXPORT_OK = qw(
+    ETX STX
+    decode_7bit_hex encode_7bit_hex
+    decode_hex encode_hex
+    from_hex_to_utf8 from_utf8_to_hex
+    load_class
+);
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 BEGIN { *import = \&Exporter::import; }
 
@@ -17,7 +23,13 @@ BEGIN { *import = \&Exporter::import; }
 use constant {
     STX => "\x02",
     ETX => "\x03",
-    SEP => '/',
+};
+
+
+sub load_class {
+    my ($class) = @_;
+    (my $file = $class . '.pm') =~ s{::}{/}g;
+    require $file;
 };
 
 
@@ -61,28 +73,16 @@ sub decode_7bit_hex {
     return pack 'b*', $bits;
 };
 
-# Encode as strict UTF-8
-sub encode_utf8 ($) {
+# Convert between UTF-8 and GSM 03.38 hex string
+sub from_utf8_to_hex ($) {
     my ($str) = @_;
-    return encode "UTF-8", $str;
+    return uc unpack "H*", encode "GSM0338", decode "UTF-8", $str;
 };
 
-# Decode from strict UTF-8
-sub decode_utf8 ($) {
-    my ($str) = @_;
-    return decode "UTF-8", $str;
-};
-
-# Encode as GSM 03.38
-sub encode_gsm ($) {
-    my ($str) = @_;
-    return encode "GSM0338", $str;
-};
-
-# Decode from GSM 03.38
-sub decode_gsm ($) {
-    my ($str) = @_;
-    return decode "GSM0338", $str;
+# Convert between GSM 03.38 hex string and UTF-8
+sub from_hex_to_utf8 ($) {
+    my ($hex) = @_;
+    return encode "UTF-8", decode "GSM0338", pack "H*", $hex
 };
 
 

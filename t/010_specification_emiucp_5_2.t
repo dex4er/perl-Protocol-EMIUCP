@@ -7,7 +7,7 @@ use Carp ();
 
 $SIG{__WARN__} = sub { local $Carp::CarpLevel = 1; Carp::confess("Warning: ", @_) };
 
-use Test::More tests => 159;
+use Test::More;
 
 BEGIN { use_ok 'Protocol::EMIUCP' };
 
@@ -19,8 +19,10 @@ sub test_message ($$$;$$) {
         isa_ok $msg, $class;
         is_deeply $msg->as_hashref, $fields, "$str fields matched";
         is $msg->as_string, $str, "$str as string matched";
+        my $msg_hashref = $msg->as_hashref;
+        isa_ok $msg_hashref, 'HASH';
         foreach (grep { defined $fields->{$_} } keys %$fields) {
-            is $msg->$_, $fields->{$_}, $_
+            is $msg_hashref->{$_}, $fields->{$_}, $_
         };
         $code->($class, $str, $fields, $args, $msg) if $code;
     };
@@ -29,8 +31,10 @@ sub test_message ($$$;$$) {
         isa_ok $msg, $class;
         is_deeply $msg->as_hashref, $fields, "$str fields matched";
         is $msg->as_string, $str, "$str as string matched";
+        my $msg_hashref = $msg->as_hashref;
+        isa_ok $msg_hashref, 'HASH';
         foreach (grep { defined $fields->{$_} } keys %$fields) {
-            is $msg->$_, $fields->{$_}, $_
+            is $msg_hashref->{$_}, $fields->{$_}, $_
         };
         $code->($class, $str, $fields, $args, $msg) if $code;
     };
@@ -55,6 +59,9 @@ do {
     delete $args{amsg};
     test_message 'Protocol::EMIUCP::Message::O_01', $str, \%fields, \%args;
 };
+
+done_testing();
+__END__
 
 # 4.2 Call input Operation -01 (p.10)
 do {
