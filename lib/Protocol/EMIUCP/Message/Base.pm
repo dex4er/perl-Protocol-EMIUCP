@@ -10,11 +10,17 @@ our $VERSION = '0.01';
 use Carp qw(confess);
 use List::Util qw(sum);
 
+__PACKAGE__->make_accessors( [qw( trn len o_r ot checksum )] );
+
 sub new {
     my ($class, %args) = @_;
 
-    $args{trn} = sprintf "%02d", ($args{trn} || 0);
-    $args{len} = sprintf "%05d", $args{len} if defined $args{len};
+    {
+        no warnings 'numeric';
+        $args{trn}  = sprintf "%02d", ($args{trn} || 0) % 100;
+        $args{len}  = sprintf "%05d", $args{len} if defined $args{len};
+        $args{ot}   = sprintf "%02d", $args{ot}  if defined $args{ot};
+    }
 
     my $self = +{};
     my @field_names = $class->list_field_names(\%args);
@@ -116,7 +122,5 @@ sub make_accessors {
         *{__PACKAGE__ . "::has_$name"} = sub { exists $_[0]->{$name} };
     };
 };
-
-__PACKAGE__->make_accessors( [qw( trn len o_r ot checksum )] );
 
 1;
