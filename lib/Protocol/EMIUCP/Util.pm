@@ -7,6 +7,7 @@ use warnings;
 
 our $VERSION = '0.01';
 
+use Carp qw(confess);
 
 use Exporter ();
 our @EXPORT_OK = qw(
@@ -29,9 +30,11 @@ use constant {
 sub load_class {
     my ($class) = @_;
     (my $file = $class . '.pm') =~ s{::}{/}g;
-    require $file;
+    eval {
+        require $file;
+    };
+    confess $@ if $@;
 };
-
 
 use Encode qw( decode encode );
 
