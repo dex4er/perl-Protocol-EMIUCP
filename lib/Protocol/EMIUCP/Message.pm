@@ -30,8 +30,8 @@ sub _find_new_class_from_args {
         if $args->{o_r} eq 'R' and not ($args->{ack} xor $args->{nack});
 
     my $new_class = sprintf 'Protocol::EMIUCP::Message::%s_%02d', $args->{o_r}, $args->{ot};
-    $new_class .= $args->{ack}  if defined $args->{ack};
-    $new_class .= $args->{nack} if defined $args->{nack};
+    $new_class .= '_A' if defined $args->{ack};
+    $new_class .= '_N' if defined $args->{nack};
 
     Protocol::EMIUCP::Util::load_class($new_class);
     return $new_class;
