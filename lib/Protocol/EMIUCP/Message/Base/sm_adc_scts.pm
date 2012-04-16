@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Base::sm_scts;
+package Protocol::EMIUCP::Message::Base::sm_adc_scts;
 
 use 5.006;
 

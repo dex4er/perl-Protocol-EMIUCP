@@ -7,7 +7,7 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw( Protocol::EMIUCP::Message::Base::R_A Protocol::EMIUCP::Message::Base::sm_scts );
+use base qw( Protocol::EMIUCP::Message::Base::R_A Protocol::EMIUCP::Message::Base::sm_adc_scts );
 
 use Carp qw(confess);
 use Scalar::Util qw(blessed);
