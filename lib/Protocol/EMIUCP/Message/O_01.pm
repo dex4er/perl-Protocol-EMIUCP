@@ -10,7 +10,6 @@ our $VERSION = '0.01';
 use base qw(Protocol::EMIUCP::Message::Base::O);
 
 use Carp qw(confess);
-use Scalar::Util qw(looks_like_number);
 use Protocol::EMIUCP::Util qw( from_hex_to_utf8 from_utf8_to_hex );
 
 __PACKAGE__->make_accessors( [qw( adc oadc ac mt nmsg amsg )] );
@@ -20,14 +19,16 @@ sub build_args {
 
     confess "Attribute (mt) is required"
         if not defined $args->{mt};
-    confess "Attribute (mt) is invalid, should be a number"
-        if not looks_like_number $args->{mt};
-    confess "Attribute (nmsg) is invalid, should be undefined if mt == 3"
-        if $args->{mt} == 3 and defined $args->{nmsg};
-    confess "Attribute (amsg) is invalid, should be undefined if mt == 2"
-        if $args->{mt} == 2 and defined $args->{amsg};
 
-    $args->{ot} = '01'  unless defined $args->{ot};
+    {
+        no warnings 'numeric';
+        confess "Attribute (nmsg) is invalid, should be undefined if mt == 3"
+            if $args->{mt} == 3 and defined $args->{nmsg};
+        confess "Attribute (amsg) is invalid, should be undefined if mt == 2"
+            if $args->{mt} == 2 and defined $args->{amsg};
+    }
+
+    $args->{ot} = '01' unless defined $args->{ot};
 
     $args->{amsg} = from_utf8_to_hex $args->{amsg_utf8}
         if defined $args->{amsg_utf8};
@@ -61,7 +62,7 @@ sub list_data_field_names {
     my $mt = ref $self ? $self->{mt}
            : (ref $fields || '') eq 'ARRAY' ? $fields->[7]
            : $fields->{mt};
-    $mt = 0 if not looks_like_number $mt;
+    no warnings 'numeric';
     return +( qw( adc oadc ac mt ), ( $mt == 2 ? 'nmsg' : 'amsg' ) );
 };
 
