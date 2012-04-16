@@ -62,9 +62,6 @@ do {
     test_message 'Protocol::EMIUCP::Message::O_01', $str, \%fields, \%args;
 };
 
-done_testing();
-__END__
-
 # 4.2 Call input Operation -01 (p.10)
 do {
     my $str = '00/00041/O/01/0888444///2/716436383334/C5';
@@ -99,6 +96,9 @@ do {
     delete $args{sm};
     test_message 'Protocol::EMIUCP::Message::R_01_A', $str, \%fields, \%args;
 };
+
+done_testing();
+__END__
 
 # 4.2.2 Call Input Operation (Negative Result) (p.11)
 do {

@@ -39,7 +39,6 @@ sub new {
 sub validate {
     my ($self) = @_;
 
-    no warnings 'uninitialized';
     confess "Attribute (adc) is invalid"
         if defined $self->{adc}  and not $self->{adc}  =~ /^\d{1,16}$/;
     confess "Attribute (oadc) is invalid"

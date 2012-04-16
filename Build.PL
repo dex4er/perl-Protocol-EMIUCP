@@ -19,7 +19,7 @@ my $build = Module::Build->new(
         'Exporter'                 => 5.566,  # *import = &Exporter::import
     },
     recommends              => {
-        'DateTime::Format::EMIUCP' => 0,
+        'DateTime::Format::EMIUCP' => 0.0200, # ::SCTS, ::DDT, ::VP
     },
     build_requires          => {
         'Test::More'               => 0,
