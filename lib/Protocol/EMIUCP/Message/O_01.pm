@@ -7,7 +7,7 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base 'Protocol::EMIUCP::Message::O';
+use base qw(Protocol::EMIUCP::Message::Base::O);
 
 use Carp qw(confess);
 use Scalar::Util qw(looks_like_number);

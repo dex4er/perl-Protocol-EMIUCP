@@ -4,18 +4,11 @@ use 5.006;
 
 our $VERSION = '0.01';
 
+use base 'Protocol::EMIUCP::Message::R_N';
 
-use Moose;
-use Moose::Util::TypeConstraints;
+use Carp qw(confess);
 
-with 'Protocol::EMIUCP::Message::Role::R';
-with 'Protocol::EMIUCP::Message::Role::OT_01';
-
-use Protocol::EMIUCP::Field;
-
-has_field  'nack';
-with_field 'ec';
-with_field  sm     => (role => 'sm_scts');
+__PACKAGE__->make_accessors( [qw( ec sm )] );
 
 sub list_data_field_names {
     return qw( nack ec sm );

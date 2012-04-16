@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::R_N;
+package Protocol::EMIUCP::Message::Base::R_A;
 
 use 5.006;
 
@@ -7,12 +7,12 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base 'Protocol::EMIUCP::Message::R';
+use base qw(Protocol::EMIUCP::Message::Base::R);
 
 sub new {
     my ($class, %args) = @_;
 
-    $args{nack}  = 'N' if $args{nack};
+    $args{ack}  = 'A' if $args{ack};
 
     return $class->SUPER::new(%args);
 };

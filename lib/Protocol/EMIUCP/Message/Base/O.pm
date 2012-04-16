@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::O;
+package Protocol::EMIUCP::Message::Base::O;
 
 use 5.006;
 
@@ -7,7 +7,7 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base 'Protocol::EMIUCP::Message::Base';
+use base qw(Protocol::EMIUCP::Message::Base);
 
 use Carp qw(confess);
 
