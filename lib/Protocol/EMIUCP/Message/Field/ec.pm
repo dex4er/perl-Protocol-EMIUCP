@@ -44,19 +44,20 @@ sub import {
 sub build_ec_args {
     my ($class, $args) = @_;
 
-    confess "Attribute (ec) is required"
-        if not defined $args->{ec};
-
     $args->{ec} = $Constant_To_EC{ $args->{ec} }
-        if $args->{ec} =~ /^EC_/;
+        if defined $args->{ec} and $args->{ec} =~ /^EC_/;
 
     return $class;
 };
 
 sub validate_ec {
     my ($self) = @_;
+
+    confess "Attribute (ec) is required"
+        unless defined $self->{ec};
     confess "Attribute (ec) is invalid"
-        if defined $self->{ec} and not grep { $_ eq $self->{ec} } $self->list_ec_codes;
+        unless grep { $_ eq $self->{ec} } $self->list_ec_codes;
+
     return $self;
 };
 
