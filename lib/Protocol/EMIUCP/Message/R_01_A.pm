@@ -10,8 +10,6 @@ our $VERSION = '0.01';
 use base qw( Protocol::EMIUCP::Message::Base::R_A Protocol::EMIUCP::Message::Base::sm_adc_scts );
 
 use Carp qw(confess);
-use Scalar::Util qw(blessed);
-eval { require DateTime::Format::EMIUCP::SCTS };
 
 __PACKAGE__->make_accessors( [qw( sm )] );
 
