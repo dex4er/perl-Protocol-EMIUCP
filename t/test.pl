@@ -20,4 +20,8 @@ BEGIN {
 
 use Test::Harness;
 
+my %opts = map { $_ => 1 } @ARGV;
+$Test::Harness::verbose = 1 if $opts{-v};
+$ENV{HARNESS_OPTIONS} = $opts{'--nocolor'} ? '' : 'c';
+
 runtests( <t/*.t> );
