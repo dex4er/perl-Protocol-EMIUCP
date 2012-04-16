@@ -27,9 +27,10 @@ sub build_args {
     confess "Attribute (amsg) is invalid, should be undefined if mt == 2"
         if $args->{mt} == 2 and defined $args->{amsg};
 
-    $args->{ot} = '01' unless defined $args->{ot};
+    $args->{ot} = '01'  unless defined $args->{ot};
 
-    $args->{amsg} = from_utf8_to_hex $args->{amsg_utf8} if defined $args->{amsg_utf8};
+    $args->{amsg} = from_utf8_to_hex $args->{amsg_utf8}
+        if defined $args->{amsg_utf8};
 
     return $class;
 };

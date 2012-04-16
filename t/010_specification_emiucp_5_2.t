@@ -116,9 +116,6 @@ do {
     test_message 'Protocol::EMIUCP::Message::R_01_N', $str, \%fields, \%args;
 };
 
-done_testing();
-__END__
-
 # 4.6 MT Alert Operation -31 (p.18)
 do {
     my $str = '02/00035/O/31/0234765439845/0139/A0';
@@ -171,3 +168,5 @@ do {
     $args{ec} = 'EC_ADC_INVALID';
     test_message 'Protocol::EMIUCP::Message::R_31_N', $str, \%fields, \%args;
 };
+
+done_testing();
