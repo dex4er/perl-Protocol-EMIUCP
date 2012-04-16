@@ -97,9 +97,6 @@ do {
     test_message 'Protocol::EMIUCP::Message::R_01_A', $str, \%fields, \%args;
 };
 
-done_testing();
-__END__
-
 # 4.2.2 Call Input Operation (Negative Result) (p.11)
 do {
     my $str = '12/00022/R/01/N/02//03';
@@ -118,6 +115,9 @@ do {
     $args{ec} = 'EC_SYNTAX_ERROR';
     test_message 'Protocol::EMIUCP::Message::R_01_N', $str, \%fields, \%args;
 };
+
+done_testing();
+__END__
 
 # 4.6 MT Alert Operation -31 (p.18)
 do {

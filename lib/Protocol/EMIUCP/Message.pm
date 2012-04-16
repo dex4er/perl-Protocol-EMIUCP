@@ -14,6 +14,7 @@ use Carp qw(confess);
 use Scalar::Util qw(looks_like_number);
 use Protocol::EMIUCP::Util;
 
+use Protocol::EMIUCP::Message::Field::ec;
 
 sub _find_new_class_from_args {
     my ($class, $args) = @_;

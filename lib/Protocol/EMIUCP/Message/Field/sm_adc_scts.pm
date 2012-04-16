@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Base::sm_adc_scts;
+package Protocol::EMIUCP::Message::Field::sm_adc_scts;
 
 use 5.006;
 
@@ -11,7 +11,7 @@ use Carp qw(confess);
 use Scalar::Util qw(blessed);
 eval { require DateTime::Format::EMIUCP::SCTS };
 
-sub sm_build_args {
+sub build_sm_args {
     my ($class, $args) = @_;
 
     $args->{sm_scts} = DateTime::Format::EMIUCP::SCTS->format_datetime($args->{sm_scts})
@@ -23,11 +23,11 @@ sub sm_build_args {
     return $class;
 };
 
-sub sm_validate {
+sub validate_sm {
     my ($self) = @_;
 
     confess "Attribute (sm) is invalid"
-        if defined $self->{sm}  and not $self->{sm}  =~ /^\d{1,16}:\d{12}$/;
+        if defined $self->{sm} and not $self->{sm}  =~ /^\d{1,16}:\d{12}$/;
 
     return $self;
 };
@@ -55,7 +55,7 @@ sub sm_scts_as_datetime {
     return DateTime::Format::EMIUCP::SCTS->parse_datetime($scts);
 };
 
-sub sm_build_hashref {
+sub build_sm_hashref {
     my ($self, $hashref) = @_;
     if (defined $hashref->{sm}) {
         $hashref->{sm_adc}  = $self->sm_adc;

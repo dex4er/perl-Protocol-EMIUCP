@@ -116,10 +116,11 @@ sub as_hashref {
 
 sub make_accessors {
     my ($class, $attrs) = @_;
+    my $caller = caller();
     no strict 'refs';
     foreach my $name (@$attrs) {
-        *{__PACKAGE__ . "::$name"}     = sub { $_[0]->{$name} };
-        *{__PACKAGE__ . "::has_$name"} = sub { exists $_[0]->{$name} };
+        *{"${caller}::$name"}     = sub { $_[0]->{$name} };
+        *{"${caller}::has_$name"} = sub { exists $_[0]->{$name} };
     };
 };
 
