@@ -29,6 +29,10 @@ sub list_data_field_names {
 
 sub build_hashref {
     my ($self, $hashref) = @_;
+
+    confess "Attribute (ot) is invalid, should be '01'"
+        if defined $args->{ot} and $args->{ot} ne '01';
+
     return $self->build_sm_hashref($hashref);
 };
 

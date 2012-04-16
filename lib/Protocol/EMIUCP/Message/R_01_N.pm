@@ -19,6 +19,10 @@ __PACKAGE__->make_accessors( [qw( ec sm )] );
 
 sub build_args {
     my ($class, $args) = @_;
+
+    confess "Attribute (ot) is invalid, should be '01'"
+        if defined $args->{ot} and $args->{ot} ne '01';
+
     return $class->build_ec_args($args)
                  ->build_sm_args($args);
 };
