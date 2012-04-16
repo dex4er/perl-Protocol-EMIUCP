@@ -15,11 +15,18 @@ __PACKAGE__->make_accessors( [qw( sm )] );
 
 sub build_args {
     my ($class, $args) = @_;
+
+    $args->{ot} = '01' unless defined $args->{ot};
+
     return $class->build_sm_args($args);
 };
 
 sub validate {
     my ($self) = @_;
+
+    confess "Attribute (ot) is invalid, should be '01'"
+        if defined $self->{ot} and $self->{ot} ne '01';
+
     return $self->validate_sm;
 };
 
@@ -29,10 +36,6 @@ sub list_data_field_names {
 
 sub build_hashref {
     my ($self, $hashref) = @_;
-
-    confess "Attribute (ot) is invalid, should be '01'"
-        if defined $args->{ot} and $args->{ot} ne '01';
-
     return $self->build_sm_hashref($hashref);
 };
 

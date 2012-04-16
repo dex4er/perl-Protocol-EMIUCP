@@ -20,8 +20,7 @@ __PACKAGE__->make_accessors( [qw( ec sm )] );
 sub build_args {
     my ($class, $args) = @_;
 
-    confess "Attribute (ot) is invalid, should be '01'"
-        if defined $args->{ot} and $args->{ot} ne '01';
+    $args->{ot} = '01' unless defined $args->{ot};
 
     return $class->build_ec_args($args)
                  ->build_sm_args($args);
@@ -29,6 +28,10 @@ sub build_args {
 
 sub validate {
     my ($self) = @_;
+
+    confess "Attribute (ot) is invalid, should be '01'"
+        if defined $self->{ot} and $self->{ot} ne '01';
+
     return $self->validate_ec
                 ->validate_sm;
 };

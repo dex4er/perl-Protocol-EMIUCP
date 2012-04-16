@@ -18,8 +18,6 @@ __PACKAGE__->make_accessors( [qw( adc oadc ac mt nmsg amsg )] );
 sub build_args {
     my ($class, $args) = @_;
 
-    confess "Attribute (ot) is invalid, should be '01'"
-        if defined $args->{ot} and $args->{ot} ne '01';
     confess "Attribute (mt) is required"
         if not defined $args->{mt};
     confess "Attribute (mt) is invalid, should be a number"
@@ -39,6 +37,8 @@ sub build_args {
 sub validate {
     my ($self) = @_;
 
+    confess "Attribute (ot) is invalid, should be '01'"
+        if defined $self->{ot}   and $self->{ot} ne '01';
     confess "Attribute (adc) is invalid"
         if defined $self->{adc}  and not $self->{adc}  =~ /^\d{1,16}$/;
     confess "Attribute (oadc) is invalid"
