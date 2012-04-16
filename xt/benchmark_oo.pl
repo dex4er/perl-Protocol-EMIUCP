@@ -75,7 +75,7 @@ my %tests = (
     },
     '4_EMIUCP' => sub {
 
-        my $msg = Protocol::EMIUCP->new_message_from_string($str);
+        my $msg = Protocol::EMIUCP::Message->new_from_string($str);
         die $msg->as_string if $msg->as_string ne $str;
 
     },
