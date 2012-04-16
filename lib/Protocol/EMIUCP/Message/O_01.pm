@@ -61,8 +61,7 @@ sub list_data_field_names {
            : (ref $fields || '') eq 'ARRAY' ? $fields->[7]
            : $fields->{mt};
     $mt = 0 if not looks_like_number $mt;
-    my @fields = ( qw( adc oadc ac mt ), ( $mt == 2 ? 'nmsg' : 'amsg' ) );
-    return wantarray ? @fields : \@fields;
+    return +( qw( adc oadc ac mt ), ( $mt == 2 ? 'nmsg' : 'amsg' ) );
 };
 
 sub amsg_utf8 {
