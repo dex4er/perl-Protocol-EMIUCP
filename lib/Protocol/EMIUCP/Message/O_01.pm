@@ -15,25 +15,25 @@ use Protocol::EMIUCP::Util qw( from_hex_to_utf8 from_utf8_to_hex );
 
 __PACKAGE__->make_accessors( [qw( adc oadc ac mt nmsg amsg )] );
 
-sub new {
-    my ($class, %args) = @_;
+sub build_args {
+    my ($class, $args) = @_;
 
     confess "Attribute (ot) is invalid, should be '01'"
-        if defined $args{ot} and $args{ot} ne '01';
+        if defined $args->{ot} and $args->{ot} ne '01';
     confess "Attribute (mt) is required"
-        if not defined $args{mt};
+        if not defined $args->{mt};
     confess "Attribute (mt) is invalid, should be a number"
-        if not looks_like_number $args{mt};
+        if not looks_like_number $args->{mt};
     confess "Attribute (nmsg) is invalid, should be undefined if mt == 3"
-        if $args{mt} == 3 and defined $args{nmsg};
+        if $args->{mt} == 3 and defined $args->{nmsg};
     confess "Attribute (amsg) is invalid, should be undefined if mt == 2"
-        if $args{mt} == 2 and defined $args{amsg};
+        if $args->{mt} == 2 and defined $args->{amsg};
 
-    $args{ot} = '01' unless defined $args{ot};
+    $args->{ot} = '01' unless defined $args->{ot};
 
-    $args{amsg} = from_utf8_to_hex $args{amsg_utf8} if defined $args{amsg_utf8};
+    $args->{amsg} = from_utf8_to_hex $args->{amsg_utf8} if defined $args->{amsg_utf8};
 
-    return $class->SUPER::new(%args);
+    return $class;
 };
 
 sub validate {
@@ -70,12 +70,10 @@ sub amsg_utf8 {
     return from_hex_to_utf8 $self->{amsg}
 };
 
-sub as_hashref {
-    my ($self) = @_;
-    return +{
-        %{ $self->SUPER::as_hashref },
-        defined $self->{amsg} ? (amsg_utf8 => $self->amsg_utf8) : (),
-    };
+sub build_hashref {
+    my ($self, $hashref) = @_;
+    $hashref->{amsg_utf8} = $self->amsg_utf8 if defined $hashref->{amsg};
+    return $self;
 };
 
 1;

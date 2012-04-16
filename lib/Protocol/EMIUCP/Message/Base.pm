@@ -22,6 +22,8 @@ sub new {
         $args{ot}   = sprintf "%02d", $args{ot}  if defined $args{ot};
     }
 
+    $class->build_args(\%args);
+
     my $self = +{};
     my @field_names = $class->list_field_names(\%args);
     @{$self}{ @field_names } = @args{ @field_names };
@@ -43,6 +45,10 @@ sub new {
     };
 
     return $self;
+};
+
+sub build_args {
+    # Base class does nothing
 };
 
 sub validate {
@@ -111,7 +117,13 @@ sub as_string {
 
 sub as_hashref {
     my ($self) = @_;
-    return +{ %$self };
+    my $hashref = +{ %$self };
+    $self->build_hashref($hashref);
+    return $hashref;
+};
+
+sub build_hashref {
+    # Base class does nothing
 };
 
 sub make_accessors {
