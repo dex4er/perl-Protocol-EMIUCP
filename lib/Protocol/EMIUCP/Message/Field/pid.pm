@@ -53,13 +53,13 @@ sub validate_pid {
     confess "Attribute (pid) is required"
         unless defined $self->{pid};
     confess "Attribute (pid) is invalid"
-        unless grep { $_ eq $self->{pid} } $self->list_pid_valid_codes;
+        unless grep { $_ eq $self->{pid} } $self->list_valid_pid_valid_codes;
 
     return $self;
 };
 
-sub list_pid_valid_codes {
-    confess "Method (list_pid_valid_codes) have to be overrided by derived class method";
+sub list_valid_pid_codes {
+    confess "Method (list_valid_pid_codes) have to be overrided by derived class method";
 };
 
 sub pid_message {

@@ -15,7 +15,7 @@ use base qw(
 use Carp qw(confess);
 use Scalar::Util qw(looks_like_number);
 
-__PACKAGE__->make_accessors( [qw( adc pid] )] );
+__PACKAGE__->make_accessors( [qw( adc pid )] );
 
 sub build_args {
     my ($class, $args) = @_;
@@ -42,7 +42,7 @@ sub list_data_field_names {
     return qw( adc pid );
 };
 
-sub list_pid_valid_codes {
+sub list_valid_pid_codes {
     return qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 );
 };
 

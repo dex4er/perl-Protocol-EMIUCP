@@ -37,7 +37,7 @@ sub list_data_field_names {
     return qw( nack ec sm );
 };
 
-sub list_ec_valid_codes {
+sub list_valid_ec_codes {
     return qw( 01 02 04 05 06 07 08 24 26 );
 };
 

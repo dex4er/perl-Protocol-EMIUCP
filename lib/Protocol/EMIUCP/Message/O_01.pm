@@ -7,7 +7,10 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw(Protocol::EMIUCP::Message::Base::O);
+use base qw(
+    Protocol::EMIUCP::Message::Base::O
+    Protocol::EMIUCP::Message::Field::mt
+);
 
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw( from_hex_to_utf8 from_utf8_to_hex );
@@ -16,9 +19,6 @@ __PACKAGE__->make_accessors( [qw( adc oadc ac mt nmsg amsg )] );
 
 sub build_args {
     my ($class, $args) = @_;
-
-    confess "Attribute (mt) is required"
-        if not defined $args->{mt};
 
     {
         no warnings 'numeric';
@@ -33,7 +33,7 @@ sub build_args {
     $args->{amsg} = from_utf8_to_hex $args->{amsg_utf8}
         if defined $args->{amsg_utf8};
 
-    return $class;
+    return $class->build_mt_args($args);
 };
 
 sub validate {
@@ -47,14 +47,12 @@ sub validate {
         if defined $self->{oadc} and not $self->{oadc} =~ /^\d{1,16}$/;
     confess "Attribute (ac) is invalid"
         if defined $self->{ac}   and not $self->{ac}   =~ /^\d{4,16}$/;
-    confess "Attribute (mt) is invalid"
-        if defined $self->{mt}   and not $self->{mt}   =~ /^[23]$/;
     confess "Attribute (nmsg) is invalid"
         if defined $self->{nmsg} and not $self->{nmsg} =~ /^\d{1,160}$/;
     confess "Attribute (amsg) is invalid"
         if defined $self->{amsg} and not $self->{amsg} =~ /^[\dA-F]{2,640}$/;
 
-    return $self;
+    return $self->validate_mt;
 };
 
 sub list_data_field_names {
@@ -66,6 +64,10 @@ sub list_data_field_names {
     return +( qw( adc oadc ac mt ), ( $mt == 2 ? 'nmsg' : 'amsg' ) );
 };
 
+sub list_valid_mt_codes {
+    return qw( 2 3 4 );
+};
+
 sub amsg_utf8 {
     my ($self) = @_;
     return from_hex_to_utf8 $self->{amsg}
@@ -74,7 +76,7 @@ sub amsg_utf8 {
 sub build_hashref {
     my ($self, $hashref) = @_;
     $hashref->{amsg_utf8} = $self->amsg_utf8 if defined $hashref->{amsg};
-    return $self;
+    return $self->build_mt_hashref($hashref);
 };
 
 1;

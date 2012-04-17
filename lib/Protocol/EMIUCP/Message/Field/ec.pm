@@ -55,13 +55,13 @@ sub validate_ec {
     confess "Attribute (ec) is required"
         unless defined $self->{ec};
     confess "Attribute (ec) is invalid"
-        unless grep { $_ eq $self->{ec} } $self->list_ec_valid_codes;
+        unless grep { $_ eq $self->{ec} } $self->list_valid_ec_codes;
 
     return $self;
 };
 
-sub list_ec_valid_codes {
-    confess "Method (list_ec_valid_codes) have to be overrided by derived class method";
+sub list_valid_ec_codes {
+    confess "Method (list_valid_ec_codes) have to be overrided by derived class method";
 };
 
 sub ec_message {

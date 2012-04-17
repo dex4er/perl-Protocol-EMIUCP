@@ -46,16 +46,17 @@ sub test_message ($$$;$$) {
 do {
     my $str = '00/00070/O/01/01234567890/09876543210//3/53686F7274204D657373616765/D9';
     my %fields = (
-        trn       => '00',
-        len       => '00070',
-        o_r       => 'O',
-        ot        => '01',
-        adc       => '01234567890',
-        oadc      => '09876543210',
-        mt        => 3,
-        amsg      => '53686F7274204D657373616765',
-        amsg_utf8 => 'Short Message',
-        checksum  => 'D9',
+        trn        => '00',
+        len        => '00070',
+        o_r        => 'O',
+        ot         => '01',
+        adc        => '01234567890',
+        oadc       => '09876543210',
+        mt         => 3,
+        mt_message => 'Alphanumeric',
+        amsg       => '53686F7274204D657373616765',
+        amsg_utf8  => 'Short Message',
+        checksum   => 'D9',
     );
     my %args = %fields;
     delete $args{amsg};
@@ -66,14 +67,15 @@ do {
 do {
     my $str = '00/00041/O/01/0888444///2/716436383334/C5';
     my %fields = (
-        trn      => '00',
-        len      => '00041',
-        o_r      => 'O',
-        ot       => '01',
-        adc      => '0888444',
-        mt       => 2,
-        nmsg     => '716436383334',
-        checksum => 'C5',
+        trn        => '00',
+        len        => '00041',
+        o_r        => 'O',
+        ot         => '01',
+        adc        => '0888444',
+        mt         => 2,
+        mt_message => 'Numeric',
+        nmsg       => '716436383334',
+        checksum   => 'C5',
     );
     test_message 'Protocol::EMIUCP::Message::O_01', $str, \%fields;
 };
