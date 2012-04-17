@@ -42,6 +42,12 @@ sub new {
     return $self;
 };
 
+sub new_from_string {
+    my ($class, $str) = @_;
+    my %args = $class->parse_string($str);
+    $class->new(%args);
+};
+
 sub build_args {
     # Base class does nothing
 };
@@ -101,12 +107,6 @@ sub parse_string {
     @args{ @{ $class->list_field_names(\@fields) } } = @fields;
     map { delete $args{$_} } grep { not defined $args{$_} or $args{$_} eq '' } keys %args;
     return wantarray ? %args : \%args;
-};
-
-sub new_from_string {
-    my ($class, $str) = @_;
-    my %args = $class->parse_string($str);
-    $class->new(%args);
 };
 
 sub as_string {
