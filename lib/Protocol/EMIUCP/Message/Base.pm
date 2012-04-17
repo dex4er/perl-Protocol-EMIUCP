@@ -25,7 +25,7 @@ sub new {
     $class->build_args(\%args);
 
     my $self = +{};
-    my @field_names = $class->list_field_names(\%args);
+    my @field_names = @{ $class->list_field_names(\%args) };
     @{$self}{ @field_names } = @args{ @field_names };
     map { delete $self->{$_} } grep { not defined $self->{$_} or $self->{$_} eq '' } keys %$self;
     bless $self => $class;
@@ -87,19 +87,18 @@ sub list_data_field_names {
 
 sub list_field_names {
     my ($self, $fields) = @_;
-    my @names = (
+    return [
         qw( trn len o_r ot ),
         @{ $self->list_data_field_names($fields) },
         qw( checksum )
-    );
-    return wantarray ? @names : \@names;
+    ];
 };
 
 sub parse_string {
     my ($class, $str) = @_;
     my %args;
     my @fields = split '/', $str;
-    @args{ $class->list_field_names(\@fields) } = @fields;
+    @args{ @{ $class->list_field_names(\@fields) } } = @fields;
     map { delete $args{$_} } grep { not defined $args{$_} or $args{$_} eq '' } keys %args;
     return wantarray ? %args : \%args;
 };
@@ -112,7 +111,7 @@ sub new_from_string {
 
 sub as_string {
     my ($self) = @_;
-    join '/', map { defined $self->{$_} ? $self->{$_} : '' } $self->list_field_names;
+    join '/', map { defined $self->{$_} ? $self->{$_} : '' } @{ $self->list_field_names };
 };
 
 sub as_hashref {
