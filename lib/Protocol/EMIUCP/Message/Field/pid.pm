@@ -9,8 +9,8 @@ our $VERSION = '0.01';
 
 use Carp qw(confess);
 
-my %Constant_To_ID;
-my %ID_To_Message = (
+my %Constant_To_Code;
+my %Code_To_Message = (
     '0100' => 'Mobile Station',
     '0122' => 'Fax Group 3',
     '0131' => 'X.400',
@@ -22,26 +22,26 @@ my %ID_To_Message = (
     '0639' => 'PC via Abbreviated Number',
 );
 
-foreach my $id (keys %ID_To_Message) {
-    my $name = 'PID_' . $ID_To_Message{$id};
+foreach my $code (keys %Code_To_Message) {
+    my $name = 'PID_' . $Code_To_Message{$code};
     $name =~ tr/a-z/A-Z/;
     $name =~ s/\W/_/g;
-    $Constant_To_ID{$name} = $id;
+    $Constant_To_Code{$name} = $code;
 };
 
 sub import {
-    foreach my $name (keys %Constant_To_ID) {
-        my $id = $Constant_To_ID{$name};
+    foreach my $name (keys %Constant_To_Code) {
+        my $code = $Constant_To_Code{$name};
         my $caller = caller();
         no strict 'refs';
-        *{"${caller}::$name"} = sub () { $id };
+        *{"${caller}::$name"} = sub () { $code };
     };
 };
 
 sub build_pid_args {
     my ($class, $args) = @_;
 
-    $args->{pid} = $Constant_To_ID{ $args->{pid} }
+    $args->{pid} = $Constant_To_Code{ $args->{pid} }
         if defined $args->{pid} and $args->{pid} =~ /^PID_/;
 
     return $class;
@@ -64,7 +64,7 @@ sub list_pid_codes {
 
 sub pid_message {
     my ($self, $pid) = @_;
-    return $ID_To_Message{ defined $pid ? $pid : $self->{pid} };
+    return $Code_To_Message{ defined $pid ? $pid : $self->{pid} };
 };
 
 sub build_pid_hashref {

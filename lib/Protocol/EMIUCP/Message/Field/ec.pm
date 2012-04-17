@@ -9,8 +9,8 @@ our $VERSION = '0.01';
 
 use Carp qw(confess);
 
-my %Constant_To_ID;
-my %ID_To_Message = (
+my %Constant_To_Code;
+my %Code_To_Message = (
     '01' => 'Checksum error',
     '02' => 'Syntax error',
     '03' => 'Operation not supported by system',
@@ -24,26 +24,26 @@ my %ID_To_Message = (
     '26' => 'Message type not valid for the pager type',
 );
 
-foreach my $id (keys %ID_To_Message) {
-    my $name = 'EC_' . $ID_To_Message{$id};
+foreach my $code (keys %Code_To_Message) {
+    my $name = 'EC_' . $Code_To_Message{$code};
     $name =~ tr/a-z/A-Z/;
     $name =~ s/\W+/_/g;
-    $Constant_To_ID{$name} = $id;
+    $Constant_To_Code{$name} = $code;
 };
 
 sub import {
-    foreach my $name (keys %Constant_To_ID) {
-        my $id = $Constant_To_ID{$name};
+    foreach my $name (keys %Constant_To_Code) {
+        my $code = $Constant_To_Code{$name};
         my $caller = caller();
         no strict 'refs';
-        *{"${caller}::$name"} = sub () { $id };
+        *{"${caller}::$name"} = sub () { $code };
     };
 };
 
 sub build_ec_args {
     my ($class, $args) = @_;
 
-    $args->{ec} = $Constant_To_ID{ $args->{ec} }
+    $args->{ec} = $Constant_To_Code{ $args->{ec} }
         if defined $args->{ec} and $args->{ec} =~ /^EC_/;
 
     return $class;
@@ -66,7 +66,7 @@ sub list_ec_codes {
 
 sub ec_message {
     my ($self, $ec) = @_;
-    return $ID_To_Message{ defined $ec ? $ec : $self->{ec} };
+    return $Code_To_Message{ defined $ec ? $ec : $self->{ec} };
 };
 
 sub build_ec_hashref {
