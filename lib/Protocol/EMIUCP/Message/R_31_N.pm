@@ -9,6 +9,7 @@ our $VERSION = '0.01';
 
 use base qw(
     Protocol::EMIUCP::Message::Base::R_N
+    Protocol::EMIUCP::Message::Base::OT_31
     Protocol::EMIUCP::Message::Field::ec
 );
 
@@ -18,19 +19,14 @@ __PACKAGE__->make_accessors( [qw( ec sm )] );
 
 sub build_args {
     my ($class, $args) = @_;
-
-    $args->{ot} = '31' unless defined $args->{ot};
-
-    return $class->build_ec_args($args);
+    return $class->build_ot_31_args($args)
+                 ->build_ec_args($args);
 };
 
 sub validate {
     my ($self) = @_;
-
-    confess "Attribute (ot) is invalid, should be '31'"
-        if defined $self->{ot} and $self->{ot} ne '31';
-
-    return $self->validate_ec;
+    return $self->validate_ot_31
+                ->validate_ec;
 };
 
 sub list_data_field_names {
