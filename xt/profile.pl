@@ -10,4 +10,4 @@ foreach (1..10000) {
     die $msg->as_string if $msg->as_string ne $str;
 }
 
-print "tmon.out data collected. Call nytprofhtml\n";
+print "nytprof.out data collected. Call nytprofhtml --open\n";
