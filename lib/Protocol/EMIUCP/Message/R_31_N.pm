@@ -25,7 +25,8 @@ sub build_args {
 
 sub validate {
     my ($self) = @_;
-    return $self->validate_ot_31
+    return $self->SUPER::validate
+                ->validate_ot_31
                 ->validate_ec;
 };
 

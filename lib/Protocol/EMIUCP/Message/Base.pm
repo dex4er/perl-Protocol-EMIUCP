@@ -30,11 +30,6 @@ sub new {
     map { delete $self->{$_} } grep { not defined $self->{$_} or $self->{$_} eq '' } keys %$self;
     bless $self => $class;
 
-    confess "Attribute (len) has invalid value, should be " . $self->calculate_len
-        if defined $self->{len} and $self->{len} ne $self->calculate_len;
-    confess "Attribute (checksum) is invalid, should be " . $self->calculate_checksum
-        if defined $self->{checksum} and $self->{checksum} ne $self->calculate_checksum;
-
     if (not defined $self->{len}) {
         $self->{len} = $self->calculate_len;
         delete $self->{checksum};
@@ -52,7 +47,12 @@ sub build_args {
 };
 
 sub validate {
-    # Base class does nothing
+    my ($self) = @_;
+    confess "Attribute (len) has invalid value, should be " . $self->calculate_len
+        if defined $self->{len} and $self->{len} ne $self->calculate_len;
+    confess "Attribute (checksum) is invalid, should be " . $self->calculate_checksum
+        if defined $self->{checksum} and $self->{checksum} ne $self->calculate_checksum;
+    return $self;
 };
 
 sub calculate_len {

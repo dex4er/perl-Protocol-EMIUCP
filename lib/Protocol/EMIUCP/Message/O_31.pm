@@ -31,7 +31,8 @@ sub validate {
     confess "Attribute (adc) is invalid"
         unless $self->{adc}  =~ /^\d{1,16}$/;
 
-    return $self->validate_ot_31;
+    return $self->SUPER::validate
+                ->validate_ot_31;
 };
 
 use constant list_data_field_names => [ qw( adc pid ) ];

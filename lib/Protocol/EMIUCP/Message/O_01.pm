@@ -50,7 +50,8 @@ sub validate {
     confess "Attribute (amsg) is invalid"
         if defined $self->{amsg} and not $self->{amsg} =~ /^[\dA-F]{2,640}$/;
 
-    return $self->validate_ot_01
+    return $self->SUPER::validate
+                ->validate_ot_01
                 ->validate_mt;
 };
 

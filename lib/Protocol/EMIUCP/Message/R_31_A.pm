@@ -32,7 +32,8 @@ sub validate {
     confess "Attribute (sm) is invalid"
         if defined $self->{sm} and not $self->{sm} =~ /^\d{4}$/;
 
-    return $self->validate_ot_31;
+    return $self->SUPER::validate
+                ->validate_ot_31;
 };
 
 use constant list_data_field_names => [ qw( ack sm ) ];
