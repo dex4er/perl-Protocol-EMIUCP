@@ -42,7 +42,7 @@ sub list_data_field_names {
     return qw( adc pid );
 };
 
-sub list_pid_codes {
+sub list_pid_valid_codes {
     return qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 );
 };
 
