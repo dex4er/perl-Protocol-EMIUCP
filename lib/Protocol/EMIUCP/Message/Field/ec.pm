@@ -9,12 +9,12 @@ our $VERSION = '0.01';
 
 use Carp qw(confess);
 
-my %Constant_To_EC;
-my %EC_To_Message = (
+my %Constant_To_ID;
+my %ID_To_Message = (
     '01' => 'Checksum error',
     '02' => 'Syntax error',
     '03' => 'Operation not supported by system',
-    '04' => 'Operation not allowed (at this point in time)',
+    '04' => 'Operation not allowed',
     '05' => 'Call barring active',
     '06' => 'AdC invalid',
     '07' => 'Authentication failure',
@@ -24,27 +24,26 @@ my %EC_To_Message = (
     '26' => 'Message type not valid for the pager type',
 );
 
-foreach my $ec (keys %EC_To_Message) {
-    my $name = 'EC_' . $EC_To_Message{$ec};
+foreach my $id (keys %ID_To_Message) {
+    my $name = 'EC_' . $ID_To_Message{$id};
     $name =~ tr/a-z/A-Z/;
-    $name =~ s/[()]//g;
     $name =~ s/\W+/_/g;
-    $Constant_To_EC{$name} = $ec;
+    $Constant_To_ID{$name} = $id;
 };
 
 sub import {
-    foreach my $name (keys %Constant_To_EC) {
-        my $ec = $Constant_To_EC{$name};
+    foreach my $name (keys %Constant_To_ID) {
+        my $id = $Constant_To_ID{$name};
         my $caller = caller();
         no strict 'refs';
-        *{"${caller}::$name"} = sub () { $ec };
+        *{"${caller}::$name"} = sub () { $id };
     };
 };
 
 sub build_ec_args {
     my ($class, $args) = @_;
 
-    $args->{ec} = $Constant_To_EC{ $args->{ec} }
+    $args->{ec} = $Constant_To_ID{ $args->{ec} }
         if defined $args->{ec} and $args->{ec} =~ /^EC_/;
 
     return $class;
@@ -67,7 +66,7 @@ sub list_ec_codes {
 
 sub ec_message {
     my ($self, $ec) = @_;
-    return $EC_To_Message{ defined $ec ? $ec : $self->{ec} };
+    return $ID_To_Message{ defined $ec ? $ec : $self->{ec} };
 };
 
 sub build_ec_hashref {
