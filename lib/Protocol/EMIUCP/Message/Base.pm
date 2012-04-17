@@ -89,7 +89,7 @@ sub list_field_names {
     my ($self, $fields) = @_;
     my @names = (
         qw( trn len o_r ot ),
-        $self->list_data_field_names($fields),
+        @{ $self->list_data_field_names($fields) },
         qw( checksum )
     );
     return wantarray ? @names : \@names;

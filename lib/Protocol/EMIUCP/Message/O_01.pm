@@ -60,12 +60,10 @@ sub list_data_field_names {
            : (ref $fields || '') eq 'ARRAY' ? $fields->[7]
            : $fields->{mt};
     no warnings 'numeric';
-    return +( qw( adc oadc ac mt ), ( $mt == 2 ? 'nmsg' : 'amsg' ) );
+    return [ +( qw( adc oadc ac mt ), $mt == 2 ? 'nmsg' : 'amsg' ) ];
 };
 
-sub list_valid_mt_codes {
-    return qw( 2 3 4 );
-};
+use constant list_valid_mt_codes => [ qw( 2 3 4 ) ];
 
 sub amsg_utf8 {
     my ($self) = @_;

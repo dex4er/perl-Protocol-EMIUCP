@@ -35,8 +35,6 @@ sub validate {
     return $self->validate_ot_31;
 };
 
-sub list_data_field_names {
-    return qw( ack sm )
-};
+use constant list_data_field_names => [ qw( ack sm ) ];
 
 1;

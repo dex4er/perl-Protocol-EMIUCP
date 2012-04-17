@@ -29,9 +29,7 @@ sub validate {
                 ->validate_sm;
 };
 
-sub list_data_field_names {
-    return qw( ack sm );
-};
+use constant list_data_field_names => [ qw( ack sm ) ];
 
 sub build_hashref {
     my ($self, $hashref) = @_;

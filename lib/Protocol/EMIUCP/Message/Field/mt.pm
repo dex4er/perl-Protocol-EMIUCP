@@ -46,7 +46,7 @@ sub validate_mt {
     confess "Attribute (mt) is required"
         unless defined $self->{mt};
     confess "Attribute (mt) is invalid"
-        unless grep { $_ eq $self->{mt} } $self->list_valid_mt_codes;
+        unless grep { $_ eq $self->{mt} } @{ $self->list_valid_mt_codes };
 
     return $self;
 };

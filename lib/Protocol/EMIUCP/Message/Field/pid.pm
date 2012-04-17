@@ -53,7 +53,7 @@ sub validate_pid {
     confess "Attribute (pid) is required"
         unless defined $self->{pid};
     confess "Attribute (pid) is invalid"
-        unless grep { $_ eq $self->{pid} } $self->list_valid_pid_valid_codes;
+        unless grep { $_ eq $self->{pid} } @{ $self->list_valid_pid_valid_codes };
 
     return $self;
 };

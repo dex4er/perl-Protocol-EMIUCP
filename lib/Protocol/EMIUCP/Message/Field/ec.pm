@@ -55,7 +55,7 @@ sub validate_ec {
     confess "Attribute (ec) is required"
         unless defined $self->{ec};
     confess "Attribute (ec) is invalid"
-        unless grep { $_ eq $self->{ec} } $self->list_valid_ec_codes;
+        unless grep { $_ eq $self->{ec} } @{ $self->list_valid_ec_codes };
 
     return $self;
 };

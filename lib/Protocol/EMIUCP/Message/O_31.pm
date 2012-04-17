@@ -34,13 +34,9 @@ sub validate {
     return $self->validate_ot_31;
 };
 
-sub list_data_field_names {
-    return qw( adc pid );
-};
+use constant list_data_field_names => [ qw( adc pid ) ];
 
-sub list_valid_pid_codes {
-    return qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 );
-};
+use constant list_valid_pid_codes => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 ) ];
 
 sub build_hashref {
     my ($self, $hashref) = @_;
