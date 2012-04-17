@@ -50,7 +50,7 @@ use lib 'lib', '../lib';
 };
 
 
-use Protocol::EMIUCP;
+use Protocol::EMIUCP::Message;
 
 my $str_01 = '00/00070/O/01/01234567890/09876543210//3/53686F7274204D657373616765/D9';
 my $str_31 = '02/00035/O/31/0234765439845/0139/A0';

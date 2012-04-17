@@ -44,8 +44,7 @@ sub new {
 
 sub new_from_string {
     my ($class, $str) = @_;
-    my %args = $class->parse_string($str);
-    $class->new(%args);
+    return $class->new( %{ $class->parse_string($str) } );
 };
 
 sub build_args {
@@ -106,7 +105,7 @@ sub parse_string {
     my @fields = split '/', $str;
     @args{ @{ $class->list_field_names(\@fields) } } = @fields;
     map { delete $args{$_} } grep { not defined $args{$_} or $args{$_} eq '' } keys %args;
-    return wantarray ? %args : \%args;
+    return \%args;
 };
 
 sub as_string {
