@@ -25,8 +25,8 @@ sub new {
     $class->build_args(\%args);
 
     my $self = +{};
-    my @field_names = @{ $class->list_field_names(\%args) };
-    @{$self}{ @field_names } = @args{ @field_names };
+    my $field_names = $class->list_field_names(\%args);
+    @{$self}{ @$field_names } = @args{ @$field_names };
     map { delete $self->{$_} } grep { not defined $self->{$_} or $self->{$_} eq '' } keys %$self;
     bless $self => $class;
 
