@@ -15,6 +15,7 @@ our @EXPORT_OK = qw(
     decode_7bit_hex encode_7bit_hex
     decode_hex encode_hex
     from_hex_to_utf8 from_utf8_to_hex
+    from_7bit_hex_to_utf8 from_utf8_to_7bit_hex
     load_class
 );
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
@@ -86,6 +87,18 @@ sub from_utf8_to_hex ($) {
 sub from_hex_to_utf8 ($) {
     my ($hex) = @_;
     return encode "UTF-8", decode "GSM0338", pack "H*", $hex
+};
+
+# Convert between UTF-8 and GSM 03.38 7-bit hex string
+sub from_utf8_to_7bit_hex ($) {
+    my ($str) = @_;
+    return encode_7bit_hex encode "GSM0338", decode "UTF-8", $str;
+};
+
+# Convert between GSM 03.38 7-bit hex string and UTF-8
+sub from_7bit_hex_to_utf8 ($) {
+    my ($hex) = @_;
+    return encode "UTF-8", decode "GSM0338", decode_7bit_hex $hex
 };
 
 
