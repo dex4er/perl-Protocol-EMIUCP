@@ -19,22 +19,25 @@ __PACKAGE__->make_accessors( [qw( sm )] );
 
 sub build_args {
     my ($class, $args) = @_;
-    return $class->build_ot_01_args($args)
-                 ->build_sm_args($args);
+    return $class
+        ->build_ot_01_args($args)
+        ->build_sm_args($args);
 };
 
 sub validate {
     my ($self) = @_;
-    return $self->SUPER::validate
-                ->validate_ot_01
-                ->validate_sm;
+    return $self
+        ->SUPER::validate
+        ->validate_ot_01
+        ->validate_sm;
 };
 
 use constant list_data_field_names => [ qw( ack sm ) ];
 
 sub build_hashref {
     my ($self, $hashref) = @_;
-    return $self->build_sm_hashref($hashref);
+    return $self
+        ->build_sm_hashref($hashref);
 };
 
 1;

@@ -32,8 +32,9 @@ sub build_args {
     $args->{amsg} = from_utf8_to_hex $args->{amsg_utf8}
         if defined $args->{amsg_utf8};
 
-    return $class->build_ot_01_args($args)
-                 ->build_mt_args($args);
+    return $class
+        ->build_ot_01_args($args)
+        ->build_mt_args($args);
 };
 
 sub validate {
@@ -50,9 +51,10 @@ sub validate {
     confess "Attribute (amsg) is invalid"
         if defined $self->{amsg} and not $self->{amsg} =~ /^[\dA-F]{2,640}$/;
 
-    return $self->SUPER::validate
-                ->validate_ot_01
-                ->validate_mt;
+    return $self
+        ->SUPER::validate
+        ->validate_ot_01
+        ->validate_mt;
 };
 
 sub list_data_field_names {
@@ -74,7 +76,8 @@ sub amsg_utf8 {
 sub build_hashref {
     my ($self, $hashref) = @_;
     $hashref->{amsg_utf8} = $self->amsg_utf8 if defined $hashref->{amsg};
-    return $self->build_mt_hashref($hashref);
+    return $self
+        ->build_mt_hashref($hashref);
 };
 
 1;

@@ -23,7 +23,8 @@ sub build_args {
     $args->{sm} = sprintf '%04d', $args->{sm}
         if defined $args->{sm} and looks_like_number $args->{sm};
 
-    return $class->build_ot_31_args($args);
+    return $class
+        ->build_ot_31_args($args);
 };
 
 sub validate {
@@ -32,8 +33,9 @@ sub validate {
     confess "Attribute (sm) is invalid"
         if defined $self->{sm} and not $self->{sm} =~ /^\d{4}$/;
 
-    return $self->SUPER::validate
-                ->validate_ot_31;
+    return $self
+        ->SUPER::validate
+        ->validate_ot_31;
 };
 
 use constant list_data_field_names => [ qw( ack sm ) ];
