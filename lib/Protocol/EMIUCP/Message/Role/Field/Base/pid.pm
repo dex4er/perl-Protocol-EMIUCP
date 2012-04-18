@@ -9,9 +9,9 @@ our $VERSION = '0.01';
 
 use Carp qw(confess);
 
-my %Constant_To_Code;
+my %Constant_To_Value;
 
-my %Code_To_Message = (
+my %Value_To_Description = (
     '0100' => 'Mobile Station',
     '0122' => 'Fax Group 3',
     '0131' => 'X.400',
@@ -23,18 +23,18 @@ my %Code_To_Message = (
     '0639' => 'PC via Abbreviated Number',
 );
 
-foreach my $code (keys %Code_To_Message) {
-    my $name = $Code_To_Message{$code};
+foreach my $code (keys %Value_To_Description) {
+    my $name = $Value_To_Description{$code};
     $name =~ tr/a-z/A-Z/;
     $name =~ s/\W/_/g;
-    $Constant_To_Code{$name} = $code;
+    $Constant_To_Value{$name} = $code;
 };
 
 sub _import_base_pid {
     my ($class, $field, $args) = @_;
 
-    foreach my $name (keys %Constant_To_Code) {
-        my $code = uc($field) . '_' . $Constant_To_Code{$name};
+    foreach my $name (keys %Constant_To_Value) {
+        my $code = uc($field) . '_' . $Constant_To_Value{$name};
         my $caller = $args->{caller};
         no strict 'refs';
         *{"${caller}::$name"} = sub () { $code };
@@ -46,7 +46,7 @@ sub _build_base_pid_args {
 
     my $uc_field = uc($field);
 
-    $args->{$field} = $Constant_To_Code{$1}
+    $args->{$field} = $Constant_To_Value{$1}
         if defined $args->{$field} and $args->{$field} =~ /^${uc_field}_(.*)$/;
 
     return $class;
@@ -55,7 +55,7 @@ sub _build_base_pid_args {
 sub _validate_base_pid {
     my ($self, $field) = @_;
 
-    my $validator = "list_valid_${field}_codes";
+    my $validator = "list_valid_${field}_values";
 
     confess "Attribute ($field) is required"
         unless defined $self->{$field};
@@ -65,18 +65,18 @@ sub _validate_base_pid {
     return $self;
 };
 
-sub _base_pid_message {
+sub _base_pid_description {
     my ($self, $field, $code) = @_;
-    return $Code_To_Message{ defined $code ? $code : $self->{$field} };
+    return $Value_To_Description{ defined $code ? $code : $self->{$field} };
 };
 
 sub _build_base_pid_hashref {
     my ($self, $field, $hashref) = @_;
 
-    my $field_message = "${field}_message";
+    my $field_description = "${field}_description";
 
     if (defined $hashref->{$field}) {
-        $hashref->{$field_message} = $self->$field_message;
+        $hashref->{$field_description} = $self->$field_description;
     };
 
     return $self;

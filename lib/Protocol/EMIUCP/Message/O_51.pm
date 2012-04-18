@@ -36,8 +36,8 @@ sub validate {
         ->validate_ot_51;
 };
 
-use constant list_valid_npid_codes => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 ) ];
+use constant list_valid_npid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 ) ];
 
-use constant list_valid_lpid_codes => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 ) ];
+use constant list_valid_lpid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 ) ];
 
 1;

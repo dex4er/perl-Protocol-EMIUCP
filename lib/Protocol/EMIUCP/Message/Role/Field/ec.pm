@@ -9,9 +9,9 @@ our $VERSION = '0.01';
 
 use Carp qw(confess);
 
-my %Constant_To_Code;
+my %Constant_To_Value;
 
-my %Code_To_Message = (
+my %Value_To_Description = (
     '01' => 'Checksum error',
     '02' => 'Syntax error',
     '03' => 'Operation not supported by system',
@@ -20,31 +20,31 @@ my %Code_To_Message = (
     '06' => 'AdC invalid',
     '07' => 'Authentication failure',
     '08' => 'Legitimisation code for all calls, failure',
-    '23' => 'Message type not supported by system',
-    '24' => 'Message too long',
-    '26' => 'Message type not valid for the pager type',
+    '23' => 'Description type not supported by system',
+    '24' => 'Description too long',
+    '26' => 'Description type not valid for the pager type',
 );
 
-foreach my $code (keys %Code_To_Message) {
-    my $name = 'EC_' . $Code_To_Message{$code};
+foreach my $value (keys %Value_To_Description) {
+    my $name = 'EC_' . $Value_To_Description{$value};
     $name =~ tr/a-z/A-Z/;
     $name =~ s/\W+/_/g;
-    $Constant_To_Code{$name} = $code;
+    $Constant_To_Value{$name} = $value;
 };
 
 sub import_ec {
-    foreach my $name (keys %Constant_To_Code) {
-        my $code = $Constant_To_Code{$name};
+    foreach my $name (keys %Constant_To_Value) {
+        my $value = $Constant_To_Value{$name};
         my $caller = caller();
         no strict 'refs';
-        *{"${caller}::$name"} = sub () { $code };
+        *{"${caller}::$name"} = sub () { $value };
     };
 };
 
 sub build_ec_args {
     my ($class, $args) = @_;
 
-    $args->{ec} = $Constant_To_Code{ $args->{ec} }
+    $args->{ec} = $Constant_To_Value{ $args->{ec} }
         if defined $args->{ec} and $args->{ec} =~ /^EC_/;
 
     return $class;
@@ -56,24 +56,24 @@ sub validate_ec {
     confess "Attribute (ec) is required"
         unless defined $self->{ec};
     confess "Attribute (ec) is invalid"
-        unless grep { $_ eq $self->{ec} } @{ $self->list_valid_ec_codes };
+        unless grep { $_ eq $self->{ec} } @{ $self->list_valid_ec_values };
 
     return $self;
 };
 
-sub list_valid_ec_codes {
-    confess "Method (list_valid_ec_codes) have to be overrided by derived class method";
+sub list_valid_ec_values {
+    confess "Method (list_valid_ec_values) have to be overrided by derived class method";
 };
 
-sub ec_message {
-    my ($self, $code) = @_;
-    return $Code_To_Message{ defined $code ? $code : $self->{ec} };
+sub ec_description {
+    my ($self, $value) = @_;
+    return $Value_To_Description{ defined $value ? $value : $self->{ec} };
 };
 
 sub build_ec_hashref {
     my ($self, $hashref) = @_;
     if (defined $hashref->{ec}) {
-        $hashref->{ec_message} = $self->ec_message;
+        $hashref->{ec_description} = $self->ec_description;
     };
     return $self;
 };

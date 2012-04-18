@@ -13,7 +13,7 @@ my %Methods = (
     import_pid        => '_import_base_pid',
     build_pid_args    => '_build_base_pid_args',
     validate_pid      => '_validate_base_pid',
-    pid_message       => '_base_pid_message',
+    pid_description   => '_base_pid_description',
     build_pid_hashref => '_build_base_pid_hashref',
 );
 

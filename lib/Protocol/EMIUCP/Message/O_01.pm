@@ -68,7 +68,7 @@ sub list_data_field_names {
     return [ +( qw( adc oadc ac mt ), $mt == 2 ? 'nmsg' : 'amsg' ) ];
 };
 
-use constant list_valid_mt_codes => [ qw( 2 3 4 ) ];
+use constant list_valid_mt_values => [ qw( 2 3 4 ) ];
 
 sub amsg_utf8 {
     my ($self) = @_;
