@@ -16,7 +16,7 @@ use lib 'lib', '../lib';
     }
 };
 
-{
+eval q{
     package My::Moose;
     use Moose;
     has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
@@ -32,7 +32,7 @@ use lib 'lib', '../lib';
     }
 };
 
-{
+eval q{
     package My::MooseImmutable;
     use Moose;
     has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
@@ -62,6 +62,7 @@ my %tests = (
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
+    Moose->VERSION ? (
     '2_Moose' => sub {
 
         my $msg = My::Moose->new($str_01);
@@ -74,6 +75,7 @@ my %tests = (
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
+    ) : (),
     '4_EMIUCP_01' => sub {
 
         my $msg = Protocol::EMIUCP::Message->new_from_string($str_01);
