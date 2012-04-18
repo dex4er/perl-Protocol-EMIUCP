@@ -10,6 +10,7 @@ our $VERSION = '0.01';
 use Carp qw(confess);
 
 my %Constant_To_Code;
+
 my %Code_To_Message = (
     '01' => 'Checksum error',
     '02' => 'Syntax error',
@@ -65,8 +66,8 @@ sub list_valid_ec_codes {
 };
 
 sub ec_message {
-    my ($self, $ec) = @_;
-    return $Code_To_Message{ defined $ec ? $ec : $self->{ec} };
+    my ($self, $code) = @_;
+    return $Code_To_Message{ defined $code ? $code : $self->{ec} };
 };
 
 sub build_ec_hashref {

@@ -10,6 +10,7 @@ our $VERSION = '0.01';
 use Carp qw(confess);
 
 my %Constant_To_Code;
+
 my %Code_To_Message = (
     '0100' => 'Mobile Station',
     '0122' => 'Fax Group 3',
@@ -63,8 +64,8 @@ sub list_valid_pid_codes {
 };
 
 sub pid_message {
-    my ($self, $pid) = @_;
-    return $Code_To_Message{ defined $pid ? $pid : $self->{pid} };
+    my ($self, $code) = @_;
+    return $Code_To_Message{ defined $code ? $code : $self->{pid} };
 };
 
 sub build_pid_hashref {

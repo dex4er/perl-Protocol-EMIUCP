@@ -10,6 +10,7 @@ our $VERSION = '0.01';
 use Carp qw(confess);
 
 my %Constant_To_Code;
+
 my %Code_To_Message = (
     '2' => 'Numeric',
     '3' => 'Alphanumeric',
@@ -56,8 +57,8 @@ sub list_valid_mt_codes {
 };
 
 sub mt_message {
-    my ($self, $mt) = @_;
-    return $Code_To_Message{ defined $mt ? $mt : $self->{mt} };
+    my ($self, $code) = @_;
+    return $Code_To_Message{ defined $code ? $code : $self->{mt} };
 };
 
 sub build_mt_hashref {
