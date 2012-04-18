@@ -36,6 +36,11 @@ sub validate {
 
 use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ) ];
 
+sub oadc_utf8 {
+    my ($self) = @_;
+    return from_7bit_hex_to_utf8 $self->{oadc};
+};
+
 sub build_hashref {
     my ($self, $hashref) = @_;
     $hashref->{oadc_utf8} = $self->oadc_utf8 if defined $hashref->{oadc}; # TODO and $hashref->{otoa} eq '5039'
