@@ -17,6 +17,12 @@ use Carp qw(confess);
 
 __PACKAGE__->make_accessors( [qw( adc pid )] );
 
+sub import {
+    my ($class, %args) = @_;
+    $args{caller} = caller() unless defined $args{caller};
+    $class->import_pid(\%args);
+};
+
 sub build_args {
     my ($class, $args) = @_;
     return $class
