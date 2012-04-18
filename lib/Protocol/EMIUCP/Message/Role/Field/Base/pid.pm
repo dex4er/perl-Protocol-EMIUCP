@@ -23,21 +23,21 @@ my %Value_To_Description = (
     '0639' => 'PC via Abbreviated Number',
 );
 
-foreach my $code (keys %Value_To_Description) {
-    my $name = $Value_To_Description{$code};
+while (my ($value, $name) = each %Value_To_Description) {
     $name =~ tr/a-z/A-Z/;
     $name =~ s/\W/_/g;
-    $Constant_To_Value{$name} = $code;
+    $Constant_To_Value{$name} = $value;
 };
 
 sub _import_base_pid {
     my ($class, $field, $args) = @_;
 
-    foreach my $name (keys %Constant_To_Value) {
-        my $code = uc($field) . '_' . $Constant_To_Value{$name};
+    my $uc_field = uc($field);
+
+    while (my ($name, $value) = each %Constant_To_Value) {
         my $caller = $args->{caller};
         no strict 'refs';
-        *{"${caller}::$name"} = sub () { $code };
+        *{"${caller}::${uc_field}_$name"} = sub () { $value };
     };
 };
 
@@ -66,8 +66,8 @@ sub _validate_base_pid {
 };
 
 sub _base_pid_description {
-    my ($self, $field, $code) = @_;
-    return $Value_To_Description{ defined $code ? $code : $self->{$field} };
+    my ($self, $field, $value) = @_;
+    return $Value_To_Description{ defined $value ? $value : $self->{$field} };
 };
 
 sub _build_base_pid_hashref {

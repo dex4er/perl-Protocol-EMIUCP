@@ -22,28 +22,26 @@ my %Bits_To_Description = (
     4 => 'ND',
 );
 
-foreach my $code (1..7) {
-    my $message = join '+', grep { $_ } map { $Bits_To_Description{$code & $_} } reverse sort keys %Bits_To_Description;
-    $Value_To_Description{$code} = $message;
-    my $name = 'NT_' . $message;
-    $name =~ s/\W/_/g;
-    $Constant_To_Value{$name} = $code;
+foreach my $value (1..7) {
+    my $message = join '+', grep { $_ } map { $Bits_To_Description{$value & $_} } reverse sort keys %Bits_To_Description;
+    $Value_To_Description{$value} = $message;
+    (my $name = $message) =~ s/\W/_/g;
+    $Constant_To_Value{$name} = $value;
 };
 
 sub import_nt {
-    foreach my $name (keys %Constant_To_Value) {
-        my $code = $Constant_To_Value{$name};
+    while (my ($name, $value) = each %Constant_To_Value) {
         my $caller = caller();
         no strict 'refs';
-        *{"${caller}::$name"} = sub () { $code };
+        *{"${caller}::NT_$name"} = sub () { $value };
     };
 };
 
 sub build_nt_args {
     my ($class, $args) = @_;
 
-    $args->{nt} = $Constant_To_Value{ $args->{nt} }
-        if defined $args->{nt} and $args->{nt} =~ /^NT_/;
+    $args->{nt} = $Constant_To_Value{$1}
+        if defined $args->{nt} and $args->{nt} =~ /^NT_(.*)$/;
 
     return $class;
 };
@@ -58,8 +56,8 @@ sub validate_nt {
 };
 
 sub nt_description {
-    my ($self, $code) = @_;
-    return $Value_To_Description{ defined $code ? $code : $self->{nt} };
+    my ($self, $value) = @_;
+    return $Value_To_Description{ defined $value ? $value : $self->{nt} };
 };
 
 sub build_nt_hashref {

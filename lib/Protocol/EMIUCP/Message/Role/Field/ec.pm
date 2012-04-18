@@ -25,27 +25,25 @@ my %Value_To_Description = (
     '26' => 'Description type not valid for the pager type',
 );
 
-foreach my $value (keys %Value_To_Description) {
-    my $name = 'EC_' . $Value_To_Description{$value};
+while (my ($value, $name) = each %Value_To_Description) {
     $name =~ tr/a-z/A-Z/;
     $name =~ s/\W+/_/g;
     $Constant_To_Value{$name} = $value;
 };
 
 sub import_ec {
-    foreach my $name (keys %Constant_To_Value) {
-        my $value = $Constant_To_Value{$name};
+    while (my ($name, $value) = each %Constant_To_Value) {
         my $caller = caller();
         no strict 'refs';
-        *{"${caller}::$name"} = sub () { $value };
+        *{"${caller}::EC_$name"} = sub () { $value };
     };
 };
 
 sub build_ec_args {
     my ($class, $args) = @_;
 
-    $args->{ec} = $Constant_To_Value{ $args->{ec} }
-        if defined $args->{ec} and $args->{ec} =~ /^EC_/;
+    $args->{ec} = $Constant_To_Value{$1}
+        if defined $args->{ec} and $args->{ec} =~ /^EC_(.*)$/;
 
     return $class;
 };

@@ -17,26 +17,24 @@ my %Value_To_Description = (
     '4' => 'Transparent',
 );
 
-foreach my $code (keys %Value_To_Description) {
-    my $name = 'MT_' . $Value_To_Description{$code};
+while (my ($value, $name) = each %Value_To_Description) {
     $name =~ tr/a-z/A-Z/;
-    $Constant_To_Value{$name} = $code;
+    $Constant_To_Value{$name} = $value;
 };
 
 sub import_mt {
-    foreach my $name (keys %Constant_To_Value) {
-        my $code = $Constant_To_Value{$name};
+    while (my ($name, $value) = each %Constant_To_Value) {
         my $caller = caller();
         no strict 'refs';
-        *{"${caller}::$name"} = sub () { $code };
+        *{"${caller}::MT_$name"} = sub () { $value };
     };
 };
 
 sub build_mt_args {
     my ($class, $args) = @_;
 
-    $args->{mt} = $Constant_To_Value{ $args->{mt} }
-        if defined $args->{mt} and $args->{mt} =~ /^MT_/;
+    $args->{mt} = $Constant_To_Value{$1}
+        if defined $args->{mt} and $args->{mt} =~ /^MT_(.*)$/;
 
     return $class;
 };
