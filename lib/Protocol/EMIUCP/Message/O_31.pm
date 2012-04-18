@@ -8,10 +8,10 @@ use warnings;
 our $VERSION = '0.01';
 
 use base qw(
-    Protocol::EMIUCP::Message::Object
-    Protocol::EMIUCP::Message::Role::O
-    Protocol::EMIUCP::Message::Role::OT_31
     Protocol::EMIUCP::Message::Role::Field::pid
+    Protocol::EMIUCP::Message::Role::OT_31
+    Protocol::EMIUCP::Message::Role::O
+    Protocol::EMIUCP::Message::Object
 );
 
 use Carp qw(confess);

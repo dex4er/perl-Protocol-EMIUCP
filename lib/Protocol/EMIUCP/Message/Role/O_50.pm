@@ -8,9 +8,10 @@ use warnings;
 our $VERSION = '0.01';
 
 use base qw(
-    Protocol::EMIUCP::Message::Role::O
-    Protocol::EMIUCP::Message::Role::OT_50
     Protocol::EMIUCP::Message::Role::Field::nt
+    Protocol::EMIUCP::Message::Role::Field::npid
+    Protocol::EMIUCP::Message::Role::OT_50
+    Protocol::EMIUCP::Message::Role::O
 );
 
 use Carp qw(confess);
@@ -27,7 +28,8 @@ sub build_o_50_args {
         if exists $args->{nrq} and not $args->{nrq};
 
     return $class
-        ->build_nt_args($args);
+        ->build_nt_args($args)
+        ->build_npid_args($args);
 };
 
 sub validate_o_50 {
@@ -45,7 +47,8 @@ sub validate_o_50 {
         if defined $self->{nadc} and not $self->{nadc} =~ /^\d{1,16}$/;
 
     return $self
-        ->validate_nt;
+        ->validate_nt
+        ->validate_npid;
 };
 
 use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ) ];
@@ -59,7 +62,8 @@ sub build_hashref {
     my ($self, $hashref) = @_;
     $hashref->{oadc_utf8} = $self->oadc_utf8 if defined $hashref->{oadc}; # TODO and $hashref->{otoa} eq '5039'
     return $self
-        ->build_nt_hashref($hashref);
+        ->build_nt_hashref($hashref)
+        ->build_npid_hashref($hashref);
 };
 
 1;
