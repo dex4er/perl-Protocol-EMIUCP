@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Field::pid;
+package Protocol::EMIUCP::Message::Role::Field::pid;
 
 use 5.006;
 
@@ -7,7 +7,7 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw(Protocol::EMIUCP::Message::Field::Base::pid);
+use base qw(Protocol::EMIUCP::Message::Role::Field::Base::pid);
 
 my %Methods = (
     import_pid        => '_import_base_pid',

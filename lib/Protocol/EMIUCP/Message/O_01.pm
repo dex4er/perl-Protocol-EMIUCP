@@ -8,15 +8,16 @@ use warnings;
 our $VERSION = '0.01';
 
 use base qw(
-    Protocol::EMIUCP::Message::Base::O
-    Protocol::EMIUCP::Message::Base::OT_01
-    Protocol::EMIUCP::Message::Field::mt
+    Protocol::EMIUCP::Message::Object
+    Protocol::EMIUCP::Message::Role::O
+    Protocol::EMIUCP::Message::Role::OT_01
+    Protocol::EMIUCP::Message::Role::Field::mt
 );
 
 use Carp qw(confess);
-use Protocol::EMIUCP::Util qw( from_hex_to_utf8 from_utf8_to_hex );
+use Protocol::EMIUCP::Util qw( has from_hex_to_utf8 from_utf8_to_hex );
 
-__PACKAGE__->make_accessors( [qw( adc oadc ac mt nmsg amsg )] );
+has [qw( adc oadc ac mt nmsg amsg )];
 
 sub build_args {
     my ($class, $args) = @_;
@@ -33,6 +34,7 @@ sub build_args {
         if defined $args->{amsg_utf8};
 
     return $class
+        ->build_o_args($args)
         ->build_ot_01_args($args)
         ->build_mt_args($args);
 };
@@ -52,7 +54,7 @@ sub validate {
         if defined $self->{amsg} and not $self->{amsg} =~ /^[\dA-F]{2,640}$/;
 
     return $self
-        ->SUPER::validate
+        ->validate_o
         ->validate_ot_01
         ->validate_mt;
 };

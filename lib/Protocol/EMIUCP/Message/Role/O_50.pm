@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Base::O_50;
+package Protocol::EMIUCP::Message::Role::O_50;
 
 use 5.006;
 
@@ -8,16 +8,17 @@ use warnings;
 our $VERSION = '0.01';
 
 use base qw(
-    Protocol::EMIUCP::Message::Base::O
-    Protocol::EMIUCP::Message::Field::nt
+    Protocol::EMIUCP::Message::Role::O
+    Protocol::EMIUCP::Message::Role::OT_50
+    Protocol::EMIUCP::Message::Role::Field::nt
 );
 
 use Carp qw(confess);
-use Protocol::EMIUCP::Util qw( from_7bit_hex_to_utf8 from_utf8_to_7bit_hex );
+use Protocol::EMIUCP::Util qw( has from_7bit_hex_to_utf8 from_utf8_to_7bit_hex );
 
-__PACKAGE__->make_accessors( [qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd )] );
+has [qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd )];
 
-sub build_args {
+sub build_o_50_args {
     my ($class, $args) = @_;
 
     $args->{oadc} = from_utf8_to_7bit_hex $args->{oadc_utf8}
@@ -29,7 +30,7 @@ sub build_args {
         ->build_nt_args($args);
 };
 
-sub validate {
+sub validate_o_50 {
     my ($self) = @_;
 
     confess "Attribute (adc) is invalid"
@@ -44,7 +45,6 @@ sub validate {
         if defined $self->{nadc} and not $self->{nadc} =~ /^\d{1,16}$/;
 
     return $self
-        ->SUPER::validate
         ->validate_nt;
 };
 

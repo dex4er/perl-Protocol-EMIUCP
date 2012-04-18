@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Field::Base::pid;
+package Protocol::EMIUCP::Message::Role::Field::Base::pid;
 
 use 5.006;
 

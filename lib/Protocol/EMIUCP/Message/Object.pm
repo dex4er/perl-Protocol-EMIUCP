@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Base;
+package Protocol::EMIUCP::Message::Object;
 
 use 5.006;
 
@@ -9,8 +9,9 @@ our $VERSION = '0.01';
 
 use Carp qw(confess);
 use List::Util qw(sum);
+use Protocol::EMIUCP::Util qw(has);
 
-__PACKAGE__->make_accessors( [qw( trn len o_r ot checksum )] );
+has [qw( trn len o_r ot checksum )];
 
 sub new {
     my ($class, %args) = @_;
@@ -122,16 +123,6 @@ sub as_hashref {
 
 sub build_hashref {
     # Base class does nothing
-};
-
-sub make_accessors {
-    my ($class, $attrs) = @_;
-    my $caller = caller();
-    no strict 'refs';
-    foreach my $name (@$attrs) {
-        *{"${caller}::$name"}     = sub { $_[0]->{$name} };
-        *{"${caller}::has_$name"} = sub { exists $_[0]->{$name} };
-    };
 };
 
 1;

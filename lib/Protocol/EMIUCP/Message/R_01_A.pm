@@ -8,14 +8,16 @@ use warnings;
 our $VERSION = '0.01';
 
 use base qw(
-    Protocol::EMIUCP::Message::Base::R_A
-    Protocol::EMIUCP::Message::Base::OT_01
-    Protocol::EMIUCP::Message::Field::sm_adc_scts
+    Protocol::EMIUCP::Message::Object
+    Protocol::EMIUCP::Message::Role::R_A
+    Protocol::EMIUCP::Message::Role::OT_01
+    Protocol::EMIUCP::Message::Role::Field::sm_adc_scts
 );
 
 use Carp qw(confess);
+use Protocol::EMIUCP::Util qw(has);
 
-__PACKAGE__->make_accessors( [qw( sm )] );
+has [qw( sm )];
 
 sub build_args {
     my ($class, $args) = @_;
@@ -27,7 +29,7 @@ sub build_args {
 sub validate {
     my ($self) = @_;
     return $self
-        ->SUPER::validate
+        ->validate_r_a
         ->validate_ot_01
         ->validate_sm;
 };

@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Field::ec;
+package Protocol::EMIUCP::Message::Role::Field::ec;
 
 use 5.006;
 
@@ -32,7 +32,7 @@ foreach my $code (keys %Code_To_Message) {
     $Constant_To_Code{$name} = $code;
 };
 
-sub import {
+sub import_ec {
     foreach my $name (keys %Constant_To_Code) {
         my $code = $Constant_To_Code{$name};
         my $caller = caller();

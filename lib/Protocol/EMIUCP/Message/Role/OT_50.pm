@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Base::OT_50;
+package Protocol::EMIUCP::Message::Role::OT_50;
 
 use 5.006;
 

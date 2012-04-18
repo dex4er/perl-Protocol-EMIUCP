@@ -8,8 +8,9 @@ use warnings;
 our $VERSION = '0.01';
 
 use base qw(
-    Protocol::EMIUCP::Message::Base::O_50
-    Protocol::EMIUCP::Message::Base::OT_51
+    Protocol::EMIUCP::Message::Object
+    Protocol::EMIUCP::Message::Role::O_50
+    Protocol::EMIUCP::Message::Role::OT_51
 );
 
 use Carp qw(confess);
@@ -18,7 +19,7 @@ sub build_args {
     my ($class, $args) = @_;
 
     return $class
-        ->SUPER::build_args($args)
+        ->build_o_50_args($args)
         ->build_ot_51_args($args);
 };
 
@@ -31,7 +32,7 @@ sub validate {
         unless defined $self->{oadc};
 
     return $self
-        ->SUPER::validate
+        ->validate_o
         ->validate_ot_51;
 };
 

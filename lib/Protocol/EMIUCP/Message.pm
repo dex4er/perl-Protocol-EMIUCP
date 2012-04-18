@@ -11,9 +11,7 @@ our $VERSION = '0.01';
 # Factory class
 
 use Carp qw(confess);
-use Protocol::EMIUCP::Util;
-
-use Protocol::EMIUCP::Message::Field::ec;
+use Protocol::EMIUCP::Util qw(load_class);
 
 sub _find_new_class_from_args {
     my ($class, $args) = @_;
@@ -36,7 +34,7 @@ sub _find_new_class_from_args {
     $new_class .= '_A' if $args->{ack};
     $new_class .= '_N' if $args->{nack};
 
-    Protocol::EMIUCP::Util::load_class($new_class);
+    load_class($new_class);
 
     return $new_class;
 };

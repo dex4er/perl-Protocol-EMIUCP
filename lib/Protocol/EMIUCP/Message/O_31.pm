@@ -8,14 +8,16 @@ use warnings;
 our $VERSION = '0.01';
 
 use base qw(
-    Protocol::EMIUCP::Message::Base::O
-    Protocol::EMIUCP::Message::Base::OT_31
-    Protocol::EMIUCP::Message::Field::pid
+    Protocol::EMIUCP::Message::Object
+    Protocol::EMIUCP::Message::Role::O
+    Protocol::EMIUCP::Message::Role::OT_31
+    Protocol::EMIUCP::Message::Role::Field::pid
 );
 
 use Carp qw(confess);
+use Protocol::EMIUCP::Util qw(has);
 
-__PACKAGE__->make_accessors( [qw( adc pid )] );
+has [qw( adc pid )];
 
 sub import {
     my ($class, %args) = @_;
@@ -39,7 +41,7 @@ sub validate {
         unless $self->{adc}  =~ /^\d{1,16}$/;
 
     return $self
-        ->SUPER::validate
+        ->validate_o
         ->validate_ot_31;
 };
 

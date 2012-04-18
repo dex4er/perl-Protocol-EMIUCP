@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Field::sm_adc_scts;
+package Protocol::EMIUCP::Message::Role::Field::sm_adc_scts;
 
 use 5.006;
 
