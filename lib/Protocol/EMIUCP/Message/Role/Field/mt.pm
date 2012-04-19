@@ -45,10 +45,8 @@ sub build_mt_args {
 sub validate_mt {
     my ($self) = @_;
 
-    confess "Attribute (mt) is required"
-        unless defined $self->{mt};
     confess "Attribute (mt) is invalid"
-        unless grep { $_ eq $self->{mt} } @{ $self->list_valid_mt_values };
+        if defined $self->{mt} and not grep { $_ eq $self->{mt} } @{ $self->list_valid_mt_values };
 
     return $self;
 };

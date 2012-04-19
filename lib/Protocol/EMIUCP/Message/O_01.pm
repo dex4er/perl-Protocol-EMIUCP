@@ -19,7 +19,7 @@ use Protocol::EMIUCP::Util qw( has from_hex_to_utf8 from_utf8_to_hex );
 
 has [qw( adc oadc ac nmsg amsg )];
 
-use constant list_valid_mt_values => [ qw( 2 3 4 ) ];
+use constant list_valid_mt_values => [ qw( 2 3 ) ];
 
 sub build_args {
     my ($class, $args) = @_;
@@ -44,8 +44,13 @@ sub build_args {
 sub validate {
     my ($self) = @_;
 
+    confess "Attribute (adc) is required"
+        unless defined $self->{adc};
+    confess "Attribute (mt) is required"
+        unless defined $self->{mt};
+
     confess "Attribute (adc) is invalid"
-        if defined $self->{adc}  and not $self->{adc}  =~ /^\d{1,16}$/;
+        unless $self->{adc}  =~ /^\d{1,16}$/;
     confess "Attribute (oadc) is invalid"
         if defined $self->{oadc} and not $self->{oadc} =~ /^\d{1,16}$/;
     confess "Attribute (ac) is invalid"
@@ -61,13 +66,16 @@ sub validate {
         ->validate_mt;
 };
 
+my @MT_To_Field;
+@MT_To_Field[2, 3] = qw( nmsg amsg );
+
 sub list_data_field_names {
     my ($self, $fields) = @_;
     my $mt = ref $self ? $self->{mt}
            : (ref $fields || '') eq 'ARRAY' ? $fields->[7]
            : $fields->{mt};
     no warnings 'numeric';
-    return [ +( qw( adc oadc ac mt ), $mt == 2 ? 'nmsg' : 'amsg' ) ];
+    return [ qw( adc oadc ac mt ), $MT_To_Field[$mt] ];
 };
 
 sub amsg_utf8 {
