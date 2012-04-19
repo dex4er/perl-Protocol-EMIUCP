@@ -32,7 +32,7 @@ sub validate {
         unless defined $self->{oadc};
 
     return $self
-        ->validate_o
+        ->validate_o_50
         ->validate_ot_51;
 };
 
