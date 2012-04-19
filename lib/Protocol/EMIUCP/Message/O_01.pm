@@ -24,25 +24,26 @@ use constant list_valid_mt_values => [ qw( 2 3 ) ];
 sub build_args {
     my ($class, $args) = @_;
 
+    $class->$_($args) foreach map { "build_${_}_args" } qw( o ot_01 mt );
+
     {
         no warnings 'numeric';
-        confess "Attribute (nmsg) is invalid, should be undefined if mt == 3"
-            if $args->{mt} == 3 and defined $args->{nmsg};
-        confess "Attribute (amsg) is invalid, should be undefined if mt == 2"
-            if $args->{mt} == 2 and defined $args->{amsg};
+        confess "Attribute (nmsg) is invalid, should be undefined if mt != 2"
+            if $args->{mt} != 2 and defined $args->{nmsg};
+        confess "Attribute (amsg) is invalid, should be undefined if mt != 3"
+            if $args->{mt} != 3 and defined $args->{amsg};
     }
 
     $args->{amsg} = from_utf8_to_hex $args->{amsg_utf8}
         if defined $args->{amsg_utf8};
 
-    return $class
-        ->build_o_args($args)
-        ->build_ot_01_args($args)
-        ->build_mt_args($args);
+    return $class;
 };
 
 sub validate {
     my ($self) = @_;
+
+    $self->$_ foreach map { "validate_$_" } qw( o ot_01 mt );
 
     confess "Attribute (adc) is required"
         unless defined $self->{adc};
@@ -60,10 +61,7 @@ sub validate {
     confess "Attribute (amsg) is invalid"
         if defined $self->{amsg} and not $self->{amsg} =~ /^[\dA-F]{2,640}$/;
 
-    return $self
-        ->validate_o
-        ->validate_ot_01
-        ->validate_mt;
+    return $self;
 };
 
 my @MT_To_Field;
@@ -85,7 +83,9 @@ sub amsg_utf8 {
 
 sub build_hashref {
     my ($self, $hashref) = @_;
+
     $hashref->{amsg_utf8} = $self->amsg_utf8 if defined $hashref->{amsg};
+
     return $self
         ->build_mt_hashref($hashref);
 };

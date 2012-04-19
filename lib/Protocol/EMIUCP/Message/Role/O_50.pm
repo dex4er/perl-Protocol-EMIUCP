@@ -41,6 +41,16 @@ sub build_o_50_args {
 
     $class->$_($args) foreach map { "build_${_}_args" } qw( nt npid lpid ddt vp scts dst dscts mt );
 
+    {
+        no warnings 'numeric';
+        confess "Attribute (nmsg) is invalid, should be undefined if mt != 2"
+            if $args->{mt} != 2 and defined $args->{nmsg};
+        confess "Attribute (amsg) is invalid, should be undefined if mt != 3"
+            if $args->{mt} != 3 and defined $args->{tmsg};
+        confess "Attribute (tmsg) is invalid, should be undefined if mt != 4"
+            if $args->{mt} != 4 and defined $args->{tmsg};
+    }
+
     foreach my $name (qw( nrq lrq dd )) {
         $args->{$name}  = 0
             if exists $args->{$name} and not $args->{$name};
