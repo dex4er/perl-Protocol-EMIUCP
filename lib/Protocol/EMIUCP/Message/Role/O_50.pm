@@ -25,7 +25,7 @@ sub build_o_50_args {
 
     $args->{oadc} = from_utf8_to_7bit_hex $args->{oadc_utf8}
         if defined $args->{oadc_utf8};
-    foreach my $name (qw( nrq lrq )) {
+    foreach my $name (qw( nrq lrq dd )) {
         $args->{$name}  = 0
             if exists $args->{$name} and not $args->{$name};
     };
@@ -43,7 +43,7 @@ sub validate_o_50 {
         confess "Attribute ($name) is invalid"
             if defined $self->{$name} and not $self->{$name}  =~ /^\d{1,16}$/;
     };
-    foreach my $name (qw( nrq lrq )) {
+    foreach my $name (qw( nrq lrq dd )) {
         confess "Attribute ($name) is invalid"
             if defined $self->{$name} and not $self->{$name}  =~ /^[01]$/;
     };
