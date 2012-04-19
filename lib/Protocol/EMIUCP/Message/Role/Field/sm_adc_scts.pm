@@ -51,7 +51,7 @@ sub sm_scts {
     return $1;
 };
 
-sub sm_scts_as_datetime {
+sub sm_scts_datetime {
     my ($self) = @_;
 
     return unless my $scts = $self->sm_scts;
@@ -63,6 +63,9 @@ sub build_sm_hashref {
     if (defined $hashref->{sm}) {
         $hashref->{sm_adc}  = $self->sm_adc;
         $hashref->{sm_scts} = $self->sm_scts;
+        if (eval { DateTime::Format::EMIUCP::SCTS->VERSION }) {
+            $hashref->{sm_scts_datetime} = $self->sm_scts_datetime;
+        };
     };
     return $self;
 };

@@ -11,6 +11,7 @@ use base qw(
     Protocol::EMIUCP::Message::Role::Field::nt
     Protocol::EMIUCP::Message::Role::Field::npid
     Protocol::EMIUCP::Message::Role::Field::lpid
+    Protocol::EMIUCP::Message::Role::Field::ddt
     Protocol::EMIUCP::Message::Role::OT_50
     Protocol::EMIUCP::Message::Role::O
 );
@@ -33,7 +34,8 @@ sub build_o_50_args {
     return $class
         ->build_nt_args($args)
         ->build_npid_args($args)
-        ->build_lpid_args($args);
+        ->build_lpid_args($args)
+        ->build_ddt_args($args);
 };
 
 sub validate_o_50 {
@@ -57,10 +59,11 @@ sub validate_o_50 {
     return $self
         ->validate_nt
         ->validate_npid
-        ->validate_lpid;
+        ->validate_lpid
+        ->validate_ddt;
 };
 
-use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ) ];
+use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt ) ];
 
 sub oadc_utf8 {
     my ($self) = @_;
@@ -73,7 +76,8 @@ sub build_hashref {
     return $self
         ->build_nt_hashref($hashref)
         ->build_npid_hashref($hashref)
-        ->build_lpid_hashref($hashref);
+        ->build_lpid_hashref($hashref)
+        ->build_ddt_hashref($hashref);
 };
 
 1;
