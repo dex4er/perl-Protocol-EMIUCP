@@ -19,6 +19,8 @@ use Protocol::EMIUCP::Util qw(has);
 
 has 'sm';
 
+use constant list_data_field_names => [ qw( ack sm ) ];
+
 sub build_args {
     my ($class, $args) = @_;
 
@@ -39,7 +41,5 @@ sub validate {
         ->validate_r_a
         ->validate_ot_31;
 };
-
-use constant list_data_field_names => [ qw( ack sm ) ];
 
 1;

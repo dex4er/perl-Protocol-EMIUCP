@@ -19,6 +19,10 @@ use Protocol::EMIUCP::Util qw(has);
 
 has 'sm';
 
+use constant list_data_field_names => [ qw( nack ec sm ) ];
+
+use constant list_valid_ec_values => [ qw( 01 02 04 05 06 07 08 24 26 ) ];
+
 sub build_args {
     my ($class, $args) = @_;
     return $class
@@ -33,10 +37,6 @@ sub validate {
         ->validate_ot_31
         ->validate_ec;
 };
-
-use constant list_data_field_names => [ qw( nack ec sm ) ];
-
-use constant list_valid_ec_values => [ qw( 01 02 04 05 06 07 08 24 26 ) ];
 
 sub build_hashref {
     my ($self, $hashref) = @_;

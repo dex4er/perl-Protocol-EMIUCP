@@ -15,6 +15,10 @@ use base qw(
 
 use Carp qw(confess);
 
+use constant list_valid_npid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 ) ];
+
+use constant list_valid_lpid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 ) ];
+
 sub build_args {
     my ($class, $args) = @_;
 
@@ -35,9 +39,5 @@ sub validate {
         ->validate_o_50
         ->validate_ot_51;
 };
-
-use constant list_valid_npid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 ) ];
-
-use constant list_valid_lpid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 ) ];
 
 1;

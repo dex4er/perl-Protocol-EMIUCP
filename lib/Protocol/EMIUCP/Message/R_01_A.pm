@@ -16,6 +16,8 @@ use base qw(
 
 use Carp qw(confess);
 
+use constant list_data_field_names => [ qw( ack sm ) ];
+
 sub build_args {
     my ($class, $args) = @_;
     return $class
@@ -30,8 +32,6 @@ sub validate {
         ->validate_ot_01
         ->validate_sm;
 };
-
-use constant list_data_field_names => [ qw( ack sm ) ];
 
 sub build_hashref {
     my ($self, $hashref) = @_;

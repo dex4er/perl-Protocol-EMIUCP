@@ -22,6 +22,12 @@ use Protocol::EMIUCP::Util qw( has from_7bit_hex_to_utf8 from_utf8_to_7bit_hex )
 
 has [qw( adc oadc ac nrq nadc lrq lrad lpid dd )];
 
+use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid ) ];
+
+use constant list_valid_rpid_values => [
+    map { sprintf '%04d', $_ } 0..71, 95, 127, 192..255
+];
+
 sub build_o_50_args {
     my ($class, $args) = @_;
 
@@ -69,12 +75,6 @@ sub validate_o_50 {
         ->validate_ddt
         ->validate_vp;
 };
-
-use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid ) ];
-
-use constant list_valid_rpid_values => [
-    map { sprintf '%04d', $_ } 0..71, 95, 127, 192..255
-];
 
 sub oadc_utf8 {
     my ($self) = @_;

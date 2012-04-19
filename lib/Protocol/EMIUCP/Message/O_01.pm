@@ -19,6 +19,8 @@ use Protocol::EMIUCP::Util qw( has from_hex_to_utf8 from_utf8_to_hex );
 
 has [qw( adc oadc ac nmsg amsg )];
 
+use constant list_valid_mt_values => [ qw( 2 3 4 ) ];
+
 sub build_args {
     my ($class, $args) = @_;
 
@@ -67,8 +69,6 @@ sub list_data_field_names {
     no warnings 'numeric';
     return [ +( qw( adc oadc ac mt ), $mt == 2 ? 'nmsg' : 'amsg' ) ];
 };
-
-use constant list_valid_mt_values => [ qw( 2 3 4 ) ];
 
 sub amsg_utf8 {
     my ($self) = @_;

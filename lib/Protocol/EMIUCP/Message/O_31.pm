@@ -19,6 +19,10 @@ use Protocol::EMIUCP::Util qw(has);
 
 has 'adc';
 
+use constant list_data_field_names => [ qw( adc pid ) ];
+
+use constant list_valid_pid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 ) ];
+
 sub import {
     my ($class, %args) = @_;
     $args{caller} = caller() unless defined $args{caller};
@@ -44,10 +48,6 @@ sub validate {
         ->validate_o
         ->validate_ot_31;
 };
-
-use constant list_data_field_names => [ qw( adc pid ) ];
-
-use constant list_valid_pid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 ) ];
 
 sub build_hashref {
     my ($self, $hashref) = @_;
