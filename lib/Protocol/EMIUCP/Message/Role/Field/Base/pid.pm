@@ -48,6 +48,8 @@ sub _build_base_pid_args {
 
     $args->{$field} = $Constant_To_Value{$1}
         if defined $args->{$field} and $args->{$field} =~ /^${uc_field}_(.*)$/;
+    $args->{$field} = sprintf '%04d', $args->{$field}
+        if defined $args->{$field} and $args->{$field} =~ /^\d+$/;
 
     return $class;
 };
@@ -57,10 +59,8 @@ sub _validate_base_pid {
 
     my $validator = "list_valid_${field}_values";
 
-    confess "Attribute ($field) is required"
-        unless defined $self->{$field};
     confess "Attribute ($field) is invalid"
-        unless grep { $_ eq $self->{$field} } @{ $self->$validator };
+        if defined $self->{$field} and not grep { $_ eq $self->{$field} } @{ $self->$validator };
 
     return $self;
 };

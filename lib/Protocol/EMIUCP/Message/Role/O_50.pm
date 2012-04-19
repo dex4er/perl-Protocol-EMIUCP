@@ -25,12 +25,14 @@ has [qw( adc oadc ac nrq nadc lrq lrad lpid dd )];
 sub build_o_50_args {
     my ($class, $args) = @_;
 
-    $args->{oadc} = from_utf8_to_7bit_hex $args->{oadc_utf8}
-        if defined $args->{oadc_utf8};
     foreach my $name (qw( nrq lrq dd )) {
         $args->{$name}  = 0
             if exists $args->{$name} and not $args->{$name};
     };
+    $args->{oadc} = from_utf8_to_7bit_hex $args->{oadc_utf8}
+        if defined $args->{oadc_utf8};
+    $args->{rpid} = sprintf '%04d', $args->{rpid}
+        if defined $args->{rpid} and $args->{rpid} =~ /^\d+$/;
 
     return $class
         ->build_nt_args($args)
@@ -57,6 +59,8 @@ sub validate_o_50 {
         if defined $self->{ac}   and not $self->{ac}   =~ /^\d{4,16}$/;
     confess "Attribute (nadc) is invalid"
         if defined $self->{nadc} and not $self->{nadc} =~ /^\d{1,16}$/;
+    confess "Attribute (rpid) is invalid"
+        if defined $self->{rpid} and not grep { $_ eq $self->{rpid} } @{ $self->list_valid_rpid_values };
 
     return $self
         ->validate_nt
@@ -66,7 +70,11 @@ sub validate_o_50 {
         ->validate_vp;
 };
 
-use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp ) ];
+use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid ) ];
+
+use constant list_valid_rpid_values => [
+    map { sprintf '%04d', $_ } 0..71, 95, 127, 192..255
+];
 
 sub oadc_utf8 {
     my ($self) = @_;
