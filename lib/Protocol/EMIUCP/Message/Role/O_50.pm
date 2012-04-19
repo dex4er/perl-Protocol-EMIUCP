@@ -39,6 +39,8 @@ use constant list_valid_mt_values => [ qw( 2 3 4 )];
 sub build_o_50_args {
     my ($class, $args) = @_;
 
+    $class->$_($args) foreach map { "build_${_}_args" } qw( nt npid lpid ddt vp scts dst dscts mt );
+
     foreach my $name (qw( nrq lrq dd )) {
         $args->{$name}  = 0
             if exists $args->{$name} and not $args->{$name};
@@ -50,12 +52,13 @@ sub build_o_50_args {
     $args->{rsn} = sprintf '%03d', $args->{rsn}
         if defined $args->{rsn} and $args->{rsn} =~ /^\d+$/;
 
-    $class->$_($args) foreach map { "build_${_}_args" } qw( nt npid lpid ddt vp scts dst dscts mt );
     return $class;
 };
 
 sub validate_o_50 {
     my ($self) = @_;
+
+    $self->$_ foreach map { "validate_$_" } qw( nt npid lpid ddt vp scts dst dscts mt );
 
     foreach my $name (qw( adc nadc lrad )) {
         confess "Attribute ($name) is invalid"
@@ -75,8 +78,9 @@ sub validate_o_50 {
         if defined $self->{rpid} and not grep { $_ eq $self->{rpid} } @{ $self->list_valid_rpid_values };
     confess "Attribute (rsn) is invalid"
         if defined $self->{rsn} and not grep { $_ eq $self->{rsn} } @{ $self->list_valid_rsn_values };
+    confess "Attribute (nb) is invalid"
+        if defined $self->{nb} and not $self->{nb} =~ /^\d{1,4}$/;
 
-    $self->$_ foreach map { "validate_$_" } qw( nt npid lpid ddt vp scts dst dscts mt );
     return $self;
 };
 
@@ -103,9 +107,10 @@ sub oadc_utf8 {
 sub build_hashref {
     my ($self, $hashref) = @_;
 
+    $self->$_($hashref) foreach map { "build_${_}_hashref" } qw( nt npid lpid ddt vp scts dst dscts mt );
+
     $hashref->{oadc_utf8} = $self->oadc_utf8 if defined $hashref->{oadc}; # TODO and $hashref->{otoa} eq '5039'
 
-    $self->$_($hashref) foreach map { "build_${_}_hashref" } qw( nt npid lpid ddt vp scts dst dscts mt );
     return $self;
 };
 
