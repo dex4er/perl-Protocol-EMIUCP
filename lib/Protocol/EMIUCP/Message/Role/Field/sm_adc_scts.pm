@@ -9,7 +9,10 @@ our $VERSION = '0.01';
 
 use Carp qw(confess);
 use Scalar::Util qw(blessed);
+use Protocol::EMIUCP::Util qw(has);
 eval { require DateTime::Format::EMIUCP::SCTS };
+
+has 'sm';
 
 sub build_sm_args {
     my ($class, $args) = @_;

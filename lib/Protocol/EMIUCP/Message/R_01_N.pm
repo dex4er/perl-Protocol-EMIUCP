@@ -18,8 +18,6 @@ use base qw(
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw(has);
 
-has [qw( ec sm )];
-
 sub build_args {
     my ($class, $args) = @_;
     return $class

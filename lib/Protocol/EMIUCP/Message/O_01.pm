@@ -17,7 +17,7 @@ use base qw(
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw( has from_hex_to_utf8 from_utf8_to_hex );
 
-has [qw( adc oadc ac mt nmsg amsg )];
+has [qw( adc oadc ac nmsg amsg )];
 
 sub build_args {
     my ($class, $args) = @_;

@@ -17,7 +17,7 @@ use Carp qw(confess);
 use Scalar::Util qw(looks_like_number);
 use Protocol::EMIUCP::Util qw(has);
 
-has [qw( sm )];
+has 'sm';
 
 sub build_args {
     my ($class, $args) = @_;

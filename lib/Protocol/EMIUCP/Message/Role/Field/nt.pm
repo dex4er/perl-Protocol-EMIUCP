@@ -8,6 +8,9 @@ use warnings;
 our $VERSION = '0.01';
 
 use Carp qw(confess);
+use Protocol::EMIUCP::Util qw(has);
+
+has 'nt';
 
 my %Constant_To_Value = (
     NT_NONE => 0,

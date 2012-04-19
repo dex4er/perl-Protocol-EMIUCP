@@ -17,7 +17,7 @@ use base qw(
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw(has);
 
-has [qw( adc pid )];
+has 'adc';
 
 sub import {
     my ($class, %args) = @_;

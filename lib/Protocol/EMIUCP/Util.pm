@@ -38,10 +38,10 @@ sub load_class ($) {
 };
 
 sub has ($) {
-    my ($class, $attrs) = @_;
+    my ($attrs) = @_;
     my $caller = caller();
     no strict 'refs';
-    foreach my $name (@$attrs) {
+    foreach my $name (ref $attrs ? @$attrs : $attrs) {
         *{"${caller}::$name"}     = sub { $_[0]->{$name} };
         *{"${caller}::has_$name"} = sub { exists $_[0]->{$name} };
     };
