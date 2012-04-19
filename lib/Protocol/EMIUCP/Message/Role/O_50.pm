@@ -25,10 +25,14 @@ use Protocol::EMIUCP::Util qw( has from_7bit_hex_to_utf8 from_utf8_to_7bit_hex )
 
 has [qw( adc oadc ac nrq nadc lrq lrad lpid dd )];
 
-use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid scts dst  dscts ) ];
+use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid scts dst rsn  dscts ) ];
 
 use constant list_valid_rpid_values => [
     map { sprintf '%04d', $_ } 0..71, 95, 127, 192..255
+];
+
+use constant list_valid_rsn_values => [
+    map { sprintf '%03d', $_ } 0..255
 ];
 
 sub build_o_50_args {
@@ -42,6 +46,8 @@ sub build_o_50_args {
         if defined $args->{oadc_utf8};
     $args->{rpid} = sprintf '%04d', $args->{rpid}
         if defined $args->{rpid} and $args->{rpid} =~ /^\d+$/;
+    $args->{rsn} = sprintf '%03d', $args->{rsn}
+        if defined $args->{rsn} and $args->{rsn} =~ /^\d+$/;
 
     return $class
         ->build_nt_args($args)
@@ -73,6 +79,8 @@ sub validate_o_50 {
         if defined $self->{nadc} and not $self->{nadc} =~ /^\d{1,16}$/;
     confess "Attribute (rpid) is invalid"
         if defined $self->{rpid} and not grep { $_ eq $self->{rpid} } @{ $self->list_valid_rpid_values };
+    confess "Attribute (rsn) is invalid"
+        if defined $self->{rsn} and not grep { $_ eq $self->{rsn} } @{ $self->list_valid_rsn_values };
 
     return $self
         ->validate_nt
