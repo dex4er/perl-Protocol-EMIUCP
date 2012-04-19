@@ -13,6 +13,8 @@ use base qw(
     Protocol::EMIUCP::Message::Role::Field::lpid
     Protocol::EMIUCP::Message::Role::Field::ddt
     Protocol::EMIUCP::Message::Role::Field::vp
+    Protocol::EMIUCP::Message::Role::Field::scts
+    Protocol::EMIUCP::Message::Role::Field::dscts
     Protocol::EMIUCP::Message::Role::OT_50
     Protocol::EMIUCP::Message::Role::O
 );
@@ -22,7 +24,7 @@ use Protocol::EMIUCP::Util qw( has from_7bit_hex_to_utf8 from_utf8_to_7bit_hex )
 
 has [qw( adc oadc ac nrq nadc lrq lrad lpid dd )];
 
-use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid ) ];
+use constant list_data_field_names => [ qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid scts  dscts ) ];
 
 use constant list_valid_rpid_values => [
     map { sprintf '%04d', $_ } 0..71, 95, 127, 192..255
@@ -45,7 +47,9 @@ sub build_o_50_args {
         ->build_npid_args($args)
         ->build_lpid_args($args)
         ->build_vp_args($args)
-        ->build_ddt_args($args);
+        ->build_ddt_args($args)
+        ->build_scts_args($args)
+        ->build_dscts_args($args);
 };
 
 sub validate_o_50 {
@@ -73,7 +77,9 @@ sub validate_o_50 {
         ->validate_npid
         ->validate_lpid
         ->validate_ddt
-        ->validate_vp;
+        ->validate_vp
+        ->validate_scts
+        ->validate_dscts;
 };
 
 sub oadc_utf8 {
@@ -89,7 +95,9 @@ sub build_hashref {
         ->build_npid_hashref($hashref)
         ->build_lpid_hashref($hashref)
         ->build_ddt_hashref($hashref)
-        ->build_vp_hashref($hashref);
+        ->build_vp_hashref($hashref)
+        ->build_scts_hashref($hashref)
+        ->build_dscts_hashref($hashref);
 };
 
 1;
