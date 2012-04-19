@@ -9,6 +9,7 @@ our $VERSION = '0.01';
 
 use base qw(
     Protocol::EMIUCP::Message::Role::Field::mt
+    Protocol::EMIUCP::Message::Role::Field::amsg
     Protocol::EMIUCP::Message::Role::OT_01
     Protocol::EMIUCP::Message::Role::O
     Protocol::EMIUCP::Message::Object
@@ -24,18 +25,7 @@ use constant list_valid_mt_values => [ qw( 2 3 ) ];
 sub build_args {
     my ($class, $args) = @_;
 
-    $class->$_($args) foreach map { "build_${_}_args" } qw( o ot_01 mt );
-
-    {
-        no warnings 'numeric';
-        confess "Attribute (nmsg) is invalid, should be undefined if mt != 2"
-            if $args->{mt} != 2 and defined $args->{nmsg};
-        confess "Attribute (amsg) is invalid, should be undefined if mt != 3"
-            if $args->{mt} != 3 and defined $args->{amsg};
-    }
-
-    $args->{amsg} = from_utf8_to_hex $args->{amsg_utf8}
-        if defined $args->{amsg_utf8};
+    $class->$_($args) foreach map { "build_${_}_args" } qw( o ot_01 mt amsg );
 
     return $class;
 };
@@ -43,7 +33,7 @@ sub build_args {
 sub validate {
     my ($self) = @_;
 
-    $self->$_ foreach map { "validate_$_" } qw( o ot_01 mt );
+    $self->$_ foreach map { "validate_$_" } qw( o ot_01 mt amsg );
 
     confess "Attribute (adc) is required"
         unless defined $self->{adc};
@@ -58,8 +48,6 @@ sub validate {
         if defined $self->{ac}   and not $self->{ac}   =~ /^\d{4,16}$/;
     confess "Attribute (nmsg) is invalid"
         if defined $self->{nmsg} and not $self->{nmsg} =~ /^\d{1,160}$/;
-    confess "Attribute (amsg) is invalid"
-        if defined $self->{amsg} and not $self->{amsg} =~ /^[\dA-F]{2,640}$/;
 
     return $self;
 };
@@ -76,18 +64,12 @@ sub list_data_field_names {
     return [ qw( adc oadc ac mt ), $MT_To_Field[$mt] ];
 };
 
-sub amsg_utf8 {
-    my ($self) = @_;
-    return from_hex_to_utf8 $self->{amsg}
-};
-
 sub build_hashref {
     my ($self, $hashref) = @_;
 
-    $hashref->{amsg_utf8} = $self->amsg_utf8 if defined $hashref->{amsg};
+    $self->$_($hashref) foreach map { "build_${_}_hashref" } qw( mt amsg );
 
-    return $self
-        ->build_mt_hashref($hashref);
+    return $self;
 };
 
 1;

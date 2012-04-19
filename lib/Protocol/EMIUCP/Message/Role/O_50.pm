@@ -17,6 +17,7 @@ use base qw(
     Protocol::EMIUCP::Message::Role::Field::dst
     Protocol::EMIUCP::Message::Role::Field::dscts
     Protocol::EMIUCP::Message::Role::Field::mt
+    Protocol::EMIUCP::Message::Role::Field::amsg
     Protocol::EMIUCP::Message::Role::OT_50
     Protocol::EMIUCP::Message::Role::O
 );
@@ -39,22 +40,13 @@ use constant list_valid_mt_values => [ qw( 2 3 4 )];
 sub build_o_50_args {
     my ($class, $args) = @_;
 
-    $class->$_($args) foreach map { "build_${_}_args" } qw( nt npid lpid ddt vp scts dst dscts mt );
-
-    {
-        no warnings 'numeric';
-        confess "Attribute (nmsg) is invalid, should be undefined if mt != 2"
-            if $args->{mt} != 2 and defined $args->{nmsg};
-        confess "Attribute (amsg) is invalid, should be undefined if mt != 3"
-            if $args->{mt} != 3 and defined $args->{tmsg};
-        confess "Attribute (tmsg) is invalid, should be undefined if mt != 4"
-            if $args->{mt} != 4 and defined $args->{tmsg};
-    }
+    $class->$_($args) foreach map { "build_${_}_args" } qw( nt npid lpid ddt vp scts dst dscts mt amsg );
 
     foreach my $name (qw( nrq lrq dd )) {
         $args->{$name}  = 0
             if exists $args->{$name} and not $args->{$name};
     };
+
     $args->{oadc} = from_utf8_to_7bit_hex $args->{oadc_utf8}
         if defined $args->{oadc_utf8};
     $args->{rpid} = sprintf '%04d', $args->{rpid}
@@ -68,7 +60,7 @@ sub build_o_50_args {
 sub validate_o_50 {
     my ($self) = @_;
 
-    $self->$_ foreach map { "validate_$_" } qw( nt npid lpid ddt vp scts dst dscts mt );
+    $self->$_ foreach map { "validate_$_" } qw( nt npid lpid ddt vp scts dst dscts mt amsg );
 
     foreach my $name (qw( adc nadc lrad )) {
         confess "Attribute ($name) is invalid"
@@ -117,7 +109,7 @@ sub oadc_utf8 {
 sub build_hashref {
     my ($self, $hashref) = @_;
 
-    $self->$_($hashref) foreach map { "build_${_}_hashref" } qw( nt npid lpid ddt vp scts dst dscts mt );
+    $self->$_($hashref) foreach map { "build_${_}_hashref" } qw( nt npid lpid ddt vp scts dst dscts mt amsg );
 
     $hashref->{oadc_utf8} = $self->oadc_utf8 if defined $hashref->{oadc}; # TODO and $hashref->{otoa} eq '5039'
 
