@@ -16,7 +16,7 @@ my $build = Module::Build->new(
     license                 => 'perl',
     requires                => {
         'perl'                     => 5.006,
-        'constant'                 => 1.04,
+        'constant'                 => 1.04,   # use constant { LIST }
         'Encode'                   => 0,
         'Exporter'                 => 5.566,  # *import = &Exporter::import
     },
