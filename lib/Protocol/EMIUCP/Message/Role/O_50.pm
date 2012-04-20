@@ -16,7 +16,7 @@ use Carp qw(confess);
 use Protocol::EMIUCP::Util qw( has with_field from_7bit_hex_to_utf8 from_utf8_to_7bit_hex );
 
 has [qw( adc oadc ac nrq nadc lrq lrad lpid dd )];
-with_field [qw( nt npid lpid ddt vp scts dst dscts mt nmsg amsg tmsg )];
+with_field [qw( nt npid lpid ddt vp scts dst dscts mt nmsg amsg tmsg mms )];
 
 use constant list_valid_rpid_values => [
     map { sprintf '%04d', $_ } 0..71, 95, 127, 192..255
@@ -87,7 +87,8 @@ sub list_data_field_names {
     no warnings 'numeric';
     return [
         qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid scts dst rsn dscts mt nb ),
-        $MT_To_Field[$mt || 3],
+        $MT_To_Field[$mt||0] || '-msg',
+        qw( mms ),
     ];
 };
 
