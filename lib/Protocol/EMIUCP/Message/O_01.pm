@@ -7,9 +7,11 @@ use warnings;
 
 our $VERSION = '0.01';
 
+our @ISA;
 use base qw(
     Protocol::EMIUCP::Message::Role::Field::mt
     Protocol::EMIUCP::Message::Role::Field::amsg
+    Protocol::EMIUCP::Message::Role::Field::nmsg
     Protocol::EMIUCP::Message::Role::OT_01
     Protocol::EMIUCP::Message::Role::O
     Protocol::EMIUCP::Message::Object
@@ -18,14 +20,15 @@ use base qw(
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw( has from_hex_to_utf8 from_utf8_to_hex );
 
-has [qw( adc oadc ac nmsg amsg )];
+has [qw( adc oadc ac )];
 
 use constant list_valid_mt_values => [ qw( 2 3 ) ];
 
 sub build_args {
     my ($class, $args) = @_;
 
-    $class->$_($args) foreach map { "build_${_}_args" } qw( o ot_01 mt amsg );
+    $class->$_($args) foreach grep { $class->can($_) }
+        map { /:(\w+)$/; sprintf 'build_%s_args', lc $1 } grep { /:Role:/ } @ISA;
 
     return $class;
 };
@@ -33,7 +36,8 @@ sub build_args {
 sub validate {
     my ($self) = @_;
 
-    $self->$_ foreach map { "validate_$_" } qw( o ot_01 mt amsg );
+    $self->$_ foreach grep { $self->can($_) }
+        map { /:(\w+)$/; sprintf 'validate_%s', lc $1 } grep { /:Role:/ } @ISA;
 
     confess "Attribute (adc) is required"
         unless defined $self->{adc};
@@ -46,8 +50,6 @@ sub validate {
         if defined $self->{oadc} and not $self->{oadc} =~ /^\d{1,16}$/;
     confess "Attribute (ac) is invalid"
         if defined $self->{ac}   and not $self->{ac}   =~ /^\d{4,16}$/;
-    confess "Attribute (nmsg) is invalid"
-        if defined $self->{nmsg} and not $self->{nmsg} =~ /^\d{1,160}$/;
 
     return $self;
 };
@@ -67,7 +69,8 @@ sub list_data_field_names {
 sub build_hashref {
     my ($self, $hashref) = @_;
 
-    $self->$_($hashref) foreach map { "build_${_}_hashref" } qw( mt amsg );
+    $self->$_($hashref) foreach grep { $self->can($_) }
+        map { /:(\w+)$/; sprintf 'build_%s_hashref', lc $1 } grep { /:Role:/ } @ISA;
 
     return $self;
 };
