@@ -10,7 +10,8 @@ our $VERSION = '0.01';
 use Carp qw(confess);
 use Scalar::Util qw(blessed);
 use Protocol::EMIUCP::Util qw(has);
-eval { require DateTime::Format::EMIUCP::SCTS };
+
+use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::SCTS };
 
 has 'sm';
 
@@ -63,9 +64,9 @@ sub build_hashref_sm {
     if (defined $hashref->{sm}) {
         $hashref->{sm_adc}  = $self->sm_adc;
         $hashref->{sm_scts} = $self->sm_scts;
-        if (eval { DateTime::Format::EMIUCP::SCTS->VERSION }) {
-            $hashref->{sm_scts_datetime} = $self->sm_scts_datetime;
-        };
+
+        $hashref->{sm_scts_datetime} = $self->sm_scts_datetime
+            if HAVE_DATETIME;
     };
     return $self;
 };

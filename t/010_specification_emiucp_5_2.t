@@ -9,6 +9,8 @@ $SIG{__WARN__} = sub { local $Carp::CarpLevel = 1; Carp::confess("Warning: ", @_
 
 use Test::More;
 
+use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP };
+
 BEGIN { use_ok 'Protocol::EMIUCP' };
 
 sub test_message ($$$;$$) {
@@ -92,6 +94,7 @@ do {
         sm       => '01234567890:090196103258',
         sm_adc   => '01234567890',
         sm_scts  => '090196103258',
+        HAVE_DATETIME ? (sm_scts_datetime => '1996-01-09T10:32:58') : (),
         checksum => '4E',
     );
     my %args = %fields;

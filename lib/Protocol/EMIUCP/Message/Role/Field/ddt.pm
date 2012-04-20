@@ -10,7 +10,8 @@ our $VERSION = '0.01';
 use Carp qw(confess);
 use Scalar::Util qw(blessed);
 use Protocol::EMIUCP::Util qw(has);
-eval { require DateTime::Format::EMIUCP::DDT };
+
+use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::DDT };
 
 has 'ddt';
 
@@ -41,9 +42,10 @@ sub ddt_datetime {
 
 sub build_hashref_ddt {
     my ($self, $hashref) = @_;
-    if (defined $hashref->{ddt} and eval { DateTime::Format::EMIUCP::DDT->VERSION }) {
-        $hashref->{ddt_datetime} = $self->ddt_datetime->datetime;
-    };
+
+    $hashref->{ddt_datetime} = $self->ddt_datetime->datetime
+        if HAVE_DATETIME and defined $hashref->{ddt};
+
     return $self;
 };
 
