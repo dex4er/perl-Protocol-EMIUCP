@@ -8,16 +8,16 @@ use warnings;
 our $VERSION = '0.01';
 
 use base qw(
-    Protocol::EMIUCP::Message::Role::Field::pid
     Protocol::EMIUCP::Message::Role::OT_31
     Protocol::EMIUCP::Message::Role::O
     Protocol::EMIUCP::Message::Object
 );
 
 use Carp qw(confess);
-use Protocol::EMIUCP::Util qw(has);
+use Protocol::EMIUCP::Util qw( has with_field );
 
 has 'adc';
+with_field 'pid';
 
 use constant list_data_field_names => [ qw( adc pid ) ];
 

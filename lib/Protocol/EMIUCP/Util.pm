@@ -16,7 +16,7 @@ our @EXPORT_OK = qw(
     decode_hex encode_hex
     from_hex_to_utf8 from_utf8_to_hex
     from_7bit_hex_to_utf8 from_utf8_to_7bit_hex
-    load_class has
+    load_class has with_field
 );
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 BEGIN { *import = \&Exporter::import; }
@@ -45,6 +45,16 @@ sub has ($) {
         *{"${caller}::$name"}     = sub { $_[0]->{$name} };
         *{"${caller}::has_$name"} = sub { exists $_[0]->{$name} };
     };
+};
+
+sub with_field ($) {
+    my ($attrs) = @_;
+    my $caller = caller();
+    my @roles = map { "Protocol::EMIUCP::Message::Role::Field::$_" }
+        ref $attrs ? @$attrs : $attrs;
+    load_class($_) foreach @roles;
+    no strict 'refs';
+    push @{"${caller}::ISA"}, @roles;
 };
 
 use Encode qw( decode encode );

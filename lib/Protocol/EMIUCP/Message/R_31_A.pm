@@ -14,7 +14,6 @@ use base qw(
 );
 
 use Carp qw(confess);
-use Scalar::Util qw(looks_like_number);
 use Protocol::EMIUCP::Util qw(has);
 
 has 'sm';
@@ -27,7 +26,7 @@ sub build_args {
     $class->SUPER::build_args($args);
 
     $args->{sm} = sprintf '%04d', $args->{sm}
-        if defined $args->{sm} and looks_like_number $args->{sm};
+        if defined $args->{sm} and $args->{sm} =~ /^\d+$/;
 
     return $class;
 };

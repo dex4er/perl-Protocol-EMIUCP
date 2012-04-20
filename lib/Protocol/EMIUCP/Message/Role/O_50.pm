@@ -8,25 +8,15 @@ use warnings;
 our $VERSION = '0.01';
 
 use base qw(
-    Protocol::EMIUCP::Message::Role::Field::nt
-    Protocol::EMIUCP::Message::Role::Field::npid
-    Protocol::EMIUCP::Message::Role::Field::lpid
-    Protocol::EMIUCP::Message::Role::Field::ddt
-    Protocol::EMIUCP::Message::Role::Field::vp
-    Protocol::EMIUCP::Message::Role::Field::scts
-    Protocol::EMIUCP::Message::Role::Field::dst
-    Protocol::EMIUCP::Message::Role::Field::dscts
-    Protocol::EMIUCP::Message::Role::Field::mt
-    Protocol::EMIUCP::Message::Role::Field::amsg
-    Protocol::EMIUCP::Message::Role::Field::tmsg
-    Protocol::EMIUCP::Message::Role::OT_50
     Protocol::EMIUCP::Message::Role::O
+    Protocol::EMIUCP::Message::Role::OT_50
 );
 
 use Carp qw(confess);
-use Protocol::EMIUCP::Util qw( has from_7bit_hex_to_utf8 from_utf8_to_7bit_hex );
+use Protocol::EMIUCP::Util qw( has with_field from_7bit_hex_to_utf8 from_utf8_to_7bit_hex );
 
 has [qw( adc oadc ac nrq nadc lrq lrad lpid dd )];
+with_field [qw( nt npid lpid ddt vp scts dst dscts mt nmsg amsg tmsg )];
 
 use constant list_valid_rpid_values => [
     map { sprintf '%04d', $_ } 0..71, 95, 127, 192..255
