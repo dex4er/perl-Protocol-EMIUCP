@@ -19,25 +19,17 @@ use constant list_valid_npid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 
 
 use constant list_valid_lpid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 ) ];
 
-sub build_args {
-    my ($class, $args) = @_;
-
-    return $class
-        ->build_o_50_args($args)
-        ->build_ot_51_args($args);
-};
-
 sub validate {
     my ($self) = @_;
+
+    $self->SUPER::validate;
 
     confess "Attribute (adc) is required"
         unless defined $self->{adc};
     confess "Attribute (oadc) is required"
         unless defined $self->{oadc};
 
-    return $self
-        ->validate_o_50
-        ->validate_ot_51;
+    return $self;
 };
 
 1;

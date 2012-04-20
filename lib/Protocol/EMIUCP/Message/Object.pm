@@ -48,16 +48,30 @@ sub new_from_string {
     return $class->new( %{ $class->parse_string($str) } );
 };
 
+sub list_roles {
+    my ($self) = @_;
+    no strict 'refs';
+    my $class = ref $self ? ref $self : $self;
+    return grep { /::Role::/ } @{"${class}::ISA"};
+};
+
 sub build_args {
-    # Base class does nothing
+    my ($class, $args) = @_;
+    $class->$_($args) foreach grep { $class->can($_) }
+        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; sprintf 'build_%s_args', lc $1 } $class->list_roles;
 };
 
 sub validate {
     my ($self) = @_;
+
     confess "Attribute (len) has invalid value, should be " . $self->calculate_len
         if defined $self->{len} and $self->{len} ne $self->calculate_len;
     confess "Attribute (checksum) is invalid, should be " . $self->calculate_checksum
         if defined $self->{checksum} and $self->{checksum} ne $self->calculate_checksum;
+
+    $self->$_ foreach grep { $self->can($_) }
+        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; sprintf 'validate_%s', lc $1 } $self->list_roles;
+
     return $self;
 };
 
@@ -122,7 +136,9 @@ sub as_hashref {
 };
 
 sub build_hashref {
-    # Base class does nothing
+    my ($self, $hashref) = @_;
+    $self->$_($hashref) foreach grep { $self->can($_) }
+        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; sprintf 'build_%s_hashref', lc $1 } $self->list_roles;
 };
 
 1;

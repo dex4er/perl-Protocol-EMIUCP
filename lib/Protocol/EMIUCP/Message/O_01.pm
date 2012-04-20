@@ -24,20 +24,10 @@ has [qw( adc oadc ac )];
 
 use constant list_valid_mt_values => [ qw( 2 3 ) ];
 
-sub build_args {
-    my ($class, $args) = @_;
-
-    $class->$_($args) foreach grep { $class->can($_) }
-        map { /:(\w+)$/; sprintf 'build_%s_args', lc $1 } grep { /:Role:/ } @ISA;
-
-    return $class;
-};
-
 sub validate {
     my ($self) = @_;
 
-    $self->$_ foreach grep { $self->can($_) }
-        map { /:(\w+)$/; sprintf 'validate_%s', lc $1 } grep { /:Role:/ } @ISA;
+    $self->SUPER::validate;
 
     confess "Attribute (adc) is required"
         unless defined $self->{adc};
@@ -64,15 +54,6 @@ sub list_data_field_names {
            : $fields->{mt};
     no warnings 'numeric';
     return [ qw( adc oadc ac mt ), $MT_To_Field[$mt] ];
-};
-
-sub build_hashref {
-    my ($self, $hashref) = @_;
-
-    $self->$_($hashref) foreach grep { $self->can($_) }
-        map { /:(\w+)$/; sprintf 'build_%s_hashref', lc $1 } grep { /:Role:/ } @ISA;
-
-    return $self;
 };
 
 1;

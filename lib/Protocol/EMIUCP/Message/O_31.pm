@@ -29,30 +29,17 @@ sub import {
     $class->import_pid(\%args);
 };
 
-sub build_args {
-    my ($class, $args) = @_;
-    return $class
-        ->build_ot_31_args($args)
-        ->build_pid_args($args);
-};
-
 sub validate {
     my ($self) = @_;
+
+    $self->SUPER::validate;
 
     confess "Attribute (adc) is required"
         unless defined $self->{adc};
     confess "Attribute (adc) is invalid"
         unless $self->{adc}  =~ /^\d{1,16}$/;
 
-    return $self
-        ->validate_o
-        ->validate_ot_31;
-};
-
-sub build_hashref {
-    my ($self, $hashref) = @_;
-    return $self
-        ->build_pid_hashref($hashref);
+    return $self;
 };
 
 1;

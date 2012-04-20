@@ -24,22 +24,23 @@ use constant list_data_field_names => [ qw( ack sm ) ];
 sub build_args {
     my ($class, $args) = @_;
 
+    $class->SUPER::build_args($args);
+
     $args->{sm} = sprintf '%04d', $args->{sm}
         if defined $args->{sm} and looks_like_number $args->{sm};
 
-    return $class
-        ->build_ot_31_args($args);
+    return $class;
 };
 
 sub validate {
     my ($self) = @_;
 
+    $self->SUPER::validate;
+
     confess "Attribute (sm) is invalid"
         if defined $self->{sm} and not $self->{sm} =~ /^\d{4}$/;
 
-    return $self
-        ->validate_r_a
-        ->validate_ot_31;
+    return $self;
 };
 
 1;
