@@ -14,7 +14,7 @@ eval { require DateTime::Format::EMIUCP::DDT };
 
 has 'ddt';
 
-sub build_ddt_args {
+sub build_args_ddt {
     my ($class, $args) = @_;
 
     $args->{ddt} = DateTime::Format::EMIUCP::DDT->format_datetime($args->{ddt})
@@ -39,7 +39,7 @@ sub ddt_datetime {
     return DateTime::Format::EMIUCP::DDT->parse_datetime($self->{ddt});
 };
 
-sub build_ddt_hashref {
+sub build_hashref_ddt {
     my ($self, $hashref) = @_;
     if (defined $hashref->{ddt} and eval { DateTime::Format::EMIUCP::DDT->VERSION }) {
         $hashref->{ddt_datetime} = $self->ddt_datetime->datetime;

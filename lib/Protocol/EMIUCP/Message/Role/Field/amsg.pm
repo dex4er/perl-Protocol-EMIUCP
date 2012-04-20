@@ -12,7 +12,7 @@ use Protocol::EMIUCP::Util qw( has from_hex_to_utf8 from_utf8_to_hex );
 
 has 'amsg';
 
-sub build_amsg_args {
+sub build_args_amsg {
     my ($class, $args) = @_;
 
     $args->{amsg} = from_utf8_to_hex $args->{amsg_utf8}
@@ -35,7 +35,7 @@ sub amsg_utf8 {
     return from_hex_to_utf8 $self->{amsg}
 };
 
-sub build_amsg_hashref {
+sub build_hashref_amsg {
     my ($self, $hashref) = @_;
     $hashref->{amsg_utf8} = $self->amsg_utf8 if defined $hashref->{amsg};
     return $self;

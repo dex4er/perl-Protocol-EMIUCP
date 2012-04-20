@@ -42,7 +42,7 @@ sub import_ec {
     };
 };
 
-sub build_ec_args {
+sub build_args_ec {
     my ($class, $args) = @_;
 
     $args->{ec} = $Constant_To_Value{$1}
@@ -71,7 +71,7 @@ sub ec_description {
     return $Value_To_Description{ defined $value ? $value : $self->{ec} };
 };
 
-sub build_ec_hashref {
+sub build_hashref_ec {
     my ($self, $hashref) = @_;
     if (defined $hashref->{ec}) {
         $hashref->{ec_description} = $self->ec_description;

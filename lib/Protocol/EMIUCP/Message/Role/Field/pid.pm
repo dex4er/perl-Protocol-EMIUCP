@@ -18,9 +18,9 @@ has field;
 
 my %Methods = (
     import_pid        => '_import_base_pid',
-    build_pid_args    => '_build_base_pid_args',
+    build_args_pid    => '_build_args_base_pid',
     pid_description   => '_base_pid_description',
-    build_pid_hashref => '_build_base_pid_hashref',
+    build_hashref_pid => '_build_hashref_base_pid',
 );
 
 while (my ($method, $base_method) = each %Methods) {

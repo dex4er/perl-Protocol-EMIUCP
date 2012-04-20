@@ -12,7 +12,7 @@ use Protocol::EMIUCP::Util qw( has decode_hex encode_hex );
 
 has 'tmsg';
 
-sub build_tmsg_args {
+sub build_args_tmsg {
     my ($class, $args) = @_;
 
     $args->{tmsg} = encode_hex $args->{tmsg_binary}
@@ -35,7 +35,7 @@ sub tmsg_binary {
     return decode_hex $self->{tmsg}
 };
 
-sub build_tmsg_hashref {
+sub build_hashref_tmsg {
     my ($self, $hashref) = @_;
     $hashref->{tmsg_binary} = $self->tmsg_binary if defined $hashref->{tmsg};
     return $self;

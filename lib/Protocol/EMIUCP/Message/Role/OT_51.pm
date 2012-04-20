@@ -11,7 +11,7 @@ use base qw(Protocol::EMIUCP::Message::Role::OT_50);
 
 use Carp qw(confess);
 
-sub build_ot_51_args {
+sub build_args_ot_51 {
     my ($class, $args) = @_;
 
     $args->{ot} = '51' unless defined $args->{ot};

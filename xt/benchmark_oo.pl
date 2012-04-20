@@ -49,6 +49,21 @@ eval q{
     __PACKAGE__->meta->make_immutable();
 };
 
+eval q{
+    package My::NetUCP;
+    use Net::UCP;
+    my $ucp = Net::UCP->new;
+    sub new {
+        my ($class, $str) = @_;
+        my $self = $ucp->parse_message($str);
+        return bless $self => $class;
+    };
+    sub as_string {
+        my ($self) = @_;
+        $ucp->{TRN_OBJ}->set_trn(99);
+        return $ucp->make_message(%$self, op=>$self->{ot}, operation=>$self->{type}?1:0, trn=>0);
+    };
+};
 
 use Protocol::EMIUCP::Message;
 
@@ -76,13 +91,21 @@ my %tests = (
 
     },
     ) : (),
-    '4_EMIUCP_01' => sub {
+    Net::UCP->VERSION ? (
+    '4_NetUCP' => sub {
+
+        my $msg = My::NetUCP->new($str_01);
+        die $msg->as_string if $msg->as_string ne $str_01;
+
+    },
+    ) : (),
+    '5_EMIUCP_01' => sub {
 
         my $msg = Protocol::EMIUCP::Message->new_from_string($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
-    '5_EMIUCP_31' => sub {
+    '6_EMIUCP_31' => sub {
 
         my $msg = Protocol::EMIUCP::Message->new_from_string($str_31);
         die $msg->as_string if $msg->as_string ne $str_31;

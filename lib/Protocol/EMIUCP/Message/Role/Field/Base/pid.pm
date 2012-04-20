@@ -41,7 +41,7 @@ sub _import_base_pid {
     };
 };
 
-sub _build_base_pid_args {
+sub _build_args_base_pid {
     my ($class, $field, $args) = @_;
 
     my $uc_field = uc($field);
@@ -70,7 +70,7 @@ sub _base_pid_description {
     return $Value_To_Description{ defined $value ? $value : $self->{$field} };
 };
 
-sub _build_base_pid_hashref {
+sub _build_hashref_base_pid {
     my ($self, $field, $hashref) = @_;
 
     my $field_description = "${field}_description";

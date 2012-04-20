@@ -17,10 +17,10 @@ has field;
 
 my %Methods = (
     import_lpid        => '_import_base_pid',
-    build_lpid_args    => '_build_base_pid_args',
+    build_args_lpid    => '_build_args_base_pid',
     validate_lpid      => '_validate_base_pid',
     lpid_description   => '_base_pid_description',
-    build_lpid_hashref => '_build_base_pid_hashref',
+    build_hashref_lpid => '_build_hashref_base_pid',
 );
 
 while (my ($method, $base_method) = each %Methods) {

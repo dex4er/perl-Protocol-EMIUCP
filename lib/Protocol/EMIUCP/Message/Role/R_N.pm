@@ -11,13 +11,13 @@ use base qw(Protocol::EMIUCP::Message::Role::R);
 
 use Carp qw(confess);
 
-sub build_r_a_args {
+sub build_args_r_a {
     my ($class, $args) = @_;
 
     $args->{nack}  = 'N' if $args->{nack};
 
     return $class
-        ->build_r_args($args);
+        ->build_args_r($args);
 };
 
 sub validate_r_n {

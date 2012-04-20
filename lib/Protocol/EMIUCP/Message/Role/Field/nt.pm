@@ -40,7 +40,7 @@ sub import_nt {
     };
 };
 
-sub build_nt_args {
+sub build_args_nt {
     my ($class, $args) = @_;
 
     $args->{nt} = $Constant_To_Value{$1}
@@ -63,7 +63,7 @@ sub nt_description {
     return $Value_To_Description{ defined $value ? $value : $self->{nt} };
 };
 
-sub build_nt_hashref {
+sub build_hashref_nt {
     my ($self, $hashref) = @_;
     if (defined $hashref->{nt}) {
         $hashref->{nt_description} = $self->nt_description;

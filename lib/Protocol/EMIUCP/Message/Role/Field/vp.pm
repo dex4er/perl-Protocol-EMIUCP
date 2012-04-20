@@ -14,7 +14,7 @@ eval { require DateTime::Format::EMIUCP::VP };
 
 has 'vp';
 
-sub build_vp_args {
+sub build_args_vp {
     my ($class, $args) = @_;
 
     $args->{vp} = DateTime::Format::EMIUCP::VP->format_datetime($args->{vp})
@@ -39,7 +39,7 @@ sub vp_datetime {
     return DateTime::Format::EMIUCP::VP->parse_datetime($self->{vp});
 };
 
-sub build_vp_hashref {
+sub build_hashref_vp {
     my ($self, $hashref) = @_;
     if (defined $hashref->{vp} and eval { DateTime::Format::EMIUCP::VP->VERSION }) {
         $hashref->{vp_datetime} = $self->vp_datetime->datetime;

@@ -33,7 +33,7 @@ sub import_mt {
     };
 };
 
-sub build_mt_args {
+sub build_args_mt {
     my ($class, $args) = @_;
 
     $args->{mt} = $Constant_To_Value{$1}
@@ -68,7 +68,7 @@ sub mt_description {
     return $Value_To_Description{ defined $code ? $code : $self->{mt} };
 };
 
-sub build_mt_hashref {
+sub build_hashref_mt {
     my ($self, $hashref) = @_;
     if (defined $hashref->{mt}) {
         $hashref->{mt_description} = $self->mt_description;

@@ -33,7 +33,7 @@ sub import_dst {
     };
 };
 
-sub build_dst_args {
+sub build_args_dst {
     my ($class, $args) = @_;
 
     $args->{dst} = $Constant_To_Value{$1}
@@ -56,7 +56,7 @@ sub dst_description {
     return $Value_To_Description{ defined $code ? $code : $self->{dst} };
 };
 
-sub build_dst_hashref {
+sub build_hashref_dst {
     my ($self, $hashref) = @_;
     if (defined $hashref->{dst}) {
         $hashref->{dst_description} = $self->dst_description;

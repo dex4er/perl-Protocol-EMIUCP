@@ -12,7 +12,7 @@ use Protocol::EMIUCP::Util qw(has);
 
 has [qw( ack nack )];
 
-sub build_r_args {
+sub build_args_r {
     my ($class, $args) = @_;
 
     $args->{o_r}  = 'R' unless defined $args->{o_r};

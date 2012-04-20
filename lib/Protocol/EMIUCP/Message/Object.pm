@@ -58,7 +58,7 @@ sub list_roles {
 sub build_args {
     my ($class, $args) = @_;
     $class->$_($args) foreach grep { $class->can($_) }
-        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; sprintf 'build_%s_args', lc $1 } $class->list_roles;
+        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; 'build_args_' . lc $1 } $class->list_roles;
 };
 
 sub validate {
@@ -70,7 +70,7 @@ sub validate {
         if defined $self->{checksum} and $self->{checksum} ne $self->calculate_checksum;
 
     $self->$_ foreach grep { $self->can($_) }
-        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; sprintf 'validate_%s', lc $1 } $self->list_roles;
+        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; 'validate_' . lc $1 } $self->list_roles;
 
     return $self;
 };
@@ -138,7 +138,7 @@ sub as_hashref {
 sub build_hashref {
     my ($self, $hashref) = @_;
     $self->$_($hashref) foreach grep { $self->can($_) }
-        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; sprintf 'build_%s_hashref', lc $1 } $self->list_roles;
+        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; 'build_hashref_' . lc $1 } $self->list_roles;
 };
 
 1;

@@ -10,7 +10,7 @@ our $VERSION = '0.01';
 use Carp qw(confess);
 use Scalar::Util qw(blessed);
 
-sub _build_base_scts_args {
+sub _build_args_base_scts {
     my ($class, $field, $args) = @_;
 
     my $formatter = 'DateTime::Format::EMIUCP::' . uc($field);
@@ -39,7 +39,7 @@ sub _base_scts_datetime {
     return $formatter->parse_datetime($self->{$field});
 };
 
-sub _build_base_scts_hashref {
+sub _build_hashref_base_scts {
     my ($self, $field, $hashref) = @_;
 
     my $formatter = 'DateTime::Format::EMIUCP::' . uc($field);

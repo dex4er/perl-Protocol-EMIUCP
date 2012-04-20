@@ -20,10 +20,10 @@ eval { load_class('DateTime::Format::EMIUCP::' . uc(field)) };
 
 my %Methods = (
     import_dscts        => '_import_base_scts',
-    build_dscts_args    => '_build_base_scts_args',
+    build_args_dscts    => '_build_base_scts_args',
     validate_dscts      => '_validate_base_scts',
     dscts_datetime      => '_base_scts_datetime',
-    build_dscts_hashref => '_build_base_scts_hashref',
+    build_hashref_dscts => '_build_base_scts_hashref',
 );
 
 while (my ($method, $base_method) = each %Methods) {

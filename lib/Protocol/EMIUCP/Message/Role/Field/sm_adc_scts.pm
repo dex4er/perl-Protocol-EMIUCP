@@ -14,7 +14,7 @@ eval { require DateTime::Format::EMIUCP::SCTS };
 
 has 'sm';
 
-sub build_sm_args {
+sub build_args_sm {
     my ($class, $args) = @_;
 
     $args->{sm_scts} = DateTime::Format::EMIUCP::SCTS->format_datetime($args->{sm_scts})
@@ -58,7 +58,7 @@ sub sm_scts_datetime {
     return DateTime::Format::EMIUCP::SCTS->parse_datetime($scts);
 };
 
-sub build_sm_hashref {
+sub build_hashref_sm {
     my ($self, $hashref) = @_;
     if (defined $hashref->{sm}) {
         $hashref->{sm_adc}  = $self->sm_adc;

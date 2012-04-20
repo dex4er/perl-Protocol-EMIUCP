@@ -9,7 +9,7 @@ our $VERSION = '0.01';
 
 use Carp qw(confess);
 
-sub build_o_args {
+sub build_args_o {
     my ($class, $args) = @_;
 
     $args->{o_r} = 'O' unless defined $args->{o_r};

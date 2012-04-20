@@ -28,11 +28,8 @@ use constant list_valid_rsn_values => [
 
 use constant list_valid_mt_values => [ qw( 2 3 4 )];
 
-sub build_o_50_args {
+sub build_args_o_50 {
     my ($class, $args) = @_;
-
-    $class->$_($args) foreach map { "build_${_}_args" }
-        qw( nt npid lpid ddt vp scts dst dscts mt amsg tmsg );
 
     foreach my $name (qw( nrq lrq dd )) {
         $args->{$name}  = 0
@@ -54,9 +51,6 @@ sub build_o_50_args {
 
 sub validate_o_50 {
     my ($self) = @_;
-
-    $self->$_ foreach map { "validate_$_" }
-        qw( nt npid lpid ddt vp scts dst dscts mt amsg tmsg );
 
     foreach my $name (qw( adc nadc lrad )) {
         confess "Attribute ($name) is invalid"
@@ -104,9 +98,6 @@ sub oadc_utf8 {
 
 sub build_hashref {
     my ($self, $hashref) = @_;
-
-    $self->$_($hashref) foreach map { "build_${_}_hashref" }
-        qw( nt npid lpid ddt vp scts dst dscts mt amsg tmsg );
 
     $hashref->{oadc_utf8} = $self->oadc_utf8 if defined $hashref->{oadc}; # TODO and $hashref->{otoa} eq '5039'
 
