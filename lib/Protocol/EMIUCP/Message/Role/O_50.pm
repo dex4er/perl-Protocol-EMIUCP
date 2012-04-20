@@ -18,6 +18,7 @@ use base qw(
     Protocol::EMIUCP::Message::Role::Field::dscts
     Protocol::EMIUCP::Message::Role::Field::mt
     Protocol::EMIUCP::Message::Role::Field::amsg
+    Protocol::EMIUCP::Message::Role::Field::tmsg
     Protocol::EMIUCP::Message::Role::OT_50
     Protocol::EMIUCP::Message::Role::O
 );
@@ -40,12 +41,16 @@ use constant list_valid_mt_values => [ qw( 2 3 4 )];
 sub build_o_50_args {
     my ($class, $args) = @_;
 
-    $class->$_($args) foreach map { "build_${_}_args" } qw( nt npid lpid ddt vp scts dst dscts mt amsg );
+    $class->$_($args) foreach map { "build_${_}_args" }
+        qw( nt npid lpid ddt vp scts dst dscts mt amsg tmsg );
 
     foreach my $name (qw( nrq lrq dd )) {
         $args->{$name}  = 0
             if exists $args->{$name} and not $args->{$name};
     };
+
+    $args->{nb} = 4 * length $args->{tmsg}  # one char from tmsg is 4 bits
+        if not defined $args->{nb} and defined $args->{tmsg};
 
     $args->{oadc} = from_utf8_to_7bit_hex $args->{oadc_utf8}
         if defined $args->{oadc_utf8};
@@ -60,7 +65,8 @@ sub build_o_50_args {
 sub validate_o_50 {
     my ($self) = @_;
 
-    $self->$_ foreach map { "validate_$_" } qw( nt npid lpid ddt vp scts dst dscts mt amsg );
+    $self->$_ foreach map { "validate_$_" }
+        qw( nt npid lpid ddt vp scts dst dscts mt amsg tmsg );
 
     foreach my $name (qw( adc nadc lrad )) {
         confess "Attribute ($name) is invalid"
@@ -109,7 +115,8 @@ sub oadc_utf8 {
 sub build_hashref {
     my ($self, $hashref) = @_;
 
-    $self->$_($hashref) foreach map { "build_${_}_hashref" } qw( nt npid lpid ddt vp scts dst dscts mt amsg );
+    $self->$_($hashref) foreach map { "build_${_}_hashref" }
+        qw( nt npid lpid ddt vp scts dst dscts mt amsg tmsg );
 
     $hashref->{oadc_utf8} = $self->oadc_utf8 if defined $hashref->{oadc}; # TODO and $hashref->{otoa} eq '5039'
 
