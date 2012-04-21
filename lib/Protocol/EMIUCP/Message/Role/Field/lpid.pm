@@ -7,7 +7,10 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw(Protocol::EMIUCP::Message::Role::Field::Base::pid);
+use base qw(
+    Protocol::EMIUCP::Message::Role::Field::Base::pid
+    Protocol::EMIUCP::Message::Role
+);
 
 use Protocol::EMIUCP::Util qw(has);
 

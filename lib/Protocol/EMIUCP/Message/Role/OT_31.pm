@@ -7,6 +7,8 @@ use warnings;
 
 our $VERSION = '0.01';
 
+use base qw(Protocol::EMIUCP::Message::Role);
+
 use Carp qw(confess);
 
 sub build_args_ot_31 {

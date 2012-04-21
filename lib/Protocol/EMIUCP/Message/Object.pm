@@ -48,17 +48,17 @@ sub new_from_string {
     return $class->new( %{ $class->parse_string($str) } );
 };
 
-sub list_roles {
+sub list_message_roles {
     my ($self) = @_;
     no strict 'refs';
     my $class = ref $self ? ref $self : $self;
-    return grep { /::Role::/ } @{"${class}::ISA"};
+    return grep { $_->DOES('Protocol::EMIUCP::Message::Role') } @{"${class}::ISA"};
 };
 
 sub build_args {
     my ($class, $args) = @_;
     $class->$_($args) foreach grep { $class->can($_) }
-        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; 'build_args_' . lc $1 } $class->list_roles;
+        map { /::(\w+)$/; 'build_args_' . lc $1 } $class->list_message_roles;
 };
 
 sub validate {
@@ -70,7 +70,7 @@ sub validate {
         if defined $self->{checksum} and $self->{checksum} ne $self->calculate_checksum;
 
     $self->$_ foreach grep { $self->can($_) }
-        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; 'validate_' . lc $1 } $self->list_roles;
+        map { /::(\w+)$/; 'validate_' . lc $1 } $self->list_message_roles;
 
     return $self;
 };
@@ -138,7 +138,7 @@ sub as_hashref {
 sub build_hashref {
     my ($self, $hashref) = @_;
     $self->$_($hashref) foreach grep { $self->can($_) }
-        map { / :: ([A-Za-z0-9]+) (?: _ .*)? $/x; 'build_hashref_' . lc $1 } $self->list_roles;
+        map { /::(\w+)$/; 'build_hashref_' . lc $1 } $self->list_message_roles;
 };
 
 1;

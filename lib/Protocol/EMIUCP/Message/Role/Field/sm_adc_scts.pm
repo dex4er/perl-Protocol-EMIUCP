@@ -7,6 +7,8 @@ use warnings;
 
 our $VERSION = '0.01';
 
+use base qw(Protocol::EMIUCP::Message::Role);
+
 use Carp qw(confess);
 use Scalar::Util qw(blessed);
 use Protocol::EMIUCP::Util qw(has);
@@ -15,7 +17,7 @@ use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::SCTS }
 
 has 'sm';
 
-sub build_args_sm {
+sub build_args_sm_adc_scts {
     my ($class, $args) = @_;
 
     $args->{sm_scts} = DateTime::Format::EMIUCP::SCTS->format_datetime($args->{sm_scts})
@@ -27,7 +29,7 @@ sub build_args_sm {
     return $class;
 };
 
-sub validate_sm {
+sub validate_sm_adc_scts {
     my ($self) = @_;
 
     confess "Attribute (sm) is invalid"
@@ -59,7 +61,7 @@ sub sm_scts_datetime {
     return DateTime::Format::EMIUCP::SCTS->parse_datetime($scts);
 };
 
-sub build_hashref_sm {
+sub build_hashref_sm_adc_scts {
     my ($self, $hashref) = @_;
     if (defined $hashref->{sm}) {
         $hashref->{sm_adc}  = $self->sm_adc;
