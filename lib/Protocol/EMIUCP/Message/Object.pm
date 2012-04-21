@@ -13,6 +13,7 @@ has [qw( trn len o_r ot checksum )];
 
 use Carp qw(confess);
 use List::Util qw(sum);
+use Protocol::EMIUCP::Util qw(get_linear_isa);
 
 sub new {
     my ($class, %args) = @_;
@@ -49,30 +50,6 @@ sub new_from_string {
     return $class->new( %{ $class->parse_string($str) } );
 };
 
-use constant HAVE_MRO => eval { require MRO::Compat };
-
-# Pure Perl reimplementation of mro::get_linear_isa
-sub _get_linear_isa ($) {
-    my ($class) = @_;
-
-    my @isa = ($class);
-    my %been;
-
-    no warnings 'once';
-    local *UNIVERSAL::_get_linear_isa = \&_get_linear_isa;
-
-    no strict 'refs';
-    foreach (@{"${class}::ISA"}) {
-        push @isa, $_;
-        push @isa, @{ $_->_get_linear_isa } if not $been{$_}++;
-    };
-
-    my %seen;
-    return [ grep { not $seen{$_}++ } @isa ];
-};
-
-BEGIN { *get_linear_isa = HAVE_MRO ? \&mro::get_linear_isa : \&_get_linear_isa };
-
 sub list_message_roles {
     my ($self) = @_;
 
@@ -82,8 +59,9 @@ sub list_message_roles {
     no warnings 'once';
     local *UNIVERSAL::does = sub {};
 
-    return [ grep { $_->does('Protocol::EMIUCP::Message::Role') }
-        @{ $class->get_linear_isa } ];
+    return [
+        grep { $_->does('Protocol::EMIUCP::Message::Role') } @{ get_linear_isa $class }
+    ];
 };
 
 sub build_args {

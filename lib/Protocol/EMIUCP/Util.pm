@@ -16,7 +16,7 @@ our @EXPORT_OK = qw(
     decode_hex encode_hex
     from_hex_to_utf8 from_utf8_to_hex
     from_7bit_hex_to_utf8 from_utf8_to_7bit_hex
-    load_class
+    get_linear_isa load_class
 );
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 BEGIN { *import = \&Exporter::import; }
@@ -27,7 +27,6 @@ use constant {
     ETX => "\x03",
 };
 
-
 sub load_class ($) {
     my ($class) = @_;
     (my $file = $class . '.pm') =~ s{::}{/}g;
@@ -36,6 +35,30 @@ sub load_class ($) {
     };
     confess $@ if $@;
 };
+
+use constant HAVE_MRO => eval { require MRO::Compat };
+
+# Pure Perl reimplementation of mro::get_linear_isa
+sub _get_linear_isa ($) {
+    my ($class) = @_;
+
+    my @isa = ($class);
+    my %been;
+
+    no warnings 'once';
+    local *UNIVERSAL::_get_linear_isa = \&_get_linear_isa;
+
+    no strict 'refs';
+    foreach (@{"${class}::ISA"}) {
+        push @isa, $_;
+        push @isa, @{ $_->_get_linear_isa } if not $been{$_}++;
+    };
+
+    my %seen;
+    return [ grep { not $seen{$_}++ } @isa ];
+};
+
+BEGIN { *get_linear_isa = HAVE_MRO ? \&mro::get_linear_isa : \&_get_linear_isa };
 
 use Encode qw( decode encode );
 
