@@ -7,17 +7,18 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw(
+use constant field => do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
+
+use Protocol::EMIUCP::OO::Role;
+
+with qw(
     Protocol::EMIUCP::Message::Role::Field::Base::pid
     Protocol::EMIUCP::Message::Role
 );
 
-use Carp qw(confess);
-use Protocol::EMIUCP::Util qw(has);
-
-use constant field => do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
-
 has field;
+
+use Carp qw(confess);
 
 my %Methods = (
     import_pid        => '_import_base_pid',
@@ -45,4 +46,3 @@ sub validate_pid {
 };
 
 1;
-

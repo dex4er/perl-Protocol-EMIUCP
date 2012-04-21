@@ -7,16 +7,15 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw(
+use Protocol::EMIUCP::OO;
+
+with qw(
     Protocol::EMIUCP::Message::Role::OT_01
     Protocol::EMIUCP::Message::Role::R_A
-    Protocol::EMIUCP::Message::Object
 );
+extends qw(Protocol::EMIUCP::Message::Object);
 
-use Carp qw(confess);
-use Protocol::EMIUCP::Util qw(with_field);
-
-with_field 'sm_adc_scts';
+has_field 'sm_adc_scts';
 
 use constant list_data_field_names => [ qw( ack sm ) ];
 

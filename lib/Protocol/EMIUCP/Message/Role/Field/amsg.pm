@@ -7,12 +7,14 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw(Protocol::EMIUCP::Message::Role);
+use Protocol::EMIUCP::OO::Role;
 
-use Carp qw(confess);
-use Protocol::EMIUCP::Util qw( has from_hex_to_utf8 from_utf8_to_hex );
+with qw(Protocol::EMIUCP::Message::Role);
 
 has 'amsg';
+
+use Carp qw(confess);
+use Protocol::EMIUCP::Util qw( from_hex_to_utf8 from_utf8_to_hex );
 
 sub build_args_amsg {
     my ($class, $args) = @_;

@@ -7,20 +7,21 @@ use warnings;
 
 our $VERSION = '0.01';
 
-our @ISA;
-use base qw(
+use Protocol::EMIUCP::OO;
+
+with qw(
     Protocol::EMIUCP::Message::Role::OT_01
     Protocol::EMIUCP::Message::Role::O
-    Protocol::EMIUCP::Message::Object
 );
-
-use Carp qw(confess);
-use Protocol::EMIUCP::Util qw( has with_field from_hex_to_utf8 from_utf8_to_hex );
+extends qw(Protocol::EMIUCP::Message::Object);
 
 has [qw( adc oadc ac )];
-with_field [qw( mt amsg nmsg )];
+has_field [qw( mt amsg nmsg )];
 
 use constant list_valid_mt_values => [ qw( 2 3 ) ];
+
+use Carp qw(confess);
+use Protocol::EMIUCP::Util qw( from_hex_to_utf8 from_utf8_to_hex );
 
 sub validate {
     my ($self) = @_;

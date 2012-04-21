@@ -7,14 +7,14 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw(
+use constant field => do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
+
+use Protocol::EMIUCP::OO::Role;
+
+with qw(
     Protocol::EMIUCP::Message::Role::Field::Base::pid
     Protocol::EMIUCP::Message::Role
 );
-
-use Protocol::EMIUCP::Util qw(has);
-
-use constant field => do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
 
 has field;
 
@@ -35,4 +35,3 @@ while (my ($method, $base_method) = each %Methods) {
 };
 
 1;
-

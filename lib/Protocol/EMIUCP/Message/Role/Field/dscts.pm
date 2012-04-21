@@ -7,18 +7,18 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw(
+use constant field => do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
+
+use Protocol::EMIUCP::OO::Role;
+
+with qw(
     Protocol::EMIUCP::Message::Role::Field::Base::scts
     Protocol::EMIUCP::Message::Role
 );
 
-use Carp qw(confess);
-use Protocol::EMIUCP::Util qw( has load_class );
-eval { require DateTime::Format::EMIUCP::DSCTS };
-
-use constant field => do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
-
 has field;
+
+eval { require DateTime::Format::EMIUCP::DSCTS };
 
 my %Methods = (
     import_dscts        => '_import_base_scts',

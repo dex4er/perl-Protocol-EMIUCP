@@ -7,10 +7,9 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw(
-    Protocol::EMIUCP::Message::Role::OT_50
-    Protocol::EMIUCP::Message::Role
-);
+use Protocol::EMIUCP::OO::Role;
+
+with qw(Protocol::EMIUCP::Message::Role::OT_50);
 
 use Carp qw(confess);
 

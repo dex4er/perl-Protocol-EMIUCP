@@ -7,15 +7,16 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw(Protocol::EMIUCP::Message::Role);
+use Protocol::EMIUCP::OO::Role;
+
+with qw(Protocol::EMIUCP::Message::Role);
+
+has 'sm';
 
 use Carp qw(confess);
 use Scalar::Util qw(blessed);
-use Protocol::EMIUCP::Util qw(has);
 
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::SCTS };
-
-has 'sm';
 
 sub build_args_sm_adc_scts {
     my ($class, $args) = @_;

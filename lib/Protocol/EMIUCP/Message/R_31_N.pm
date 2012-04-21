@@ -7,17 +7,16 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw(
+use Protocol::EMIUCP::OO;
+
+with qw(
     Protocol::EMIUCP::Message::Role::OT_31
     Protocol::EMIUCP::Message::Role::R_N
-    Protocol::EMIUCP::Message::Object
 );
-
-use Carp qw(confess);
-use Protocol::EMIUCP::Util qw( has with_field );
+extends qw(Protocol::EMIUCP::Message::Object);
 
 has 'sm';
-with_field 'ec';
+has_field 'ec';
 
 use constant list_data_field_names => [ qw( nack ec sm ) ];
 

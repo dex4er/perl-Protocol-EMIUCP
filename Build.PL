@@ -22,6 +22,7 @@ my $build = Module::Build->new(
     },
     recommends              => {
         'DateTime::Format::EMIUCP' => 0.0300, # ::DDT, ::DSCTS, ::SCTS, ::VP
+        'MRO::Compat'              => 0,      # mro::get_linear_isa
     },
     build_requires          => {
         'Test::More'               => 0,

@@ -7,11 +7,12 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use Carp qw(confess);
-use List::Util qw(sum);
-use Protocol::EMIUCP::Util qw(has);
+use Protocol::EMIUCP::OO;
 
 has [qw( trn len o_r ot checksum )];
+
+use Carp qw(confess);
+use List::Util qw(sum);
 
 sub new {
     my ($class, %args) = @_;
@@ -48,17 +49,47 @@ sub new_from_string {
     return $class->new( %{ $class->parse_string($str) } );
 };
 
+use constant HAVE_MRO => eval { require MRO::Compat };
+
+# Pure Perl reimplementation of mro::get_linear_isa
+sub _get_linear_isa ($) {
+    my ($class) = @_;
+
+    my @isa = ($class);
+    my %been;
+
+    no warnings 'once';
+    local *UNIVERSAL::_get_linear_isa = \&_get_linear_isa;
+
+    no strict 'refs';
+    foreach (@{"${class}::ISA"}) {
+        push @isa, $_;
+        push @isa, @{ $_->_get_linear_isa } if not $been{$_}++;
+    };
+
+    my %seen;
+    return [ grep { not $seen{$_}++ } @isa ];
+};
+
+BEGIN { *get_linear_isa = HAVE_MRO ? \&mro::get_linear_isa : \&_get_linear_isa };
+
 sub list_message_roles {
     my ($self) = @_;
+
     no strict 'refs';
     my $class = ref $self ? ref $self : $self;
-    return grep { $_->DOES('Protocol::EMIUCP::Message::Role') } @{"${class}::ISA"};
+
+    no warnings 'once';
+    local *UNIVERSAL::does = sub {};
+
+    return [ grep { $_->does('Protocol::EMIUCP::Message::Role') }
+        @{ $class->get_linear_isa } ];
 };
 
 sub build_args {
     my ($class, $args) = @_;
     $class->$_($args) foreach grep { $class->can($_) }
-        map { /::(\w+)$/; 'build_args_' . lc $1 } $class->list_message_roles;
+        map { /::(\w+)$/; 'build_args_' . lc $1 } @{ $class->list_message_roles };
 };
 
 sub validate {
@@ -70,7 +101,7 @@ sub validate {
         if defined $self->{checksum} and $self->{checksum} ne $self->calculate_checksum;
 
     $self->$_ foreach grep { $self->can($_) }
-        map { /::(\w+)$/; 'validate_' . lc $1 } $self->list_message_roles;
+        map { /::(\w+)$/; 'validate_' . lc $1 } @{ $self->list_message_roles };
 
     return $self;
 };
@@ -138,7 +169,7 @@ sub as_hashref {
 sub build_hashref {
     my ($self, $hashref) = @_;
     $self->$_($hashref) foreach grep { $self->can($_) }
-        map { /::(\w+)$/; 'build_hashref_' . lc $1 } $self->list_message_roles;
+        map { /::(\w+)$/; 'build_hashref_' . lc $1 } @{ $self->list_message_roles };
 };
 
 1;
