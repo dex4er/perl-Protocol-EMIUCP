@@ -7,6 +7,8 @@ use warnings;
 
 our $VERSION = '0.01';
 
+use Protocol::EMIUCP::OO::Role;
+
 use Carp qw(confess);
 use Scalar::Util qw(blessed);
 

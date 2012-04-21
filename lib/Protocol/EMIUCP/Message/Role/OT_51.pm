@@ -9,7 +9,10 @@ our $VERSION = '0.01';
 
 use Protocol::EMIUCP::OO::Role;
 
-with qw(Protocol::EMIUCP::Message::Role::OT_50);
+with qw(
+    Protocol::EMIUCP::Message::Role::OT_50
+    Protocol::EMIUCP::Message::Role
+);
 
 use Carp qw(confess);
 

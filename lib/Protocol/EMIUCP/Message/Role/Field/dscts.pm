@@ -22,10 +22,10 @@ eval { require DateTime::Format::EMIUCP::DSCTS };
 
 my %Methods = (
     import_dscts        => '_import_base_scts',
-    build_args_dscts    => '_build_base_scts_args',
+    build_args_dscts    => '_build_args_base_scts',
     validate_dscts      => '_validate_base_scts',
     dscts_datetime      => '_base_scts_datetime',
-    build_hashref_dscts => '_build_base_scts_hashref',
+    build_hashref_dscts => '_build_hashref_base_scts',
 );
 
 while (my ($method, $base_method) = each %Methods) {
