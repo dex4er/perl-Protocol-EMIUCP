@@ -14,8 +14,11 @@ with qw(
     Protocol::EMIUCP::Message::Role::OT_50
 );
 
-has [qw( adc ac nrq nadc lrq lrad lpid dd )];
-has_field [qw( oadc_alpha nt npid lpid ddt vp scts dst dscts mt nmsg amsg tmsg mms )];
+has [qw( adc ac nrq nadc lrq lrad lpid dd pr cpg rply )];
+has_field [qw(
+    oadc_alphanum nt npid lpid ddt vp scts dst dscts mt nmsg amsg tmsg mms dcs
+    mcls rpl otoa
+)];
 
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw( from_7bit_hex_to_utf8 from_utf8_to_7bit_hex );
@@ -67,9 +70,15 @@ sub validate_o_50 {
     confess "Attribute (rpid) is invalid"
         if defined $self->{rpid} and not grep { $_ eq $self->{rpid} } @{ $self->list_valid_rpid_values };
     confess "Attribute (rsn) is invalid"
-        if defined $self->{rsn} and not grep { $_ eq $self->{rsn} } @{ $self->list_valid_rsn_values };
+        if defined $self->{rsn}  and not grep { $_ eq $self->{rsn} } @{ $self->list_valid_rsn_values };
     confess "Attribute (nb) is invalid"
-        if defined $self->{nb} and not $self->{nb} =~ /^\d{1,4}$/;
+        if defined $self->{nb}   and not $self->{nb} =~ /^\d{1,4}$/;
+    confess "Attribute (pr) is invalid"
+        if defined $self->{pr}   and not $self->{pr} =~ /^.$/;
+    confess "Attribute (cpg) is invalid"
+        if defined $self->{cpg}  and not $self->{cpg} =~ /^\d$/;
+    confess "Attribute (rply) is invalid"
+        if defined $self->{rply} and not $self->{rply} =~ /^\d$/;
 
     return $self;
 };
@@ -86,7 +95,7 @@ sub list_data_field_names {
     return [
         qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid scts dst rsn dscts mt nb ),
         $MT_To_Field[$mt||0] || '-msg',
-        qw( mms ),
+        qw( mms pr dcs mcls rpl cpg rply otoa ),
     ];
 };
 
