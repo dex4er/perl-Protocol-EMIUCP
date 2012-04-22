@@ -16,22 +16,14 @@ with qw(
 
 has [qw( adc ac nrq nadc lrq lrad lpid dd pr cpg rply hplmn res4 res5 )];
 has_field [qw(
-    oadc_alphanum nt npid lpid ddt vp scts dst dscts mt nmsg amsg tmsg mms dcs
-    mcls rpl otoa xser
+    oadc_alphanum nt npid lpid ddt vp rpid scts dst rsn dscts mt nmsg amsg
+    tmsg mms dcs mcls rpl otoa xser
 )];
+
+use constant list_valid_mt_values => [ qw( 2 3 4 )];
 
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw( from_7bit_hex_to_utf8 from_utf8_to_7bit_hex );
-
-use constant list_valid_rpid_values => [
-    map { sprintf '%04d', $_ } 0..71, 95, 127, 192..255
-];
-
-use constant list_valid_rsn_values => [
-    map { sprintf '%03d', $_ } 0..255
-];
-
-use constant list_valid_mt_values => [ qw( 2 3 4 )];
 
 sub build_args_o_50 {
     my ($class, $args) = @_;
@@ -40,14 +32,6 @@ sub build_args_o_50 {
         $args->{$name}  = 0
             if exists $args->{$name} and not $args->{$name};
     };
-
-    $args->{nb} = 4 * length $args->{tmsg}  # one char from tmsg is 4 bits
-        if not defined $args->{nb} and defined $args->{tmsg};
-
-    $args->{rpid} = sprintf '%04d', $args->{rpid}
-        if defined $args->{rpid} and $args->{rpid} =~ /^\d+$/;
-    $args->{rsn} = sprintf '%03d', $args->{rsn}
-        if defined $args->{rsn} and $args->{rsn} =~ /^\d+$/;
 
     return $class;
 };
@@ -65,12 +49,6 @@ sub validate_o_50 {
     };
     confess "Attribute (ac) is invalid"
         if defined $self->{ac}   and not $self->{ac}   =~ /^\d{4,16}$/;
-    confess "Attribute (rpid) is invalid"
-        if defined $self->{rpid} and not grep { $_ eq $self->{rpid} } @{ $self->list_valid_rpid_values };
-    confess "Attribute (rsn) is invalid"
-        if defined $self->{rsn}  and not grep { $_ eq $self->{rsn} } @{ $self->list_valid_rsn_values };
-    confess "Attribute (nb) is invalid"
-        if defined $self->{nb}   and not $self->{nb} =~ /^\d{1,4}$/;
     confess "Attribute (pr) is invalid"
         if defined $self->{pr}   and not $self->{pr} =~ /^.$/;
     confess "Attribute (cpg) is invalid"

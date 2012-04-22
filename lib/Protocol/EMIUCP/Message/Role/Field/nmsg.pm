@@ -21,6 +21,9 @@ sub validate_nmsg {
     confess "Attribute (nmsg) is invalid"
         if defined $self->{nmsg} and not $self->{nmsg} =~ /^\d{1,160}$/;
 
+    confess "Attribute (nmsg) is invalid, should be undefined if mt != 2"
+        if defined $self->{mt} and $self->{mt} ne 2 and defined $self->{nmsg};
+
     return $self;
 };
 

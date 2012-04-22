@@ -22,6 +22,9 @@ sub build_args_tmsg {
     $args->{tmsg} = encode_hex $args->{tmsg_binary}
         if defined $args->{tmsg_binary};
 
+    $args->{nb} = 4 * length $args->{tmsg}  # one char from tmsg is 4 bits
+        if not defined $args->{nb} and defined $args->{tmsg};
+
     return $class;
 };
 
@@ -30,6 +33,9 @@ sub validate_tmsg {
 
     confess "Attribute (tmsg) is invalid"
         if defined $self->{tmsg} and not $self->{tmsg} =~ /^[\dA-F]{2,1403}$/;
+
+    confess "Attribute (tmsg) is invalid, should be undefined if mt != 4"
+        if defined $self->{mt} and $self->{mt} != 4 and defined $self->{tmsg};
 
     return $self;
 };

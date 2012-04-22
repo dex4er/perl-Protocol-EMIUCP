@@ -31,6 +31,9 @@ sub validate_amsg {
     confess "Attribute (amsg) is invalid"
         if defined $self->{amsg} and not $self->{amsg} =~ /^[\dA-F]{2,640}$/;
 
+    confess "Attribute (amsg) is invalid, should be undefined if mt != 3"
+        if defined $self->{mt} and $self->{mt} ne 3 and defined $self->{amsg};
+
     return $self;
 };
 

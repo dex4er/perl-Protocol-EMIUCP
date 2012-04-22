@@ -42,14 +42,6 @@ sub build_args_mt {
     $args->{mt} = $Constant_To_Value{$1}
         if defined $args->{mt} and $args->{mt} =~ /^MT_(.*)$/;
 
-    no warnings 'numeric';
-    confess "Attribute (nmsg) is invalid, should be undefined if mt != 2"
-        if defined $args->{mt} and $args->{mt} != 2 and defined $args->{nmsg};
-    confess "Attribute (amsg) is invalid, should be undefined if mt != 3"
-        if defined $args->{mt} and $args->{mt} != 3 and defined $args->{amsg};
-    confess "Attribute (tmsg) is invalid, should be undefined if mt != 4"
-        if defined $args->{mt} and $args->{mt} != 4 and defined $args->{tmsg};
-
     return $class;
 };
 

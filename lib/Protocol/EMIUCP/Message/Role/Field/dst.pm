@@ -49,7 +49,7 @@ sub validate_dst {
     my ($self) = @_;
 
     confess "Attribute (dst) is invalid"
-        unless grep { $_ eq $self->{dst} } keys %Value_To_Description;
+        if defined $self->{dst} and not grep { $_ eq $self->{dst} } keys %Value_To_Description;
 
     return $self;
 };
