@@ -52,7 +52,7 @@ sub list_data_field_names {
            : (ref $fields || '') eq 'ARRAY' ? $fields->[7]
            : $fields->{mt};
     no warnings 'numeric';
-    return [ qw( adc oadc ac mt ), $MT_To_Field[$mt] ];
+    return [ qw( adc oadc ac mt ), $MT_To_Field[$mt||0] || '-msg' ];
 };
 
 1;
