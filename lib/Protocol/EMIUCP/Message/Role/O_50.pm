@@ -14,10 +14,10 @@ with qw(
     Protocol::EMIUCP::Message::Role::OT_50
 );
 
-has [qw( adc ac nrq nadc lrq lrad lpid dd pr cpg rply )];
+has [qw( adc ac nrq nadc lrq lrad lpid dd pr cpg rply hplmn )];
 has_field [qw(
     oadc_alphanum nt npid lpid ddt vp scts dst dscts mt nmsg amsg tmsg mms dcs
-    mcls rpl otoa hplmn
+    mcls rpl otoa xser
 )];
 
 use Carp qw(confess);
@@ -93,7 +93,7 @@ sub list_data_field_names {
     return [
         qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid scts dst rsn dscts mt nb ),
         $MT_To_Field[$mt||0] || '-msg',
-        qw( mms pr dcs mcls rpl cpg rply otoa hplmn ),
+        qw( mms pr dcs mcls rpl cpg rply otoa hplmn xser ),
     ];
 };
 
