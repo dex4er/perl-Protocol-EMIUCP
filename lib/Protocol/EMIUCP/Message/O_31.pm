@@ -15,8 +15,7 @@ with qw(
 );
 extends qw(Protocol::EMIUCP::Message::Object);
 
-has 'adc';
-has_field 'pid';
+has_field [qw( adc pid )];
 
 use constant list_data_field_names => [ qw( adc pid ) ];
 
@@ -33,8 +32,6 @@ sub validate {
         unless defined $self->{adc};
     confess "Attribute (pid) is required"
         unless defined $self->{pid};
-    confess "Attribute (adc) is invalid"
-        unless $self->{adc}  =~ /^\d{1,16}$/;
 
     return $self;
 };

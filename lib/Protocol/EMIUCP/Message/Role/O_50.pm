@@ -14,10 +14,10 @@ with qw(
     Protocol::EMIUCP::Message::Role::OT_50
 );
 
-has [qw( adc ac nrq lrq lrad dd pr cpg rply hplmn res4 res5 )];
+has [qw( nrq lrq lrad dd pr cpg rply hplmn res4 res5 )];
 has_field [qw(
-    oadc_alphanum nadc nt npid lpid ddt vp rpid scts dst rsn dscts mt nmsg
-    amsg tmsg mms dcs mcls rpl otoa xser
+    adc oadc_alphanum ac nadc nt npid lpid ddt vp rpid scts dst rsn dscts mt
+    nmsg amsg tmsg mms dcs mcls rpl otoa xser
 )];
 
 use constant list_valid_mt_values => [ qw( 2 3 4 )];
@@ -39,7 +39,7 @@ sub _build_args_o_50 {
 sub _validate_o_50 {
     my ($self) = @_;
 
-    foreach my $name (qw( adc nadc lrad hplmn )) {
+    foreach my $name (qw( lrad hplmn )) {
         confess "Attribute ($name) is invalid"
             if defined $self->{$name} and not $self->{$name}  =~ /^\d{1,16}$/;
     };
@@ -47,8 +47,6 @@ sub _validate_o_50 {
         confess "Attribute ($name) is invalid"
             if defined $self->{$name} and not $self->{$name}  =~ /^[01]$/;
     };
-    confess "Attribute (ac) is invalid"
-        if defined $self->{ac}   and not $self->{ac}   =~ /^\d{4,16}$/;
     confess "Attribute (pr) is invalid"
         if defined $self->{pr}   and not $self->{pr} =~ /^.$/;
     confess "Attribute (cpg) is invalid"
