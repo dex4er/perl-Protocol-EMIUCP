@@ -15,32 +15,8 @@ with qw(
 );
 extends qw(Protocol::EMIUCP::Message::Object);
 
-has 'sm';
+has_field 'sm_Num4';
 
 use constant list_data_field_names => [ qw( ack sm ) ];
-
-use Carp qw(confess);
-
-sub build_args {
-    my ($class, $args) = @_;
-
-    $class->SUPER::build_args($args);
-
-    $args->{sm} = sprintf '%04d', $args->{sm}
-        if defined $args->{sm} and $args->{sm} =~ /^\d+$/;
-
-    return $class;
-};
-
-sub validate {
-    my ($self) = @_;
-
-    $self->SUPER::validate;
-
-    confess "Attribute (sm) is invalid"
-        if defined $self->{sm} and not $self->{sm} =~ /^\d{4}$/;
-
-    return $self;
-};
 
 1;

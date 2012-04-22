@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Role::Field::mvp;
+package Protocol::EMIUCP::Message::Role::Field::sm_Str;
 
 use 5.006;
 
@@ -14,11 +14,11 @@ with qw(
     Protocol::EMIUCP::Message::Role
 );
 
-has 'mvp';
+has 'sm';
 
-sub _validate_mvp {
+sub _validate_sm {
     my ($self) = @_;
-    return $self->_validate_base_Str('mvp');
+    return $self->_validate_base_Str('sm');
 };
 
 1;
