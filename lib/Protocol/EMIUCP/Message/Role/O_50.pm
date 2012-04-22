@@ -17,7 +17,7 @@ with qw(
 has [qw( adc ac nrq nadc lrq lrad lpid dd pr cpg rply )];
 has_field [qw(
     oadc_alphanum nt npid lpid ddt vp scts dst dscts mt nmsg amsg tmsg mms dcs
-    mcls rpl otoa
+    mcls rpl otoa hplmn
 )];
 
 use Carp qw(confess);
@@ -55,7 +55,7 @@ sub build_args_o_50 {
 sub validate_o_50 {
     my ($self) = @_;
 
-    foreach my $name (qw( adc nadc lrad )) {
+    foreach my $name (qw( adc nadc lrad hplmn )) {
         confess "Attribute ($name) is invalid"
             if defined $self->{$name} and not $self->{$name}  =~ /^\d{1,16}$/;
     };
@@ -65,8 +65,6 @@ sub validate_o_50 {
     };
     confess "Attribute (ac) is invalid"
         if defined $self->{ac}   and not $self->{ac}   =~ /^\d{4,16}$/;
-    confess "Attribute (nadc) is invalid"
-        if defined $self->{nadc} and not $self->{nadc} =~ /^\d{1,16}$/;
     confess "Attribute (rpid) is invalid"
         if defined $self->{rpid} and not grep { $_ eq $self->{rpid} } @{ $self->list_valid_rpid_values };
     confess "Attribute (rsn) is invalid"
@@ -95,7 +93,7 @@ sub list_data_field_names {
     return [
         qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid scts dst rsn dscts mt nb ),
         $MT_To_Field[$mt||0] || '-msg',
-        qw( mms pr dcs mcls rpl cpg rply otoa ),
+        qw( mms pr dcs mcls rpl cpg rply otoa hplmn ),
     ];
 };
 
