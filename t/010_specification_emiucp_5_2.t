@@ -174,4 +174,80 @@ do {
     test_message 'Protocol::EMIUCP::Message::R_31_N', $str, \%fields, \%args;
 };
 
+# 5.3 Submit Short Message Operation -51 (p.36)
+do {
+    my $str = '18/00113/O/51/012345/09876//1/1920870340125000/4/0539//////3012961212//////3//4D657373616765203531/////////////CD';
+    my %fields = (
+        trn              => 18,
+        len              => '00113',
+        o_r              => 'O',
+        ot               => '51',
+        adc              => '012345',
+        oadc             => '09876',
+        nrq              => 1,
+        nadc             => '1920870340125000',
+        nadc_addr        => '192.87.34.12:5000',
+        nt               => 4,
+        nt_description   => 'ND',
+        npid             => '0539',
+        npid_description => 'PC via TCP/IP',
+        vp               => '3012961212',
+        HAVE_DATETIME ? (vp_datetime => '1996-12-30T12:12:00') : (),
+        mt               => 3,
+        mt_description   => 'Alphanumeric',
+        amsg             => '4D657373616765203531',
+        amsg_utf8        => 'Message 51',
+        checksum         => 'CD',
+    );
+    my %args = %fields;
+    delete $args{$_} foreach (qw( nt_description ntpid_description mt_description amsg nadc ));
+    %args = (
+        %args,
+        nadc => '192.87.34.12:5000',
+        nt   => 'NT_ND',
+        npid => 'NPID_PC_VIA_TCP_IP',
+        mt   => 'MT_ALPHANUMERIC',
+    );
+    test_message 'Protocol::EMIUCP::Message::O_51', $str, \%fields, \%args;
+};
+
+# 5.3 Submit Short Message Operation -51 (p.36)
+do {
+    my $str = '39/00099/O/51/0657467/078769//1//7//1/0545765/0122/1/0808971800///////4/32/F5AA34DE////1/////////65';
+    my %fields = (
+        trn              => '39',
+        len              => '00099',
+        o_r              => 'O',
+        ot               => '51',
+        adc              => '0657467',
+        oadc             => '078769',
+        nrq              => 1,
+        nt               => 7,
+        nt_description   => 'ND+DN+BN',
+        lrq              => 1,
+        lrad             => '0545765',
+        lpid             => '0122',
+        lpid_description => 'Fax Group 3',
+        dd               => 1,
+        ddt              => '0808971800',
+        HAVE_DATETIME ? (ddt_datetime => '1997-08-08T18:00:00') : (),
+        mt               => 4,
+        mt_description   => 'Transparent',
+        nb               => 32,
+        tmsg             => 'F5AA34DE',
+        tmsg_binary      => "\xF5\xAA\x34\xDE",
+        mcls             => 1,
+        checksum         => '65',
+    );
+    my %args = %fields;
+    delete $args{$_} foreach (qw( nt_description lpid_description mt_description nb tmsg ));
+    %args = (
+        %args,
+        nt   => 'NT_ND_DN_BN',
+        lpid => 'LPID_FAX_GROUP_3',
+        mt   => 'MT_TRANSPARENT',
+    );
+    test_message 'Protocol::EMIUCP::Message::O_51', $str, \%fields, \%args;
+};
+
 done_testing();
