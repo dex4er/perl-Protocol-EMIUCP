@@ -15,7 +15,7 @@ has 'mms';
 
 use Carp qw(confess);
 
-sub validate_mms {
+sub _validate_mms {
     my ($self) = @_;
 
     confess "Attribute (mms) is invalid"

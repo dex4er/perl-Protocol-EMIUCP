@@ -19,7 +19,7 @@ use constant list_valid_rpid_values => [
 
 use Carp qw(confess);
 
-sub build_args_rpid {
+sub _build_args_rpid {
     my ($class, $args) = @_;
 
     $args->{rpid} = sprintf '%04d', $args->{rpid}
@@ -28,7 +28,7 @@ sub build_args_rpid {
     return $class;
 };
 
-sub validate_rpid {
+sub _validate_rpid {
     my ($self) = @_;
 
     confess "Attribute (rpid) is invalid"

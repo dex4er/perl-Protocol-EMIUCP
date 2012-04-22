@@ -35,7 +35,7 @@ foreach my $value (1..7) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub import_nt {
+sub _import_nt {
     my ($class, $args) = @_;
     my $caller = $args->{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
@@ -44,7 +44,7 @@ sub import_nt {
     };
 };
 
-sub build_args_nt {
+sub _build_args_nt {
     my ($class, $args) = @_;
 
     $args->{nt} = $Constant_To_Value{$1}
@@ -53,7 +53,7 @@ sub build_args_nt {
     return $class;
 };
 
-sub validate_nt {
+sub _validate_nt {
     my ($self) = @_;
 
     confess "Attribute (nt) is invalid"
@@ -67,7 +67,7 @@ sub nt_description {
     return $Value_To_Description{ defined $value ? $value : $self->{nt} };
 };
 
-sub build_hashref_nt {
+sub _build_hashref_nt {
     my ($self, $hashref) = @_;
     if (defined $hashref->{nt}) {
         $hashref->{nt_description} = $self->nt_description;

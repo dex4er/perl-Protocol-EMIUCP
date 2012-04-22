@@ -15,7 +15,7 @@ has 'nb';
 
 use Carp qw(confess);
 
-sub validate_nb {
+sub _validate_nb {
     my ($self) = @_;
 
     confess "Attribute (nb) is invalid"

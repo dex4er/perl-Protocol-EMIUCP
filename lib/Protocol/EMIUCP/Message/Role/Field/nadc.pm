@@ -16,9 +16,9 @@ has 'nadc';
 use Carp qw(confess);
 
 use Protocol::EMIUCP::Message::Role::Field::npid;
-BEGIN { Protocol::EMIUCP::Message::Role::Field::npid->import_npid };
+BEGIN { Protocol::EMIUCP::Message::Role::Field::npid->_import_npid };
 
-sub build_args_nadc {
+sub _build_args_nadc {
     my ($class, $args) = @_;
 
     $args->{nadc} = $class->_from_addr_to_nadc($args->{nadc_addr})
@@ -50,7 +50,7 @@ sub build_args_nadc {
     };
 }
 
-sub validate_nadc {
+sub _validate_nadc {
     my ($self) = @_;
 
     if (defined $self->{nadc}) {
@@ -72,7 +72,7 @@ sub nadc_addr {
     return $self->_from_nadc_to_addr($self->{nadc});
 };
 
-sub build_hashref_nadc {
+sub _build_hashref_nadc {
     my ($self, $hashref) = @_;
 
     if (defined $self->{nadc}) {

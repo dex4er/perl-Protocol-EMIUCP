@@ -18,7 +18,7 @@ use Scalar::Util qw(blessed);
 
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::DDT };
 
-sub build_args_ddt {
+sub _build_args_ddt {
     my ($class, $args) = @_;
 
     $args->{ddt} = DateTime::Format::EMIUCP::DDT->format_datetime($args->{ddt})
@@ -27,7 +27,7 @@ sub build_args_ddt {
     return $class;
 };
 
-sub validate_ddt {
+sub _validate_ddt {
     my ($self) = @_;
 
     confess "Attribute (ddt) is invalid"
@@ -43,7 +43,7 @@ sub ddt_datetime {
     return DateTime::Format::EMIUCP::DDT->parse_datetime($self->{ddt});
 };
 
-sub build_hashref_ddt {
+sub _build_hashref_ddt {
     my ($self, $hashref) = @_;
 
     $hashref->{ddt_datetime} = $self->ddt_datetime->datetime

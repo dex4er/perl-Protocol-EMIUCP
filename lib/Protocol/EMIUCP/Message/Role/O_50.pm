@@ -25,7 +25,7 @@ use constant list_valid_mt_values => [ qw( 2 3 4 )];
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw( from_7bit_hex_to_utf8 from_utf8_to_7bit_hex );
 
-sub build_args_o_50 {
+sub _build_args_o_50 {
     my ($class, $args) = @_;
 
     foreach my $name (qw( nrq lrq dd )) {
@@ -36,7 +36,7 @@ sub build_args_o_50 {
     return $class;
 };
 
-sub validate_o_50 {
+sub _validate_o_50 {
     my ($self) = @_;
 
     foreach my $name (qw( adc nadc lrad hplmn )) {

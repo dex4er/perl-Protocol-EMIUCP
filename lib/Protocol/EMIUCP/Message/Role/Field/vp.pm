@@ -18,7 +18,7 @@ use Scalar::Util qw(blessed);
 
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::VP };
 
-sub build_args_vp {
+sub _build_args_vp {
     my ($class, $args) = @_;
 
     $args->{vp} = DateTime::Format::EMIUCP::VP->format_datetime($args->{vp})
@@ -27,7 +27,7 @@ sub build_args_vp {
     return $class;
 };
 
-sub validate_vp {
+sub _validate_vp {
     my ($self) = @_;
 
     confess "Attribute (vp) is invalid"
@@ -43,7 +43,7 @@ sub vp_datetime {
     return DateTime::Format::EMIUCP::VP->parse_datetime($self->{vp});
 };
 
-sub build_hashref_vp {
+sub _build_hashref_vp {
     my ($self, $hashref) = @_;
 
     $hashref->{vp_datetime} = $self->vp_datetime->datetime

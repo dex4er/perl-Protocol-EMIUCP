@@ -15,7 +15,7 @@ has [qw( ack nack )];
 
 use Carp qw(confess);
 
-sub build_args_r {
+sub _build_args_r {
     my ($class, $args) = @_;
 
     $args->{o_r}  = 'R' unless defined $args->{o_r};
@@ -23,7 +23,7 @@ sub build_args_r {
     return $class;
 };
 
-sub validate_r {
+sub _validate_r {
     my ($self) = @_;
 
     confess "Attribute (o_r) is invalid, should be 'R'"

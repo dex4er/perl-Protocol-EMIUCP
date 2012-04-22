@@ -18,7 +18,7 @@ extends qw(Protocol::EMIUCP::Message::Object);
 use Carp qw(confess);
 
 use Protocol::EMIUCP::Message::Role::Field::mt;
-BEGIN { Protocol::EMIUCP::Message::Role::Field::mt->import_mt };
+BEGIN { Protocol::EMIUCP::Message::Role::Field::mt->_import_mt };
 
 use constant list_valid_npid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 ) ];
 

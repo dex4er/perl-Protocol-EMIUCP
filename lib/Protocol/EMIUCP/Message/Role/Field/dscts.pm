@@ -21,11 +21,11 @@ has field;
 eval { require DateTime::Format::EMIUCP::DSCTS };
 
 my %Methods = (
-    import_dscts        => '_import_base_scts',
-    build_args_dscts    => '_build_args_base_scts',
-    validate_dscts      => '_validate_base_scts',
-    dscts_datetime      => '_base_scts_datetime',
-    build_hashref_dscts => '_build_hashref_base_scts',
+    _import_dscts        => '_import_base_scts',
+    _build_args_dscts    => '_build_args_base_scts',
+    _validate_dscts      => '_validate_base_scts',
+    dscts_datetime       => '_base_scts_datetime',
+    _build_hashref_dscts => '_build_hashref_base_scts',
 );
 
 while (my ($method, $base_method) = each %Methods) {

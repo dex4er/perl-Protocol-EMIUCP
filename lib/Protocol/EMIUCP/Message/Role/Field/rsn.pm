@@ -19,7 +19,7 @@ use constant list_valid_rsn_values => [
 
 use Carp qw(confess);
 
-sub build_args_rsn {
+sub _build_args_rsn {
     my ($class, $args) = @_;
 
     $args->{rsn} = sprintf '%03d', $args->{rsn}
@@ -28,7 +28,7 @@ sub build_args_rsn {
     return $class;
 };
 
-sub validate_rsn {
+sub _validate_rsn {
     my ($self) = @_;
 
     confess "Attribute (rsn) is invalid"

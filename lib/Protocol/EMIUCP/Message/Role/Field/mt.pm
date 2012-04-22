@@ -28,7 +28,7 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub import_mt {
+sub _import_mt {
     my ($class, $args) = @_;
     my $caller = $args->{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
@@ -37,7 +37,7 @@ sub import_mt {
     };
 };
 
-sub build_args_mt {
+sub _build_args_mt {
     my ($class, $args) = @_;
 
     $args->{mt} = $Constant_To_Value{$1}
@@ -46,7 +46,7 @@ sub build_args_mt {
     return $class;
 };
 
-sub validate_mt {
+sub _validate_mt {
     my ($self) = @_;
 
     confess "Attribute (mt) is invalid"
@@ -64,7 +64,7 @@ sub mt_description {
     return $Value_To_Description{ defined $code ? $code : $self->{mt} };
 };
 
-sub build_hashref_mt {
+sub _build_hashref_mt {
     my ($self, $hashref) = @_;
     if (defined $hashref->{mt}) {
         $hashref->{mt_description} = $self->mt_description;

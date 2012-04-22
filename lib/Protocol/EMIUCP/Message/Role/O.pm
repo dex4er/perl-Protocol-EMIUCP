@@ -13,7 +13,7 @@ with qw(Protocol::EMIUCP::Message::Role);
 
 use Carp qw(confess);
 
-sub build_args_o {
+sub _build_args_o {
     my ($class, $args) = @_;
 
     $args->{o_r} = 'O' unless defined $args->{o_r};
@@ -21,7 +21,7 @@ sub build_args_o {
     return $class;
 };
 
-sub validate_o {
+sub _validate_o {
     my ($self) = @_;
 
     confess "Attribute (o_r) is invalid, should be 'O'"

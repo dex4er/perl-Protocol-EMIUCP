@@ -21,10 +21,10 @@ has field;
 use Carp qw(confess);
 
 my %Methods = (
-    import_pid        => '_import_base_pid',
-    build_args_pid    => '_build_args_base_pid',
-    pid_description   => '_base_pid_description',
-    build_hashref_pid => '_build_hashref_base_pid',
+    _import_pid        => '_import_base_pid',
+    _build_args_pid    => '_build_args_base_pid',
+    pid_description    => '_base_pid_description',
+    _build_hashref_pid => '_build_hashref_base_pid',
 );
 
 while (my ($method, $base_method) = each %Methods) {
@@ -33,16 +33,6 @@ while (my ($method, $base_method) = each %Methods) {
         my ($self, @args) = @_;
         return $self->$base_method(field, @args);
     };
-};
-
-sub validate_pid {
-    my ($self) = @_;
-
-    confess "Attribute (pid) is required"
-        unless defined $self->{pid};
-
-    return $self
-        ->_validate_base_pid(field);
 };
 
 1;

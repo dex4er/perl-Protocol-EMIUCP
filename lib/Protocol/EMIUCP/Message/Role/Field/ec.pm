@@ -37,7 +37,7 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub import_ec {
+sub _import_ec {
     my ($class, $args) = @_;
     my $caller = $args->{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
@@ -46,7 +46,7 @@ sub import_ec {
     };
 };
 
-sub build_args_ec {
+sub _build_args_ec {
     my ($class, $args) = @_;
 
     $args->{ec} = $Constant_To_Value{$1}
@@ -55,7 +55,7 @@ sub build_args_ec {
     return $class;
 };
 
-sub validate_ec {
+sub _validate_ec {
     my ($self) = @_;
 
     confess "Attribute (ec) is required"
@@ -75,7 +75,7 @@ sub ec_description {
     return $Value_To_Description{ defined $value ? $value : $self->{ec} };
 };
 
-sub build_hashref_ec {
+sub _build_hashref_ec {
     my ($self, $hashref) = @_;
     if (defined $hashref->{ec}) {
         $hashref->{ec_description} = $self->ec_description;

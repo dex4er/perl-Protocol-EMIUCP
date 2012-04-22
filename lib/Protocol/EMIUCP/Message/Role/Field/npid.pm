@@ -19,11 +19,11 @@ with qw(
 has field;
 
 my %Methods = (
-    import_npid        => '_import_base_pid',
-    build_args_npid    => '_build_args_base_pid',
-    validate_npid      => '_validate_base_pid',
-    npid_description   => '_base_pid_description',
-    build_hashref_npid => '_build_hashref_base_pid',
+    _import_npid        => '_import_base_pid',
+    _build_args_npid    => '_build_args_base_pid',
+    _validate_npid      => '_validate_base_pid',
+    npid_description    => '_base_pid_description',
+    _build_hashref_npid => '_build_hashref_base_pid',
 );
 
 while (my ($method, $base_method) = each %Methods) {

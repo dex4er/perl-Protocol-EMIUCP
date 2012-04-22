@@ -16,7 +16,7 @@ has 'tmsg';
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw( decode_hex encode_hex );
 
-sub build_args_tmsg {
+sub _build_args_tmsg {
     my ($class, $args) = @_;
 
     $args->{tmsg} = encode_hex $args->{tmsg_binary}
@@ -28,7 +28,7 @@ sub build_args_tmsg {
     return $class;
 };
 
-sub validate_tmsg {
+sub _validate_tmsg {
     my ($self) = @_;
 
     confess "Attribute (tmsg) is invalid"
@@ -45,7 +45,7 @@ sub tmsg_binary {
     return decode_hex $self->{tmsg}
 };
 
-sub build_hashref_tmsg {
+sub _build_hashref_tmsg {
     my ($self, $hashref) = @_;
     $hashref->{tmsg_binary} = $self->tmsg_binary if defined $hashref->{tmsg};
     return $self;

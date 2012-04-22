@@ -27,7 +27,7 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub import_otoa {
+sub _import_otoa {
     my ($class, $args) = @_;
     my $caller = $args->{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
@@ -36,7 +36,7 @@ sub import_otoa {
     };
 };
 
-sub build_args_otoa {
+sub _build_args_otoa {
     my ($class, $args) = @_;
 
     $args->{otoa} = $Constant_To_Value{$1}
@@ -45,7 +45,7 @@ sub build_args_otoa {
     return $class;
 };
 
-sub validate_otoa {
+sub _validate_otoa {
     my ($self) = @_;
 
     confess "Attribute (otoa) is invalid"
@@ -59,7 +59,7 @@ sub otoa_description {
     return $Value_To_Description{ defined $code ? $code : $self->{otoa} };
 };
 
-sub build_hashref_otoa {
+sub _build_hashref_otoa {
     my ($self, $hashref) = @_;
     if (defined $hashref->{otoa}) {
         $hashref->{otoa_description} = $self->otoa_description;

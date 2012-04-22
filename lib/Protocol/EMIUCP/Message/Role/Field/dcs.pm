@@ -28,7 +28,7 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub import_dcs {
+sub _import_dcs {
     my ($class, $args) = @_;
     my $caller = $args->{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
@@ -37,7 +37,7 @@ sub import_dcs {
     };
 };
 
-sub build_args_dcs {
+sub _build_args_dcs {
     my ($class, $args) = @_;
 
     $args->{dcs} = $Constant_To_Value{$1}
@@ -46,7 +46,7 @@ sub build_args_dcs {
     return $class;
 };
 
-sub validate_dcs {
+sub _validate_dcs {
     my ($self) = @_;
 
     confess "Attribute (dcs) is invalid"
@@ -60,7 +60,7 @@ sub dcs_description {
     return $Value_To_Description{ (defined $code ? $code : $self->{dcs}) || 0 };
 };
 
-sub build_hashref_dcs {
+sub _build_hashref_dcs {
     my ($self, $hashref) = @_;
     if (defined $hashref->{dcs}) {
         $hashref->{dcs_description} = $self->dcs_description;

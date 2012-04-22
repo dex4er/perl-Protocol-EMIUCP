@@ -15,7 +15,7 @@ has 'mcls';
 
 use Carp qw(confess);
 
-sub validate_mcls {
+sub _validate_mcls {
     my ($self) = @_;
 
     confess "Attribute (mcls) is invalid"

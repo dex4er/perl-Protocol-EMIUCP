@@ -15,7 +15,7 @@ has 'xser';
 
 use Carp qw(confess);
 
-sub validate_xser {
+sub _validate_xser {
     my ($self) = @_;
 
     confess "Attribute (xser) is invalid"

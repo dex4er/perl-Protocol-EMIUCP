@@ -27,7 +27,7 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub import_rpl {
+sub _import_rpl {
     my ($class, $args) = @_;
     my $caller = $args->{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
@@ -36,7 +36,7 @@ sub import_rpl {
     };
 };
 
-sub build_args_rpl {
+sub _build_args_rpl {
     my ($class, $args) = @_;
 
     $args->{mt} = $Constant_To_Value{$1}
@@ -45,7 +45,7 @@ sub build_args_rpl {
     return $class;
 };
 
-sub validate_rpl {
+sub _validate_rpl {
     my ($self) = @_;
 
     confess "Attribute (rpl) is invalid"
@@ -59,7 +59,7 @@ sub rpl_description {
     return $Value_To_Description{ defined $code ? $code : $self->{rpl} };
 };
 
-sub build_hashref_rpl {
+sub _build_hashref_rpl {
     my ($self, $hashref) = @_;
     if (defined $hashref->{rpl}) {
         $hashref->{rpl_description} = $self->rpl_description;

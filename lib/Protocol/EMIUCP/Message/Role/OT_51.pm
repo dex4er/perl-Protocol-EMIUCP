@@ -13,7 +13,7 @@ with qw(Protocol::EMIUCP::Message::Role::OT_50);
 
 use Carp qw(confess);
 
-sub build_args_ot_51 {
+sub _build_args_ot_51 {
     my ($class, $args) = @_;
 
     $args->{ot} = '51' unless defined $args->{ot};
@@ -21,7 +21,7 @@ sub build_args_ot_51 {
     return $class;
 };
 
-sub validate_ot_51 {
+sub _validate_ot_51 {
     my ($self) = @_;
 
     confess "Attribute (ot) is invalid, should be '51'"

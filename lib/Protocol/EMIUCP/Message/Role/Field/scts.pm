@@ -23,11 +23,11 @@ use Carp qw(confess);
 eval { require DateTime::Format::EMIUCP::SCTS };
 
 my %Methods = (
-    import_scts        => '_import_base_scts',
-    build_args_scts    => '_build_args_base_scts',
-    validate_scts      => '_validate_base_scts',
-    scts_datetime      => '_base_scts_datetime',
-    build_hashref_scts => '_build_hashref_base_scts',
+    _import_scts        => '_import_base_scts',
+    _build_args_scts    => '_build_args_base_scts',
+    _validate_scts      => '_validate_base_scts',
+    scts_datetime       => '_base_scts_datetime',
+    _build_hashref_scts => '_build_hashref_base_scts',
 );
 
 while (my ($method, $base_method) = each %Methods) {

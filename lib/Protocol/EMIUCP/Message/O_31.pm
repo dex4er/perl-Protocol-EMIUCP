@@ -31,6 +31,8 @@ sub validate {
 
     confess "Attribute (adc) is required"
         unless defined $self->{adc};
+    confess "Attribute (pid) is required"
+        unless defined $self->{pid};
     confess "Attribute (adc) is invalid"
         unless $self->{adc}  =~ /^\d{1,16}$/;
 

@@ -15,7 +15,7 @@ has 'nmsg';
 
 use Carp qw(confess);
 
-sub validate_nmsg {
+sub _validate_nmsg {
     my ($self) = @_;
 
     confess "Attribute (nmsg) is invalid"

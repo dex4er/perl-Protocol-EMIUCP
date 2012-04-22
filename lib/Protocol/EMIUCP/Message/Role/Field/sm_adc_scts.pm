@@ -18,7 +18,7 @@ use Scalar::Util qw(blessed);
 
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::SCTS };
 
-sub build_args_sm_adc_scts {
+sub _build_args_sm_adc_scts {
     my ($class, $args) = @_;
 
     $args->{sm_scts} = DateTime::Format::EMIUCP::SCTS->format_datetime($args->{sm_scts})
@@ -30,7 +30,7 @@ sub build_args_sm_adc_scts {
     return $class;
 };
 
-sub validate_sm_adc_scts {
+sub _validate_sm_adc_scts {
     my ($self) = @_;
 
     confess "Attribute (sm) is invalid"
@@ -62,7 +62,7 @@ sub sm_scts_datetime {
     return DateTime::Format::EMIUCP::SCTS->parse_datetime($scts);
 };
 
-sub build_hashref_sm_adc_scts {
+sub _build_hashref_sm_adc_scts {
     my ($self, $hashref) = @_;
     if (defined $hashref->{sm}) {
         $hashref->{sm_adc}  = $self->sm_adc;

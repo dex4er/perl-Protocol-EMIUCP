@@ -28,7 +28,7 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub import_dst {
+sub _import_dst {
     my ($class, $args) = @_;
     my $caller = $args->{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
@@ -37,7 +37,7 @@ sub import_dst {
     };
 };
 
-sub build_args_dst {
+sub _build_args_dst {
     my ($class, $args) = @_;
 
     $args->{dst} = $Constant_To_Value{$1}
@@ -46,7 +46,7 @@ sub build_args_dst {
     return $class;
 };
 
-sub validate_dst {
+sub _validate_dst {
     my ($self) = @_;
 
     confess "Attribute (dst) is invalid"
@@ -60,7 +60,7 @@ sub dst_description {
     return $Value_To_Description{ defined $code ? $code : $self->{dst} };
 };
 
-sub build_hashref_dst {
+sub _build_hashref_dst {
     my ($self, $hashref) = @_;
     if (defined $hashref->{dst}) {
         $hashref->{dst_description} = $self->dst_description;
