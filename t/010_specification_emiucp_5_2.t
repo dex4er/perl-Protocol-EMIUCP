@@ -250,4 +250,24 @@ do {
     test_message 'Protocol::EMIUCP::Message::O_51', $str, \%fields, \%args;
 };
 
+# 5.3.1 Submit Short Message Operation (Positive Result) (p.37)
+do {
+    my $str = '00/00039/R/51/A//012234:090996101010/68';
+    my %fields = (
+        trn            => '00',
+        len            => '00039',
+        o_r            => 'R',
+        ot             => '51',
+        ack            => 'A',
+        sm             => '012234:090996101010',
+        sm_adc         => '012234',
+        sm_scts        => '090996101010',
+        HAVE_DATETIME ? (sm_scts_datetime => '1996-09-09T10:10:10') : (),
+        checksum       => '68',
+    );
+    my %args = %fields;
+    delete $args{sm};
+    test_message 'Protocol::EMIUCP::Message::R_51_A', $str, \%fields, \%args;
+};
+
 done_testing();

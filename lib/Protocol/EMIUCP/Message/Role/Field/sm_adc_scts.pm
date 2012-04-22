@@ -34,7 +34,7 @@ sub _validate_sm_adc_scts {
     my ($self) = @_;
 
     confess "Attribute (sm) is invalid"
-        if defined $self->{sm} and not $self->{sm}  =~ /^\d{1,16}:\d{12}$/;
+        if defined $self->{sm} and not $self->{sm} =~ /^\d{1,16}:\d{12}$/;
 
     return $self;
 };
@@ -42,7 +42,7 @@ sub _validate_sm_adc_scts {
 sub sm_adc {
     my ($self) = @_;
 
-    return unless defined $self->{sm} and $self->{sm}  =~ / ^ ( \d{1,16} ) : \d{12} $ /x;
+    return unless defined $self->{sm} and $self->{sm} =~ / ^ ( \d{1,16} ) : \d{12} $ /x;
 
     return $1;
 };
@@ -50,7 +50,7 @@ sub sm_adc {
 sub sm_scts {
     my ($self) = @_;
 
-    return unless defined $self->{sm} and $self->{sm}  =~ / ^ \d{1,16} : ( \d{12} ) $ /x;
+    return unless defined $self->{sm} and $self->{sm} =~ / ^ \d{1,16} : ( \d{12} ) $ /x;
 
     return $1;
 };
@@ -67,8 +67,7 @@ sub _build_hashref_sm_adc_scts {
     if (defined $hashref->{sm}) {
         $hashref->{sm_adc}  = $self->sm_adc;
         $hashref->{sm_scts} = $self->sm_scts;
-
-        $hashref->{sm_scts_datetime} = $self->sm_scts_datetime
+        $hashref->{sm_scts_datetime} = $self->sm_scts_datetime->datetime
             if HAVE_DATETIME;
     };
     return $self;

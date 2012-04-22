@@ -25,7 +25,7 @@ sub _validate_ot_31 {
     my ($self) = @_;
 
     confess "Attribute (ot) is invalid, should be '31'"
-        if defined $self->{ot}   and $self->{ot} ne '31';
+        if defined $self->{ot} and $self->{ot} ne '31';
 
     return $self;
 };
