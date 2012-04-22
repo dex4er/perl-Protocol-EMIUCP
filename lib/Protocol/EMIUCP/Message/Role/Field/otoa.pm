@@ -28,8 +28,9 @@ while (my ($value, $name) = each %Value_To_Description) {
 };
 
 sub import_otoa {
+    my ($class, $args) = @_;
+    my $caller = $args->{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
-        my $caller = caller();
         no strict 'refs';
         *{"${caller}::OTOA_$name"} = sub () { $value };
     };

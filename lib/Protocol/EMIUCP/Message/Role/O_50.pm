@@ -14,10 +14,10 @@ with qw(
     Protocol::EMIUCP::Message::Role::OT_50
 );
 
-has [qw( adc ac nrq nadc lrq lrad lpid dd pr cpg rply hplmn res4 res5 )];
+has [qw( adc ac nrq lrq lrad dd pr cpg rply hplmn res4 res5 )];
 has_field [qw(
-    oadc_alphanum nt npid lpid ddt vp rpid scts dst rsn dscts mt nmsg amsg
-    tmsg mms dcs mcls rpl otoa xser
+    oadc_alphanum nadc nt npid lpid ddt vp rpid scts dst rsn dscts mt nmsg
+    amsg tmsg mms dcs mcls rpl otoa xser
 )];
 
 use constant list_valid_mt_values => [ qw( 2 3 4 )];

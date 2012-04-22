@@ -33,9 +33,9 @@ sub _import_base_pid {
     my ($class, $field, $args) = @_;
 
     my $uc_field = uc($field);
+    my $caller = $args->{caller} || caller(1);
 
     while (my ($name, $value) = each %Constant_To_Value) {
-        my $caller = $args->{caller};
         no strict 'refs';
         *{"${caller}::${uc_field}_$name"} = sub () { $value };
     };

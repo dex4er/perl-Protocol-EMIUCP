@@ -28,8 +28,9 @@ while (my ($value, $name) = each %Value_To_Description) {
 };
 
 sub import_rpl {
+    my ($class, $args) = @_;
+    my $caller = $args->{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
-        my $caller = caller();
         no strict 'refs';
         *{"${caller}::RPL_$name"} = sub () { $value };
     };

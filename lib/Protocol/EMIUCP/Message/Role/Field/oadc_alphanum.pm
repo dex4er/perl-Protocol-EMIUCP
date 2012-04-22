@@ -50,8 +50,9 @@ sub oadc_utf8 {
 
 sub build_hashref_oadc_alphanum {
     my ($self, $hashref) = @_;
-    if (defined $self->{otoa} and $self->{otoa} eq OTOA_ALPHANUMERIC) {
-        $hashref->{oadc_utf8} = $self->oadc_utf8 if defined $hashref->{oadc};
+    if (defined $hashref->{oadc}) {
+        $hashref->{oadc_utf8} = $self->oadc_utf8
+            if defined $self->{otoa} and $self->{otoa} eq OTOA_ALPHANUMERIC;
     };
     return $self;
 };

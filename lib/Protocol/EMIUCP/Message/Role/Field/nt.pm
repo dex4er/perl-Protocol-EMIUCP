@@ -36,8 +36,9 @@ foreach my $value (1..7) {
 };
 
 sub import_nt {
+    my ($class, $args) = @_;
+    my $caller = $args->{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
-        my $caller = caller();
         no strict 'refs';
         *{"${caller}::NT_$name"} = sub () { $value };
     };
