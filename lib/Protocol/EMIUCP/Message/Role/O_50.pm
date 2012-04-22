@@ -12,7 +12,6 @@ use Protocol::EMIUCP::OO::Role;
 with qw(
     Protocol::EMIUCP::Message::Role::O
     Protocol::EMIUCP::Message::Role::OT_50
-    Protocol::EMIUCP::Message::Role
 );
 
 has [qw( adc oadc ac nrq nadc lrq lrad lpid dd )];

@@ -56,11 +56,9 @@ sub list_message_roles {
     no strict 'refs';
     my $class = ref $self ? ref $self : $self;
 
-    no warnings 'once';
-    local *UNIVERSAL::does = sub {};
-
     return [
-        grep { $_->does('Protocol::EMIUCP::Message::Role') } @{ get_linear_isa $class }
+        grep { $_->can('does') and $_->does('Protocol::EMIUCP::Message::Role') }
+            @{ get_linear_isa $class }
     ];
 };
 
