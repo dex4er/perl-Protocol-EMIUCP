@@ -111,6 +111,12 @@ my %tests = (
         die $msg->as_string if $msg->as_string ne $str_31;
 
     },
+    '7_EMIUCP_31_v' => sub {
+
+        my $msg = Protocol::EMIUCP::Message->new_from_string($str_31)->validate;
+        die $msg->as_string if $msg->as_string ne $str_31;
+
+    },
 );
 
 use Benchmark ':all';
