@@ -76,6 +76,16 @@ sub validate {
     confess "Attribute (checksum) is invalid, should be " . $self->calculate_checksum
         if defined $self->{checksum} and $self->{checksum} ne $self->calculate_checksum;
 
+    foreach my $name (@{ $self->list_required_field_names }) {
+        confess "Attribute ($name) is required"
+            unless defined $self->{$name};
+    };
+
+    foreach my $name (@{ $self->list_conflicting_field_names }) {
+        confess "Attribute ($name) should not be defined"
+            if defined $self->{$name};
+    };
+
     $self->$_ foreach grep { $self->can($_) }
         map { /::(\w+)$/; '_validate_' . lc $1 } @{ $self->list_message_roles };
 
@@ -110,6 +120,14 @@ sub calculate_checksum {
 
 sub list_data_field_names {
     confess "Method (list_data_field_names) have to be overrided by derived class method";
+};
+
+sub list_required_field_names {
+    return +[];
+};
+
+sub list_conflicting_field_names {
+    return +[];
 };
 
 sub list_field_names {

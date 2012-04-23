@@ -19,21 +19,10 @@ has_field [qw( adc oadc_num ac mt amsg nmsg )];
 
 use constant list_valid_mt_values => [ qw( 2 3 ) ];
 
+use constant list_required_field_names => [ qw( adc mt ) ];
+
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw( from_hex_to_utf8 from_utf8_to_hex );
-
-sub validate {
-    my ($self) = @_;
-
-    $self->SUPER::validate;
-
-    foreach my $name (qw( adc mt )) {
-        confess "Attribute ($name) is required"
-            unless defined $self->{$name};
-    };
-
-    return $self;
-};
 
 my @MT_To_Field;
 @MT_To_Field[2, 3] = qw( nmsg amsg );

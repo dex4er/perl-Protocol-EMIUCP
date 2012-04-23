@@ -17,23 +17,11 @@ extends qw(Protocol::EMIUCP::Message::Object);
 
 has_field [qw( adc pid )];
 
-use constant list_data_field_names => [ qw( adc pid ) ];
-
 use constant list_valid_pid_values => [ qw( 0100 0122 0131 0138 0139 0339 0439 0539 0639 ) ];
 
+use constant list_data_field_names => [ qw( adc pid ) ];
+use constant list_required_field_names => [ qw( adc pid ) ];
+
 use Carp qw(confess);
-
-sub validate {
-    my ($self) = @_;
-
-    $self->SUPER::validate;
-
-    foreach my $name (qw( adc pid )) {
-        confess "Attribute ($name) is required"
-            unless defined $self->{$name};
-    };
-
-    return $self;
-};
 
 1;
