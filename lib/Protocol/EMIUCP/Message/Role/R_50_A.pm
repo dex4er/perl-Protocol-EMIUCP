@@ -16,6 +16,6 @@ with qw(
 
 has_field [qw( mvp sm_adc_scts )];
 
-use constant list_data_field_names => [ qw( ack mvp sm ) ];
+use constant list_data_field_names => [qw( ack mvp sm )];
 
 1;

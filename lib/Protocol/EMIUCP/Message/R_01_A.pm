@@ -17,6 +17,6 @@ extends qw(Protocol::EMIUCP::Message::Object);
 
 has_field 'sm_adc_scts';
 
-use constant list_data_field_names => [ qw( ack sm ) ];
+use constant list_data_field_names => [qw( ack sm )];
 
 1;

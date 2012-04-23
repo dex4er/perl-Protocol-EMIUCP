@@ -17,9 +17,9 @@ extends qw(Protocol::EMIUCP::Message::Object);
 
 has_field [qw( adc oadc_num ac mt amsg nmsg )];
 
-use constant list_valid_mt_values => [ qw( 2 3 ) ];
+use constant list_valid_mt_values => [qw( 2 3 )];
 
-use constant list_required_field_names => [ qw( adc mt ) ];
+use constant list_required_field_names => [qw( adc mt )];
 
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw( from_hex_to_utf8 from_utf8_to_hex );
