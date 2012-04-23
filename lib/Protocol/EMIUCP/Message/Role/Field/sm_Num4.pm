@@ -9,16 +9,28 @@ our $VERSION = '0.01';
 
 use Protocol::EMIUCP::OO::Role;
 
-with qw(
-    Protocol::EMIUCP::Message::Role::Field::Base::Num4
-    Protocol::EMIUCP::Message::Role
-);
+with qw(Protocol::EMIUCP::Message::Role);
 
 has 'sm';
 
+use Carp qw(confess);
+
+sub _build_args_sm_Num4 {
+    my ($class, $args) = @_;
+
+    $args->{sm} = sprintf '%04d', $args->{sm}
+        if defined $args->{sm} and $args->{sm} =~ /^\d{1,4}$/;
+
+    return $class;
+};
+
 sub _validate_sm_Num4 {
     my ($self) = @_;
-    return $self->_validate_base_Num4('sm');
+
+    confess "Attribute (sm) is invalid"
+        if defined $self->{sm} and not $self->{sm} =~ /^\d{4}$/;
+
+    return $self;
 };
 
 1;

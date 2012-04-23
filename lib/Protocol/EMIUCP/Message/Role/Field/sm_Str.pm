@@ -9,16 +9,19 @@ our $VERSION = '0.01';
 
 use Protocol::EMIUCP::OO::Role;
 
-with qw(
-    Protocol::EMIUCP::Message::Role::Field::Base::Str
-    Protocol::EMIUCP::Message::Role
-);
+with qw(Protocol::EMIUCP::Message::Role);
 
 has 'sm';
 
-sub _validate_sm {
+use Carp qw(confess);
+
+sub _validate_sm_Str {
     my ($self) = @_;
-    return $self->_validate_base_Str('sm');
+
+    confess "Attribute (sm) is invalid"
+        if defined $self->{sm} and $self->{sm} =~ m{/};
+
+    return $self;
 };
 
 1;
