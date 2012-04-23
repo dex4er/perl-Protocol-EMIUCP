@@ -28,10 +28,10 @@ sub validate {
 
     $self->SUPER::validate;
 
-    confess "Attribute (adc) is required"
-        unless defined $self->{adc};
-    confess "Attribute (pid) is required"
-        unless defined $self->{pid};
+    foreach my $name (qw( adc pid )) {
+        confess "Attribute ($name) is required"
+            unless defined $self->{$name};
+    };
 
     return $self;
 };

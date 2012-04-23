@@ -15,8 +15,7 @@ with qw(
 );
 extends qw(Protocol::EMIUCP::Message::Object);
 
-has [qw( oadc )];
-has_field [qw( adc ac mt amsg nmsg )];
+has_field [qw( adc oadc_num ac mt amsg nmsg )];
 
 use constant list_valid_mt_values => [ qw( 2 3 ) ];
 
@@ -32,9 +31,6 @@ sub validate {
         confess "Attribute ($name) is required"
             unless defined $self->{$name};
     };
-
-    confess "Attribute (oadc) is invalid"
-        if defined $self->{oadc} and not $self->{oadc} =~ /^\d{1,16}$/;
 
     return $self;
 };
