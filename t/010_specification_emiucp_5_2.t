@@ -112,7 +112,7 @@ do {
         ot             => '01',
         nack           => 'N',
         ec             => '02',
-        ec_description => 'Syntax error',
+        ec_description => 'Syntax Error',
         checksum       => '03',
     );
     my %args = %fields;
@@ -165,7 +165,7 @@ do {
         ot             => '31',
         nack           => 'N',
         ec             => '06',
-        ec_description => 'AdC invalid',
+        ec_description => 'AdC Invalid',
         checksum       => '07',
     );
     my %args = %fields;
@@ -268,6 +268,25 @@ do {
     my %args = %fields;
     delete $args{sm};
     test_message 'Protocol::EMIUCP::Message::R_51_A', $str, \%fields, \%args;
+};
+
+# 5.3.2 Submit Short Message Operation (Negative Result) (p.37)
+do {
+    my $str = '00/00022/R/51/N/31//07';
+    my %fields = (
+        trn            => '00',
+        len            => '00022',
+        o_r            => 'R',
+        ot             => '51',
+        nack           => 'N',
+        ec             => 31,
+        ec_description => 'Fax Group Not Supported',
+        checksum       => '07',
+    );
+    my %args = %fields;
+    delete $args{ec_description};
+    $args{ec} = 'EC_FAX_GROUP_NOT_SUPPORTED';
+    test_message 'Protocol::EMIUCP::Message::R_51_N', $str, \%fields, \%args;
 };
 
 done_testing();

@@ -18,17 +18,42 @@ use Carp qw(confess);
 my %Constant_To_Value;
 
 my %Value_To_Description = (
-    '01' => 'Checksum error',
-    '02' => 'Syntax error',
-    '03' => 'Operation not supported by system',
-    '04' => 'Operation not allowed',
-    '05' => 'Call barring active',
-    '06' => 'AdC invalid',
-    '07' => 'Authentication failure',
-    '08' => 'Legitimisation code for all calls, failure',
-    '23' => 'Description type not supported by system',
-    '24' => 'Description too long',
-    '26' => 'Description type not valid for the pager type',
+    '01' => 'Checksum Error',
+    '02' => 'Syntax Error',
+    '03' => 'Operation Not Supported by System',
+    '04' => 'Operation Not Allowed',
+    '05' => 'Call Barring Active',
+    '06' => 'AdC Invalid',
+    '07' => 'Authentication Failure',
+    '08' => 'Legitimisation Code for All Calls, Failure',
+    '09' => 'GA Not Valid',
+    '10' => 'Repetition Not Allowed',
+    '11' => 'Legitimisation Code for Repetition, Failure',
+    '12' => 'Priority Call Not Allowed',
+    '13' => 'Legitimisation Code for Priority Call, Failure',
+    '14' => 'Urgent Message Not Allowed',
+    '15' => 'Legitimisation Code for Urgent Message, Failure',
+    '16' => 'Reverse Charging Not Allowed',
+    '17' => 'Legitimisation Code for Rev. Charging, Failure',
+    '18' => 'Deferred Delivery Not Allowed',
+    '19' => 'New AC Not Valid',
+    '20' => 'New Legitimisation Code Not Valid',
+    '21' => 'Standard Text Not Valid',
+    '22' => 'Time Period Not Valid',
+    '23' => 'Message Type Not Supported by System',
+    '24' => 'Message too Long',
+    '25' => 'Requested Standard Text Not Valid',
+    '26' => 'Message Type Not Valid for the Pager Type',
+    '27' => 'Message not found in SMSC',
+    '30' => 'Subscriber Hang-up',
+    '31' => 'Fax Group Not Supported',
+    '32' => 'Fax Message Type Not Supported',
+    '33' => 'Address already in List',
+    '34' => 'Address not in List',
+    '35' => 'List full, cannot add Address to List',
+    '36' => 'RPID already in Use',
+    '37' => 'Delivery in Progress',
+    '38' => 'Message Forwarded',
 );
 
 while (my ($value, $name) = each %Value_To_Description) {
@@ -67,7 +92,7 @@ sub _validate_ec {
 };
 
 sub list_valid_ec_values {
-    confess "Method (list_valid_ec_values) have to be overrided by derived class method";
+    return [ keys %Value_To_Description ];
 };
 
 sub ec_description {
