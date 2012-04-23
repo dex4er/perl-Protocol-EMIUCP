@@ -15,7 +15,7 @@ with qw(
 );
 extends qw(Protocol::EMIUCP::Message::Object);
 
-has_field [qw( ec sm_Str )];
+has_field [qw( ec sm_str )];
 
 use constant list_data_field_names => [ qw( nack ec sm ) ];
 

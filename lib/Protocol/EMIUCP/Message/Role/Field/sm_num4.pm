@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Role::Field::sm_Num4;
+package Protocol::EMIUCP::Message::Role::Field::sm_num4;
 
 use 5.006;
 
@@ -15,7 +15,7 @@ has 'sm';
 
 use Carp qw(confess);
 
-sub _build_args_sm_Num4 {
+sub _build_args_sm_num4 {
     my ($class, $args) = @_;
 
     $args->{sm} = sprintf '%04d', $args->{sm}
@@ -24,7 +24,7 @@ sub _build_args_sm_Num4 {
     return $class;
 };
 
-sub _validate_sm_Num4 {
+sub _validate_sm_num4 {
     my ($self) = @_;
 
     confess "Attribute (sm) is invalid"

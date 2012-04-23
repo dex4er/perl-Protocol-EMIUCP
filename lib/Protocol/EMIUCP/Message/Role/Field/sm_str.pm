@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Role::Field::sm_Str;
+package Protocol::EMIUCP::Message::Role::Field::sm_str;
 
 use 5.006;
 
@@ -15,7 +15,7 @@ has 'sm';
 
 use Carp qw(confess);
 
-sub _validate_sm_Str {
+sub _validate_sm_str {
     my ($self) = @_;
 
     confess "Attribute (sm) is invalid"
