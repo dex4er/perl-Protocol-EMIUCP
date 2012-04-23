@@ -13,10 +13,11 @@ with qw(Protocol::EMIUCP::Message::Role::R);
 
 use Carp qw(confess);
 
-sub _build_args_r_a {
+sub _build_args_r_n {
     my ($class, $args) = @_;
 
-    $args->{nack}  = 'N' if $args->{nack};
+    $args->{nack} = 'N' if $args->{nack};
+    delete $args->{nack} if defined $args->{nack} and not $args->{nack};
 
     return $class;
 };

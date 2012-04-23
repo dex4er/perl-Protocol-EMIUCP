@@ -16,7 +16,8 @@ use Carp qw(confess);
 sub _build_args_r_a {
     my ($class, $args) = @_;
 
-    $args->{ack}  = 'A' if $args->{ack};
+    $args->{ack} = 'A' if $args->{ack};
+    delete $args->{ack} if defined $args->{ack} and not $args->{ack};
 
     return $class;
 };
