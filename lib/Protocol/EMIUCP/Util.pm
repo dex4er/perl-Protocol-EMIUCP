@@ -9,7 +9,7 @@ our $VERSION = '0.01';
 
 use Carp qw(confess);
 
-use Exporter ();
+use Exporter qw(import);
 our @EXPORT_OK = qw(
     ETX STX
     decode_7bit_hex encode_7bit_hex
@@ -19,8 +19,6 @@ our @EXPORT_OK = qw(
     get_linear_isa load_class
 );
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
-BEGIN { *import = \&Exporter::import; }
-
 
 use constant {
     STX => "\x02",

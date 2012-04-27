@@ -9,14 +9,25 @@ our $VERSION = '0.01';
 
 use Carp qw(confess);
 use Protocol::EMIUCP::Util qw(load_class);
+use Protocol::EMIUCP::OO::Object ();
 
 use Exporter ();
-our @EXPORT = qw( has extends with has_field );
-BEGIN { *import = \&Exporter::import };
+our @EXPORT = qw( has extends with );
+
+sub import {
+    {
+        my $caller = caller;
+
+        no strict 'refs';
+        no warnings 'once';
+        push @{ *{"${caller}::ISA"} }, __PACKAGE__ . '::Object';
+    }
+    goto &Exporter::import;
+};
 
 sub has ($) {
     my ($attrs) = @_;
-    my $caller = caller();
+    my $caller = caller;
     no strict 'refs';
     foreach my $name (ref $attrs ? @$attrs : $attrs) {
         *{"${caller}::$name"}     = sub { $_[0]->{$name} };
@@ -47,17 +58,6 @@ sub with (@) {
         push @{ *{"${caller}::ISA"} }, $role;
         push @{ *{"${caller}::DOES"} }, $role;
     };
-};
-
-sub has_field ($) {
-    my ($attrs) = @_;
-
-    my $caller = caller();
-    my @roles = map { "Protocol::EMIUCP::Message::Role::Field::$_" }
-        ref $attrs ? @$attrs : $attrs;
-
-    @_ = @roles;
-    goto &with;
 };
 
 1;

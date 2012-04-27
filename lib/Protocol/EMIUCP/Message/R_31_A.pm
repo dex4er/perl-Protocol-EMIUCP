@@ -8,6 +8,7 @@ use warnings;
 our $VERSION = '0.01';
 
 use Protocol::EMIUCP::OO;
+use Protocol::EMIUCP::Message::Field;
 
 with qw(
     Protocol::EMIUCP::Message::Role::OT_31

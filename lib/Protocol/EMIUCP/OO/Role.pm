@@ -12,8 +12,18 @@ use Protocol::EMIUCP::OO;
 use Protocol::EMIUCP::Util qw(get_linear_isa);
 
 use Exporter ();
-our @EXPORT = qw( has extends with has_field does );
-BEGIN { *import = \&Exporter::import };
+our @EXPORT = qw( has extends with does );
+
+sub import {
+    {
+        my $caller = caller;
+
+        no strict 'refs';
+        no warnings 'once';
+        push @{ *{"${caller}::DOES"} }, __PACKAGE__;
+    }
+    goto &Exporter::import;
+};
 
 sub does ($$) {
     my ($self, $role) = @_;

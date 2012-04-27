@@ -25,12 +25,14 @@ sub new {
         $args{ot}   = sprintf "%02d", $args{ot}  if defined $args{ot};
     }
 
-    $class->build_args(\%args);
+    $class->_build_args(\%args);
 
-    my $self = +{};
+    my %fields;
     my $field_names = $class->list_field_names(\%args);
-    @{$self}{ @$field_names } = @args{ @$field_names };
-    map { delete $self->{$_} } grep { not defined $self->{$_} or $self->{$_} eq '' } keys %$self;
+    @fields{ @$field_names } = @args{ @$field_names };
+    map { delete $fields{$_} } grep { not defined $fields{$_} or $fields{$_} eq '' } keys %fields;
+
+    my $self = { %fields };
     bless $self => $class;
 
     if (not defined $self->{len}) {
@@ -48,24 +50,6 @@ sub new {
 sub new_from_string {
     my ($class, $str) = @_;
     return $class->new( %{ $class->parse_string($str) } );
-};
-
-sub list_message_roles {
-    my ($self) = @_;
-
-    no strict 'refs';
-    my $class = ref $self ? ref $self : $self;
-
-    return [
-        grep { $_->can('does') and $_->does('Protocol::EMIUCP::Message::Role') }
-            @{ get_linear_isa $class }
-    ];
-};
-
-sub build_args {
-    my ($class, $args) = @_;
-    $class->$_($args) foreach grep { $class->can($_) }
-        map { /::(\w+)$/; '_build_args_' . lc $1 } @{ $class->list_message_roles };
 };
 
 sub validate {
@@ -87,7 +71,7 @@ sub validate {
     };
 
     $self->$_ foreach grep { $self->can($_) }
-        map { /::(\w+)$/; '_validate_' . lc $1 } @{ $self->list_message_roles };
+        map { /::(\w+)$/; '_validate_' . lc $1 } @{ $self->_list_roles };
 
     return $self;
 };
@@ -156,14 +140,14 @@ sub as_string {
 sub as_hashref {
     my ($self) = @_;
     my $hashref = +{ %$self };
-    $self->build_hashref($hashref);
+    $self->_build_hashref($hashref);
     return $hashref;
 };
 
-sub build_hashref {
+sub _build_hashref {
     my ($self, $hashref) = @_;
     $self->$_($hashref) foreach grep { $self->can($_) }
-        map { /::(\w+)$/; '_build_hashref_' . lc $1 } @{ $self->list_message_roles };
+        map { /::(\w+)$/; '_build_hashref_' . lc $1 } @{ $self->_list_roles };
 };
 
 1;
