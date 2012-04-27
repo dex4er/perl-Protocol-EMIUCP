@@ -29,13 +29,13 @@ sub _validate_len {
 
     confess "Attribute (len) is invalid"
         if defined $self->{len} and not $self->{len} =~ /^\d{5}$/;
-    confess "Attribute (len) has invalid value, should be " . $self->calculate_len
-        if defined $self->{len} and $self->{len} ne $self->calculate_len;
+    confess "Attribute (len) has invalid value, should be " . $self->_calculate_len
+        if defined $self->{len} and $self->{len} ne $self->_calculate_len;
 
     return $self;
 };
 
-sub calculate_len {
+sub _calculate_len {
     my ($self, $str) = @_;
     $str = $self->as_string if not defined $str;
 

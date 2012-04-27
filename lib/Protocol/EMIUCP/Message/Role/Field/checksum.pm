@@ -21,13 +21,13 @@ sub _validate_checksum {
 
     confess "Attribute (checksum) is invalid"
         if defined $self->{checksum} and not $self->{checksum} =~ /^[\d[A-F]{2}$/;
-    confess "Attribute (checksum) is invalid, should be " . $self->calculate_checksum
-        if defined $self->{checksum} and $self->{checksum} ne $self->calculate_checksum;
+    confess "Attribute (checksum) is invalid, should be " . $self->_calculate_checksum
+        if defined $self->{checksum} and $self->{checksum} ne $self->_calculate_checksum;
 
     return $self;
 };
 
-sub calculate_checksum {
+sub _calculate_checksum {
     my ($self, $str) = @_;
     $str = $self->as_string if not defined $str;
     $str =~ m{ ^ (.* / ) (?: [0-9A-F]{2} )? $ }x

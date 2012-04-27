@@ -30,12 +30,12 @@ sub new {
     bless $self => $class;
 
     if (not defined $self->{len}) {
-        $self->{len} = $self->calculate_len;
+        $self->{len} = $self->_calculate_len;
         delete $self->{checksum};
     };
 
     if (not defined $self->{checksum}) {
-        $self->{checksum} = $self->calculate_checksum;
+        $self->{checksum} = $self->_calculate_checksum;
     };
 
     return $self;
@@ -43,7 +43,7 @@ sub new {
 
 sub new_from_string {
     my ($class, $str) = @_;
-    return $class->new( %{ $class->parse_string($str) } );
+    return $class->new( %{ $class->_parse_string($str) } );
 };
 
 sub validate {
@@ -86,7 +86,7 @@ sub list_field_names {
     ];
 };
 
-sub parse_string {
+sub _parse_string {
     my ($class, $str) = @_;
     my %args;
     my @fields = split '/', $str;
