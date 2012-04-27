@@ -81,7 +81,7 @@ sub validate {
             unless defined $self->{$name};
     };
 
-    foreach my $name (@{ $self->list_conflicting_field_names }) {
+    foreach my $name (@{ $self->list_empty_field_names }) {
         confess "Attribute ($name) should not be defined"
             if defined $self->{$name};
     };
@@ -126,7 +126,7 @@ sub list_required_field_names {
     return +[];
 };
 
-sub list_conflicting_field_names {
+sub list_empty_field_names {
     return +[];
 };
 
