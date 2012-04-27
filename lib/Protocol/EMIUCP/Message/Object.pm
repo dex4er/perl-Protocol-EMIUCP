@@ -8,22 +8,16 @@ use warnings;
 our $VERSION = '0.01';
 
 use Protocol::EMIUCP::OO;
+use Protocol::EMIUCP::Message::Field;
 
-has [qw( trn len o_r ot checksum )];
+has [qw( o_r )];
+has_field [qw( trn len ot checksum )];
 
 use Carp qw(confess);
-use List::Util qw(sum);
 use Protocol::EMIUCP::Util qw(get_linear_isa);
 
 sub new {
     my ($class, %args) = @_;
-
-    {
-        no warnings 'numeric';
-        $args{trn}  = sprintf "%02d", ($args{trn} || 0) % 100;
-        $args{len}  = sprintf "%05d", $args{len} if defined $args{len};
-        $args{ot}   = sprintf "%02d", $args{ot}  if defined $args{ot};
-    }
 
     $class->_build_args(\%args);
 
@@ -55,11 +49,6 @@ sub new_from_string {
 sub validate {
     my ($self) = @_;
 
-    confess "Attribute (len) has invalid value, should be " . $self->calculate_len
-        if defined $self->{len} and $self->{len} ne $self->calculate_len;
-    confess "Attribute (checksum) is invalid, should be " . $self->calculate_checksum
-        if defined $self->{checksum} and $self->{checksum} ne $self->calculate_checksum;
-
     foreach my $name (@{ $self->list_required_field_names }) {
         confess "Attribute ($name) is required"
             unless defined $self->{$name};
@@ -74,32 +63,6 @@ sub validate {
         map { /::(\w+)$/; '_validate_' . lc $1 } @{ $self->_list_roles };
 
     return $self;
-};
-
-sub calculate_len {
-    my ($self, $str) = @_;
-    $str = $self->as_string if not defined $str;
-
-    my $len = length $str;
-
-    $str =~ m{ ^ \d{2} / ( \d{5} )? / }x
-        or confess "Invalid EMI-UCP message '$str'";
-    $len += 5 if not defined $1;
-
-    $str =~ m{ / ( [0-9A-F]{2} )? $ }x
-        or confess "Invalid EMI-UCP message '$str'";
-    $len += 2 if not defined $1;
-
-    return sprintf "%05d", $len;
-};
-
-sub calculate_checksum {
-    my ($self, $str) = @_;
-    $str = $self->as_string if not defined $str;
-    $str =~ m{ ^ (.* / ) (?: [0-9A-F]{2} )? $ }x
-        or confess "Invalid EMI-UCP message '$str'";
-    my $c += sum unpack "C*", $1;
-    return sprintf "%02X", $c % 16**2;
 };
 
 sub list_data_field_names {
