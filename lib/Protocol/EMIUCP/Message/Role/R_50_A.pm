@@ -15,7 +15,7 @@ with qw(
     Protocol::EMIUCP::Message::Role::OT_50
 );
 
-has_field [qw( mvp sm_adc_scts )];
+has_field [qw( mvp )];
 
 use constant list_data_field_names => [qw( ack mvp sm )];
 

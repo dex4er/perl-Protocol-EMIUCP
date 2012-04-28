@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::R_52_A;
+package Protocol::EMIUCP::Message::R_53_A;
 
 use 5.006;
 
@@ -10,10 +10,10 @@ our $VERSION = '0.01';
 use Protocol::EMIUCP::OO;
 use Protocol::EMIUCP::Message::Field;
 
-has_field 'sm_maybe_adc_scts';
+has_field 'sm_str';
 
 with qw(
-    Protocol::EMIUCP::Message::Role::OT_52
+    Protocol::EMIUCP::Message::Role::OT_53
     Protocol::EMIUCP::Message::Role::R_50_A
 );
 extends qw(Protocol::EMIUCP::Message::Object);

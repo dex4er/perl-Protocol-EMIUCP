@@ -358,4 +358,75 @@ do {
     test_message 'Protocol::EMIUCP::Message::R_52_N', $str, \%fields, \%args;
 };
 
+# 5.5 Delivery Notification Operation -53 (p.41)
+do {
+    my $str = '00/00234/O/53/1299998/3155555/////////////090196161057/1/108/090196161105/3//4D65737361676520666F7220333135353535352C2077697468206964656E74696669636174696F6E2039363031303931363130353720686173206265656E206275666665726564/////////////1F';
+    my %fields = (
+        trn              => '00',
+        len              => '00234',
+        o_r              => 'O',
+        ot               => '53',
+        adc              => '1299998',
+        oadc             => '3155555',
+        scts             => '090196161057',
+        HAVE_DATETIME ? (scts_datetime => '1996-01-09T16:10:57') : (),
+        dst              => 1,
+        dst_description  => 'Buffered',
+        rsn              => 108,
+        dscts            => '090196161105',
+        HAVE_DATETIME ? (dscts_datetime => '1996-01-09T16:11:05') : (),
+        mt               => 3,
+        mt_description   => 'Alphanumeric',
+        amsg             => '4D65737361676520666F7220333135353535352C2077697468206964656E74696669636174696F6E2039363031303931363130353720686173206265656E206275666665726564',
+        amsg_utf8        => 'Message for 3155555, with identification 960109161057 has been buffered',
+        checksum         => '1F',
+    );
+    my %args = %fields;
+    delete $args{$_} foreach (qw( dsc_description mt_description amsg ));
+    %args = (
+        %args,
+        dst  => 'DST_BUFFERED',
+        mt   => 'MT_ALPHANUMERIC',
+    );
+    test_message 'Protocol::EMIUCP::Message::O_53', $str, \%fields, \%args;
+};
+
+# 5.5.1 Delivery Notification Operation (Positive Result) (p.41)
+do {
+    my $str = '00/00032/R/53/A//020296020202/F2';
+    my %fields = (
+        trn            => '00',
+        len            => '00032',
+        o_r            => 'R',
+        ot             => '53',
+        ack            => 'A',
+        sm             => '020296020202',
+        sm_scts        => '020296020202',
+        HAVE_DATETIME ? (sm_scts_datetime => '1996-02-02T02:02:02') : (),
+        checksum       => 'F2',
+    );
+    my %args = %fields;
+    delete $args{sm};
+    test_message 'Protocol::EMIUCP::Message::R_53_A', $str, \%fields, \%args;
+};
+
+# 5.5.2 Delivery Notification Operation (Negative Result) (p.41)
+do {
+    my $str = '00/00022/R/53/N/02//07';
+    my %fields = (
+        trn            => '00',
+        len            => '00022',
+        o_r            => 'R',
+        ot             => '53',
+        nack           => 'N',
+        ec             => '02',
+        ec_description => 'Syntax Error',
+        checksum       => '07',
+    );
+    my %args = %fields;
+    delete $args{ec_description};
+    $args{ec} = 'EC_SYNTAX_ERROR';
+    test_message 'Protocol::EMIUCP::Message::R_53_N', $str, \%fields, \%args;
+};
+
 done_testing();
