@@ -46,6 +46,8 @@ sub new_from_string {
     return $class->new( %{ $class->_parse_string($str) } );
 };
 
+our %Cache_Validate_Methods;
+
 sub validate {
     my ($self) = @_;
 
@@ -59,8 +61,16 @@ sub validate {
             if defined $self->{$name};
     };
 
-    $self->$_ foreach grep { $self->can($_) }
-        map { /::(\w+)$/; '_validate_' . lc $1 } @{ $self->_list_roles };
+    my $class = ref $self;
+    my $roles = exists $Cache_Validate_Methods{$class}
+              ? $Cache_Validate_Methods{$class}
+              : ( $Cache_Validate_Methods{$class} = [
+                    grep { $self->can($_) }
+                    map { /::(\w+)$/; '_validate_' . lc $1 }
+                    @{ $self->_list_roles }
+                ] );
+
+    $self->$_ foreach @$roles;
 
     return $self;
 };
@@ -107,10 +117,21 @@ sub as_hashref {
     return $hashref;
 };
 
+our %Cache_Build_Hashref_Methods;
+
 sub _build_hashref {
     my ($self, $hashref) = @_;
-    $self->$_($hashref) foreach grep { $self->can($_) }
-        map { /::(\w+)$/; '_build_hashref_' . lc $1 } @{ $self->_list_roles };
+
+    my $class = ref $self;
+    my $roles = exists $Cache_Build_Hashref_Methods{$class}
+              ? $Cache_Build_Hashref_Methods{$class}
+              : ( $Cache_Build_Hashref_Methods{$class} = [
+                    grep { $self->can($_) }
+                    map { /::(\w+)$/; '_build_hashref_' . lc $1 }
+                    @{ $self->_list_roles }
+                ] );
+
+    $self->$_($hashref) foreach @$roles;
 };
 
 1;

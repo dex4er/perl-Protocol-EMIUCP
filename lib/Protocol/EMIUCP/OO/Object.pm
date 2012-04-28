@@ -21,11 +21,20 @@ sub new {
     return bless $self => $class;
 };
 
+our %Cache_Build_Args_Methods;
+
 sub _build_args {
     my ($class, $args) = @_;
 
-    $class->$_($args) foreach grep { $class->can($_) }
-        map { /::(\w+)$/; '_build_args_' . lc $1 } @{ $class->_list_roles };
+    my $roles = exists $Cache_Build_Args_Methods{$class}
+              ? $Cache_Build_Args_Methods{$class}
+              : ( $Cache_Build_Args_Methods{$class} = [
+                    grep { $class->can($_) }
+                    map { /::(\w+)$/; '_build_args_' . lc $1 }
+                    @{ $class->_list_roles }
+                ] );
+
+    $class->$_($args) foreach @$roles;
 
     return $class;
 };
