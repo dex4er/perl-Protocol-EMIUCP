@@ -9,7 +9,7 @@ use lib 'lib', '../lib';
         my %msg;
         @msg{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
         return bless \%msg => $class;
-    };
+    }
     sub as_string {
         my ($self) = @_;
         return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
@@ -47,6 +47,71 @@ eval q{
         return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
     }
     __PACKAGE__->meta->make_immutable();
+};
+
+eval q{
+    package My::Mouse;
+    use Mouse;
+    has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
+    around BUILDARGS => sub {
+        my ($orig, $class, $str) = @_;
+        my %args;
+        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        return $class->$orig(%args);
+    };
+    sub as_string {
+        my ($self) = @_;
+        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+    }
+};
+
+eval q{
+    package My::MouseImmutable;
+    use Mouse;
+    has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
+    around BUILDARGS => sub {
+        my ($orig, $class, $str) = @_;
+        my %args;
+        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        return $class->$orig(%args);
+    };
+    sub as_string {
+        my ($self) = @_;
+        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+    }
+    __PACKAGE__->meta->make_immutable();
+};
+
+eval q{
+    package My::Mo;
+    use Mo qw(is);
+    has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
+    sub new {
+        my ($class, $str) = @_;
+        my %args;
+        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        return $class->SUPER::new(%args);
+    };
+    sub as_string {
+        my ($self) = @_;
+        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+    }
+};
+
+eval q{
+    package My::VSO;
+    use VSO;
+    has $_ => (is => 'ro', isa => 'Str') foreach qw( trn len o_r ot adc oadc ac mt amsg checksum );
+    sub new {
+        my ($class, $str) = @_;
+        my %args;
+        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        return $class->SUPER::new(%args);
+    };
+    sub as_string {
+        my ($self) = @_;
+        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+    }
 };
 
 eval q{
@@ -91,27 +156,57 @@ my %tests = (
 
     },
     ) : (),
+    Mouse->VERSION ? (
+    '4_Mouse' => sub {
+
+        my $msg = My::Mouse->new($str_01);
+        die $msg->as_string if $msg->as_string ne $str_01;
+
+    },
+    '5_MouseImmutable' => sub {
+
+        my $msg = My::MouseImmutable->new($str_01);
+        die $msg->as_string if $msg->as_string ne $str_01;
+
+    },
+    ) : (),
+    Mo->VERSION ? (
+    '6_Mo' => sub {
+
+        my $msg = My::Mo->new($str_01);
+        die $msg->as_string if $msg->as_string ne $str_01;
+
+    },
+    ) : (),
+    VSO->VERSION ? (
+    '7_VSO' => sub {
+
+        my $msg = My::VSO->new($str_01);
+        die $msg->as_string if $msg->as_string ne $str_01;
+
+    },
+    ) : (),
     Net::UCP->VERSION ? (
-    '4_NetUCP' => sub {
+    '8_NetUCP' => sub {
 
         my $msg = My::NetUCP->new($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
     ) : (),
-    '5_EMIUCP_01' => sub {
+    '9_EMIUCP_01' => sub {
 
         my $msg = Protocol::EMIUCP::Message->new_from_string($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
-    '6_EMIUCP_31' => sub {
+    'A_EMIUCP_31' => sub {
 
         my $msg = Protocol::EMIUCP::Message->new_from_string($str_31);
         die $msg->as_string if $msg->as_string ne $str_31;
 
     },
-    '7_EMIUCP_31_v' => sub {
+    'B_EMIUCP_31_v' => sub {
 
         my $msg = Protocol::EMIUCP::Message->new_from_string($str_31)->validate;
         die $msg->as_string if $msg->as_string ne $str_31;
