@@ -14,7 +14,7 @@ has_field 'sm_maybe_adc_scts';
 
 with qw(
     Protocol::EMIUCP::Message::Role::OT_53
-    Protocol::EMIUCP::Message::Role::R_50_A
+    Protocol::EMIUCP::Message::Role::R_5x_A
 );
 extends qw(Protocol::EMIUCP::Message::Object);
 

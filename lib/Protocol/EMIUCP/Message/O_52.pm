@@ -11,7 +11,7 @@ use Protocol::EMIUCP::OO;
 
 with qw(
     Protocol::EMIUCP::Message::Role::OT_52
-    Protocol::EMIUCP::Message::Role::O_50
+    Protocol::EMIUCP::Message::Role::O_5x
 );
 extends qw(Protocol::EMIUCP::Message::Object);
 

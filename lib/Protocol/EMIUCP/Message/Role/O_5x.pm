@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Role::O_50;
+package Protocol::EMIUCP::Message::Role::O_5x;
 
 use 5.006;
 
@@ -12,7 +12,7 @@ use Protocol::EMIUCP::Message::Field;
 
 with qw(
     Protocol::EMIUCP::Message::Role::O
-    Protocol::EMIUCP::Message::Role::OT_50
+    Protocol::EMIUCP::Message::Role::OT_5x
 );
 
 has [qw( res4 res5 )];

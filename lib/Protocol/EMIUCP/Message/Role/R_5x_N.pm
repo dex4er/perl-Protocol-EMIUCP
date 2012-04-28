@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::Role::R_50_N;
+package Protocol::EMIUCP::Message::Role::R_5x_N;
 
 use 5.006;
 
@@ -12,7 +12,7 @@ use Protocol::EMIUCP::Message::Field;
 
 with qw(
     Protocol::EMIUCP::Message::Role::R_N
-    Protocol::EMIUCP::Message::Role::OT_50
+    Protocol::EMIUCP::Message::Role::OT_5x
 );
 
 has_field [qw( ec sm_str )];
