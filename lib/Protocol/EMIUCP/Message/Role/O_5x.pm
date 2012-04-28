@@ -24,9 +24,6 @@ has_field [qw(
 
 use constant list_valid_mt_values => [qw( 2 3 4 )];
 
-use Carp qw(confess);
-use Protocol::EMIUCP::Util qw( from_7bit_hex_to_utf8 from_utf8_to_7bit_hex );
-
 my @MT_To_Field;
 @MT_To_Field[2, 3, 4] = qw( nmsg amsg tmsg );
 
