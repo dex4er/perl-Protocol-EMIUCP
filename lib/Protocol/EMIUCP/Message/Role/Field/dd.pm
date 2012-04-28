@@ -18,7 +18,7 @@ use Carp qw(confess);
 sub _build_args_dd {
     my ($class, $args) = @_;
 
-    $args->{dd}  = 0
+    $args->{dd} = 0
         if defined $args->{dd} and not $args->{dd};
 
     return $class;

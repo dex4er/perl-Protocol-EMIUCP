@@ -429,4 +429,69 @@ do {
     test_message 'Protocol::EMIUCP::Message::R_53_N', $str, \%fields, \%args;
 };
 
+# 6.3 Session Management Operation -60 (p.57)
+do {
+    my $str = '02/00059/O/60/07656765/2/1/1/50617373776F7264//0100//////61';
+    my %fields = (
+        trn              => '02',
+        len              => '00059',
+        o_r              => 'O',
+        ot               => '60',
+        oadc             => '07656765',
+        oton             => '2',
+        oton_description => 'National',
+        onpi             => '1',
+        onpi_description => 'E.164 Address',
+        styp             => '1',
+        styp_description => 'Add item to MO-List',
+        pwd              => '50617373776F7264',
+        pwd_utf8         => 'Password',
+        vers             => '0100',
+        checksum         => '61',
+    );
+    my %args = %fields;
+    delete $args{$_} foreach (qw( oton_description onpi_description styp_description pwd ));
+    %args = (
+        %args,
+        oton => 'OTON_NATIONAL',
+        onpi => 'ONPI_E_164_ADDRESS',
+        styp => 'STYP_ADD_ITEM_TO_MO_LIST',
+    );
+    test_message 'Protocol::EMIUCP::Message::O_60', $str, \%fields, \%args;
+};
+
+# 6.3.1 Session Management Operation (Positive Result) (p.58)
+do {
+    my $str = '00/00019/R/60/A//6D';
+    my %fields = (
+        trn            => '00',
+        len            => '00019',
+        o_r            => 'R',
+        ot             => '60',
+        ack            => 'A',
+        checksum       => '6D',
+    );
+    my %args = %fields;
+    test_message 'Protocol::EMIUCP::Message::R_60_A', $str, \%fields, \%args;
+};
+
+# 6.3.2 Session Management Operation (Negative Result) (p.58)
+do {
+    my $str = '00/00022/R/60/N/01//04';
+    my %fields = (
+        trn            => '00',
+        len            => '00022',
+        o_r            => 'R',
+        ot             => '60',
+        nack           => 'N',
+        ec             => '01',
+        ec_description => 'Checksum Error',
+        checksum       => '04',
+    );
+    my %args = %fields;
+    delete $args{ec_description};
+    $args{ec} = 'EC_CHECKSUM_ERROR';
+    test_message 'Protocol::EMIUCP::Message::R_60_N', $str, \%fields, \%args;
+};
+
 done_testing();
