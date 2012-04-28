@@ -1,4 +1,4 @@
-package Protocol::EMIUCP::Message::R_51_N;
+package Protocol::EMIUCP::Message::R_52_N;
 
 use 5.006;
 
@@ -10,7 +10,7 @@ our $VERSION = '0.01';
 use Protocol::EMIUCP::OO;
 
 with qw(
-    Protocol::EMIUCP::Message::Role::OT_51
+    Protocol::EMIUCP::Message::Role::OT_52
     Protocol::EMIUCP::Message::Role::R_50_N
 );
 extends qw(Protocol::EMIUCP::Message::Object);

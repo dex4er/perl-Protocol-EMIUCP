@@ -289,4 +289,73 @@ do {
     test_message 'Protocol::EMIUCP::Message::R_51_N', $str, \%fields, \%args;
 };
 
+# 5.4 Delivery Short Message Operation -52 (p.39)
+do {
+    my $str = '00/00120/O/52/076523578/07686745/////////////120396111055////3//43616C6C20796F75206261636B206C617465722E///0//////////A3';
+    my %fields = (
+        trn              => '00',
+        len              => '00120',
+        o_r              => 'O',
+        ot               => '52',
+        adc              => '076523578',
+        oadc             => '07686745',
+        scts             => '120396111055',
+        HAVE_DATETIME ? (scts_datetime => '1996-03-12T11:10:55') : (),
+        mt               => 3,
+        mt_description   => 'Alphanumeric',
+        amsg             => '43616C6C20796F75206261636B206C617465722E',
+        amsg_utf8        => 'Call you back later.',
+        dcs              => '0',
+        dcs_description  => 'Default Alphabet',
+        checksum         => 'A3',
+    );
+    my %args = %fields;
+    delete $args{$_} foreach (qw( mt_description amsg dcs_description ));
+    %args = (
+        %args,
+        mt   => 'MT_ALPHANUMERIC',
+        dcs  => 'DCS_DEFAULT_ALPHABET',
+    );
+    test_message 'Protocol::EMIUCP::Message::O_52', $str, \%fields, \%args;
+};
+
+# 5.4.1 Delivery Short Message Operation (Positive Result) (p.39)
+do {
+    my $str = '00/00039/R/52/A//076567:010196010101/6C';
+    my %fields = (
+        trn            => '00',
+        len            => '00039',
+        o_r            => 'R',
+        ot             => '52',
+        ack            => 'A',
+        sm             => '076567:010196010101',
+        sm_adc         => '076567',
+        sm_scts        => '010196010101',
+        HAVE_DATETIME ? (sm_scts_datetime => '1996-01-01T01:01:01') : (),
+        checksum       => '6C',
+    );
+    my %args = %fields;
+    delete $args{sm};
+    test_message 'Protocol::EMIUCP::Message::R_52_A', $str, \%fields, \%args;
+};
+
+# 5.4.2 Delivery Short Message Operation (Negative Result) (p.39)
+do {
+    my $str = '00/00022/R/52/N/01//05';
+    my %fields = (
+        trn            => '00',
+        len            => '00022',
+        o_r            => 'R',
+        ot             => '52',
+        nack           => 'N',
+        ec             => '01',
+        ec_description => 'Checksum Error',
+        checksum       => '05',
+    );
+    my %args = %fields;
+    delete $args{ec_description};
+    $args{ec} = 'EC_CHECKSUM_ERROR';
+    test_message 'Protocol::EMIUCP::Message::R_52_N', $str, \%fields, \%args;
+};
+
 done_testing();

@@ -8,7 +8,6 @@ use warnings;
 our $VERSION = '0.01';
 
 use Protocol::EMIUCP::OO;
-use Protocol::EMIUCP::Message::Field;
 
 with qw(
     Protocol::EMIUCP::Message::Role::OT_51
@@ -21,7 +20,5 @@ use constant list_valid_lpid_values => [qw( 0100 0122 0131 0138 0139 0339 0439 0
 
 use constant list_required_field_names => [qw( adc oadc mt )];
 use constant list_empty_field_names => [qw( scts dst rsn dscts dcs cpg rply hplmn res4 res5 )];
-
-use Carp qw(confess);
 
 1;
