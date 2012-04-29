@@ -9,11 +9,11 @@ our $VERSION = '0.01';
 
 use Protocol::EMIUCP::OO;
 
+extends qw(Protocol::EMIUCP::Message::Object);
 with qw(
     Protocol::EMIUCP::Message::Role::OT_53
     Protocol::EMIUCP::Message::Role::O_5x
 );
-extends qw(Protocol::EMIUCP::Message::Object);
 
 use constant list_required_field_names => [qw( adc oadc scts dst rsn dscts mt )];
 use constant list_empty_field_names => [qw(

@@ -12,10 +12,10 @@ use Protocol::EMIUCP::Message::Field;
 
 has_field 'sm_maybe_adc_scts';
 
+extends qw(Protocol::EMIUCP::Message::Object);
 with qw(
     Protocol::EMIUCP::Message::Role::OT_52
     Protocol::EMIUCP::Message::Role::R_5x_A
 );
-extends qw(Protocol::EMIUCP::Message::Object);
 
 1;

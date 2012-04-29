@@ -39,25 +39,26 @@ sub extends (@) {
     my (@classes) = @_;
     my $caller = caller;
 
+    load_class($_) foreach (@classes);
+
     no strict 'refs';
     no warnings 'once';
-    foreach my $class (@classes) {
-        load_class($class);
-        push @{ *{"${caller}::ISA"} }, $class;
-    };
+    my @isa = @{ *{"${caller}::ISA"} };
+    @{ *{"${caller}::ISA"} } = (@classes, @isa);
 };
 
 sub with (@) {
     my (@roles) = @_;
     my $caller = caller;
 
+    load_class($_) foreach (@roles);
+
     no strict 'refs';
     no warnings 'once';
-    foreach my $role (@roles) {
-        load_class($role);
-        push @{ *{"${caller}::ISA"} }, $role;
-        push @{ *{"${caller}::DOES"} }, $role;
-    };
+    my @isa = @{ *{"${caller}::ISA"} };
+    @{ *{"${caller}::ISA"} } = (@roles, @isa);
+    my @does = @{ *{"${caller}::DOES"} };
+    @{ *{"${caller}::DOES"} } = (@roles, @does);
 };
 
 1;

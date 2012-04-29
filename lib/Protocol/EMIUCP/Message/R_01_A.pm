@@ -10,11 +10,11 @@ our $VERSION = '0.01';
 use Protocol::EMIUCP::OO;
 use Protocol::EMIUCP::Message::Field;
 
+extends qw(Protocol::EMIUCP::Message::Object);
 with qw(
     Protocol::EMIUCP::Message::Role::OT_01
     Protocol::EMIUCP::Message::Role::R_A
 );
-extends qw(Protocol::EMIUCP::Message::Object);
 
 has_field 'sm_adc_scts';
 
