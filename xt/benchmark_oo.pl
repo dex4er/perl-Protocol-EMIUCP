@@ -83,6 +83,22 @@ eval q{
 };
 
 eval q{
+    package My::Mousse;
+    use Mousse;
+    has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
+    around BUILDARGS => sub {
+        my ($orig, $class, $str) = @_;
+        my %args;
+        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        return $class->$orig(%args);
+    };
+    sub as_string {
+        my ($self) = @_;
+        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+    }
+};
+
+eval q{
     package My::Mo;
     use Mo qw(is);
     has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
@@ -136,20 +152,20 @@ my $str_01 = '00/00070/O/01/01234567890/09876543210//3/53686F7274204D65737361676
 my $str_31 = '02/00035/O/31/0234765439845/0139/A0';
 
 my %tests = (
-    '1_Blessed' => sub {
+    '01_Blessed' => sub {
 
         my $msg = My::Blessed->new($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
     Moose->VERSION ? (
-    '2_Moose' => sub {
+    '02_Moose' => sub {
 
         my $msg = My::Moose->new($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
-    '3_MooseImmutable' => sub {
+    '03_MooseImmutable' => sub {
 
         my $msg = My::MooseImmutable->new($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
@@ -157,21 +173,29 @@ my %tests = (
     },
     ) : (),
     Mouse->VERSION ? (
-    '4_Mouse' => sub {
+    '04_Mouse' => sub {
 
         my $msg = My::Mouse->new($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
-    '5_MouseImmutable' => sub {
+    '05_MouseImmutable' => sub {
 
         my $msg = My::MouseImmutable->new($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
     ) : (),
+    Mousse->VERSION ? (
+    '06_Mousse' => sub {
+
+        my $msg = My::Mousse->new($str_01);
+        die $msg->as_string if $msg->as_string ne $str_01;
+
+    },
+    ) : (),
     Mo->VERSION ? (
-    '6_Mo' => sub {
+    '07_Mo' => sub {
 
         my $msg = My::Mo->new($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
@@ -179,7 +203,7 @@ my %tests = (
     },
     ) : (),
     VSO->VERSION ? (
-    '7_VSO' => sub {
+    '08_VSO' => sub {
 
         my $msg = My::VSO->new($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
@@ -187,26 +211,26 @@ my %tests = (
     },
     ) : (),
     Net::UCP->VERSION ? (
-    '8_NetUCP' => sub {
+    '09_NetUCP' => sub {
 
         my $msg = My::NetUCP->new($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
     ) : (),
-    '9_EMIUCP_01' => sub {
+    '10_EMIUCP_01' => sub {
 
         my $msg = Protocol::EMIUCP::Message->new_from_string($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
-    'A_EMIUCP_31' => sub {
+    '11_EMIUCP_31' => sub {
 
         my $msg = Protocol::EMIUCP::Message->new_from_string($str_31);
         die $msg->as_string if $msg->as_string ne $str_31;
 
     },
-    'B_EMIUCP_31_v' => sub {
+    '12_EMIUCP_31_v' => sub {
 
         my $msg = Protocol::EMIUCP::Message->new_from_string($str_31)->validate;
         die $msg->as_string if $msg->as_string ne $str_31;
