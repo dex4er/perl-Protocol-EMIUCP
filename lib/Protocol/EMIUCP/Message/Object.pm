@@ -8,6 +8,13 @@ use Protocol::EMIUCP::Message::Field;
 
 with_field [qw( o_r trn len ot checksum )];
 
+has '_string_cached' => (
+    is        => 'ro',
+    isa       => 'Str',
+    predicate => '_has_string_cached',
+    clearer   => '_clear_string_cached'
+);
+
 sub import {
     # export constants with roles
 };
@@ -61,7 +68,11 @@ sub _parse_string {
 
 sub as_string {
     my ($self) = @_;
-    join '/', map { defined $self->{$_} ? $self->{$_} : '' } @{ $self->list_field_names };
+
+    return $self->{_string_cached} if exists $self->{_string_cached};
+
+    return $self->{_string_cached} =
+        join '/', map { defined $self->{$_} ? $self->{$_} : '' } @{ $self->list_field_names };
 };
 
 sub _make_hashref {
@@ -73,7 +84,11 @@ sub _make_hashref {
 sub as_hashref {
     my ($self) = @_;
     my $hashref = +{ %$self };
+
+    delete $hashref->{$_} foreach grep { /^_/ } keys %$hashref;
+
     $self->_make_hashref($hashref);
+
     return $hashref;
 };
 
