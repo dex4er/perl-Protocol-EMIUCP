@@ -1,34 +1,36 @@
 package Protocol::EMIUCP::Message;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse;
 
 our $VERSION = '0.01';
 
+use Mouse::Util qw(load_class);
 
-# Factory class
-
+use Mouse::Util qw(load_class);
 use Carp qw(confess);
-use Protocol::EMIUCP::Util qw(load_class);
+
+sub import {
+    foreach my $field (qw( dcs dst ec lpid mt nt npid onpi opid otoa oton pid rpl styp )) {
+        my $class = "Protocol::EMIUCP::Message::Role::Field::$field";
+        load_class($class);
+        $class->import(caller => caller);
+    }
+};
 
 sub _find_new_class_from_args {
     my ($class, $args) = @_;
 
-    {
-        no warnings 'numeric';
-        confess "Attribute (ot) is required"
-            unless defined $args->{ot};
-        confess "Attribute (ot) has invalid value '$args->{ot}', should be larger than 0"
-            unless defined $args->{ot} and $args->{ot} > 0;
-        confess "Attribute (o_r) is required"
-            unless defined $args->{o_r};
-        confess "Attribute (o_r) has invalid value '$args->{o_r}', should be 'O' or 'R'"
-            unless $args->{o_r} eq 'O' or $args->{o_r} eq 'R';
-        confess "Attribute (ack) xor (nack) is required if (o_r) eq 'R'"
-            if $args->{o_r} eq 'R' and not ($args->{ack} xor $args->{nack});
-    }
+    no warnings 'numeric';
+    confess "Attribute (ot) is required"
+        unless defined $args->{ot};
+    confess "Attribute (ot) has invalid value '$args->{ot}', should be between 1 and 99"
+        unless $args->{ot} =~ /^\d{1,2}$/;
+    confess "Attribute (o_r) is required"
+        unless defined $args->{o_r};
+    confess "Attribute (o_r) has invalid value '$args->{o_r}', should be 'O' or 'R'"
+        unless $args->{o_r} eq 'O' or $args->{o_r} eq 'R';
+    confess "Attribute (ack) xor (nack) is required if attribute (o_r) eq 'R'"
+        if $args->{o_r} eq 'R' and not ($args->{ack} xor $args->{nack});
 
     my $new_class = sprintf 'Protocol::EMIUCP::Message::%s_%02d', $args->{o_r}, $args->{ot};
     $new_class .= '_A' if $args->{ack};
@@ -69,6 +71,5 @@ sub new_from_string {
     my ($class, $str) = @_;
     return $class->_find_new_class_from_string($str)->new_from_string($str);
 };
-
 
 1;

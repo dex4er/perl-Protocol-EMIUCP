@@ -1,13 +1,8 @@
 package Protocol::EMIUCP::Message::O_60;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse;
 
 our $VERSION = '0.01';
-
-use Protocol::EMIUCP::OO;
 
 extends qw(Protocol::EMIUCP::Message::Object);
 with qw(
@@ -15,7 +10,11 @@ with qw(
     Protocol::EMIUCP::Message::Role::O_6x
 );
 
-use constant list_required_field_names => [qw( oadc styp pwd vers )];
-use constant list_empty_field_names => [qw( ladc lton lnpi res1 )];
+use Protocol::EMIUCP::Message::Field;
+
+required_field [qw( oadc styp pwd vers )];
+empty_field [qw( ladc lton lnpi res1 )];
+
+__PACKAGE__->meta->make_immutable();
 
 1;

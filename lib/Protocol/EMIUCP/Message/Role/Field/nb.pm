@@ -1,33 +1,23 @@
 package Protocol::EMIUCP::Message::Role::Field::nb;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
-
-has 'nb';
+has_field 'nb' => (isa => 'EMIUCP_Num4');
 
 use Carp qw(confess);
 
-sub _validate_nb {
+before BUILD => sub {
     my ($self) = @_;
 
-    confess "Attribute (nb) is invalid"
-        if defined $self->{nb} and not $self->{nb} =~ /^\d{1,4}$/;
-
     if (defined $self->{mt} and $self->{mt} == 4) {
-        confess "Attribute (nb) is required"
+        confess "Attribute (nb) is required if attribute (mt) == 4"
             unless defined $self->{nb};
         # TODO mcl is required if XSer "GSM DCS information" is not supplied
     };
-
-    return $self;
 };
 
 1;

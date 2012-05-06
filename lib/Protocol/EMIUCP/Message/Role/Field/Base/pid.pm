@@ -1,13 +1,8 @@
 package Protocol::EMIUCP::Message::Role::Field::Base::pid;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
-
-use Carp qw(confess);
 
 my %Constant_To_Value;
 
@@ -30,10 +25,10 @@ while (my ($value, $name) = each %Value_To_Description) {
 };
 
 sub _import_base_pid {
-    my ($class, $field, $args) = @_;
+    my ($class, $field, %args) = @_;
 
     my $uc_field = uc($field);
-    my $caller = $args->{caller} || caller(1);
+    my $caller = $args{caller} || caller(1);
 
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
@@ -41,28 +36,13 @@ sub _import_base_pid {
     };
 };
 
-sub _build_args_base_pid {
-    my ($class, $field, $args) = @_;
-
-    my $uc_field = uc($field);
-
-    $args->{$field} = $Constant_To_Value{$1}
-        if defined $args->{$field} and $args->{$field} =~ /^${uc_field}_(.*)$/;
-    $args->{$field} = sprintf '%04d', $args->{$field}
-        if defined $args->{$field} and $args->{$field} =~ /^\d+$/;
-
-    return $class;
-};
-
-sub _validate_base_pid {
+sub _BUILD_base_pid {
     my ($self, $field) = @_;
 
     my $validator = "list_valid_${field}_values";
 
     confess "Attribute ($field) is invalid"
         if defined $self->{$field} and not grep { $_ eq $self->{$field} } @{ $self->$validator };
-
-    return $self;
 };
 
 sub _base_pid_description {
@@ -70,7 +50,7 @@ sub _base_pid_description {
     return $Value_To_Description{ defined $value ? $value : $self->{$field} };
 };
 
-sub _build_hashref_base_pid {
+sub _make_hashref_base_pid {
     my ($self, $field, $hashref) = @_;
 
     my $field_description = "${field}_description";
@@ -78,8 +58,6 @@ sub _build_hashref_base_pid {
     if (defined $hashref->{$field}) {
         $hashref->{$field_description} = $self->$field_description;
     };
-
-    return $self;
 };
 
 1;

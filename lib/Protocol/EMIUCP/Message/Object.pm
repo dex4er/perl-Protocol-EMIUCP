@@ -1,33 +1,24 @@
 package Protocol::EMIUCP::Message::Object;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO;
 use Protocol::EMIUCP::Message::Field;
 
-has [qw( o_r )];
-has_field [qw( trn len ot checksum )];
+with_field [qw( o_r trn len ot checksum )];
 
-use Carp qw(confess);
-use Protocol::EMIUCP::Util qw(get_linear_isa);
+sub import {
+    # export constants with roles
+};
 
-sub new {
-    my ($class, %args) = @_;
+sub BUILD {
+    my ($self, $args) = @_;
 
-    $class->_build_args(\%args);
-
-    my %fields;
-    my $field_names = $class->list_field_names(\%args);
-    @fields{ @$field_names } = @args{ @$field_names };
-    map { delete $fields{$_} } grep { not defined $fields{$_} or $fields{$_} eq '' } keys %fields;
-
-    my $self = { %fields };
-    bless $self => $class;
+    for my $n ($self->list_field_names($args)) {
+        delete $self->{"clear_$n"}
+            if exists $self->{"clear_$n"} and (not defined $self->{$n} or $self->{$n} eq '');
+    };
 
     if (not defined $self->{len}) {
         $self->{len} = $self->_calculate_len;
@@ -46,45 +37,8 @@ sub new_from_string {
     return $class->new( %{ $class->_parse_string($str) } );
 };
 
-our %Cache_Validate_Methods;
-
-sub validate {
-    my ($self) = @_;
-
-    foreach my $name (@{ $self->list_required_field_names }) {
-        confess "Attribute ($name) is required"
-            unless defined $self->{$name};
-    };
-
-    foreach my $name (@{ $self->list_empty_field_names }) {
-        confess "Attribute ($name) should not be defined"
-            if defined $self->{$name};
-    };
-
-    my $class = ref $self;
-    my $roles = exists $Cache_Validate_Methods{$class}
-              ? $Cache_Validate_Methods{$class}
-              : ( $Cache_Validate_Methods{$class} = [
-                    grep { $self->can($_) }
-                    map { /::(\w+)$/; '_validate_' . lc $1 }
-                    @{ $self->_list_roles }
-                ] );
-
-    $self->$_ foreach @$roles;
-
-    return $self;
-};
-
 sub list_data_field_names {
     confess "Method (list_data_field_names) have to be overrided by derived class method";
-};
-
-sub list_required_field_names {
-    return +[];
-};
-
-sub list_empty_field_names {
-    return +[];
 };
 
 sub list_field_names {
@@ -92,7 +46,7 @@ sub list_field_names {
     return [
         qw( trn len o_r ot ),
         @{ $self->list_data_field_names($fields) },
-        qw( checksum )
+        qw( checksum ),
     ];
 };
 
@@ -110,28 +64,29 @@ sub as_string {
     join '/', map { defined $self->{$_} ? $self->{$_} : '' } @{ $self->list_field_names };
 };
 
-sub as_hashref {
-    my ($self) = @_;
-    my $hashref = +{ %$self };
-    $self->_build_hashref($hashref);
+sub _make_hashref {
+    my ($self, $hashref) = @_;
+    # should be overrided by roles
     return $hashref;
 };
 
-our %Cache_Build_Hashref_Methods;
-
-sub _build_hashref {
-    my ($self, $hashref) = @_;
-
-    my $class = ref $self;
-    my $roles = exists $Cache_Build_Hashref_Methods{$class}
-              ? $Cache_Build_Hashref_Methods{$class}
-              : ( $Cache_Build_Hashref_Methods{$class} = [
-                    grep { $self->can($_) }
-                    map { /::(\w+)$/; '_build_hashref_' . lc $1 }
-                    @{ $self->_list_roles }
-                ] );
-
-    $self->$_($hashref) foreach @$roles;
+sub as_hashref {
+    my ($self) = @_;
+    my $hashref = +{ %$self };
+    $self->_make_hashref($hashref);
+    return $hashref;
 };
+
+sub Dump {
+    eval {
+        require YAML::XS;
+        YAML::XS::Dump(@_);
+    } or do {
+        require YAML;
+        YAML::Dump(@_);
+    };
+};
+
+__PACKAGE__->meta->make_immutable();
 
 1;

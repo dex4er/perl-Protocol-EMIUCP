@@ -1,13 +1,9 @@
 package Protocol::EMIUCP::Message::O_01;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO;
 use Protocol::EMIUCP::Message::Field;
 
 extends qw(Protocol::EMIUCP::Message::Object);
@@ -16,14 +12,11 @@ with qw(
     Protocol::EMIUCP::Message::Role::O
 );
 
-has_field [qw( adc oadc_num ac mt amsg nmsg )];
+with_field [qw( adc oadc_num ac mt amsg nmsg )];
+required_field [qw( adc mt )];
 
 use constant list_valid_mt_values => [qw( 2 3 )];
 
-use constant list_required_field_names => [qw( adc mt )];
-
-use Carp qw(confess);
-use Protocol::EMIUCP::Util qw( from_hex_to_utf8 from_utf8_to_hex );
 
 my @MT_To_Field;
 @MT_To_Field[2, 3] = qw( nmsg amsg );
@@ -36,5 +29,7 @@ sub list_data_field_names {
     no warnings 'numeric';
     return [ qw( adc oadc ac mt ), $MT_To_Field[$mt||0] || '-msg' ];
 };
+
+__PACKAGE__->meta->make_immutable();
 
 1;

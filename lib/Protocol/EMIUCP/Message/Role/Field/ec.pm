@@ -1,19 +1,12 @@
 package Protocol::EMIUCP::Message::Role::Field::ec;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
-
-has 'ec';
-
-use Carp qw(confess);
+has_field 'ec' => (isa => 'EMIUCP_Num02', coerce => 1);
 
 my %Constant_To_Value;
 
@@ -62,33 +55,20 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub _import_ec {
-    my ($class, $args) = @_;
-    my $caller = $args->{caller} || caller;
+sub import {
+    my ($class, %args) = @_;
+    my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::EC_$name"} = sub () { $value };
     };
 };
 
-sub _build_args_ec {
-    my ($class, $args) = @_;
-
-    $args->{ec} = $Constant_To_Value{$1}
-        if defined $args->{ec} and $args->{ec} =~ /^EC_(.*)$/;
-
-    return $class;
-};
-
-sub _validate_ec {
+before BUILD => sub {
     my ($self) = @_;
 
-    confess "Attribute (ec) is required"
-        unless defined $self->{ec};
-    confess "Attribute (ec) is invalid"
-        unless grep { $_ eq $self->{ec} } @{ $self->list_valid_ec_values };
-
-    return $self;
+    confess "Attribute (ec) is invalid with value " . $self->{ec}
+        if defined $self->{ec} and not grep { $_ eq $self->{ec} } @{ $self->list_valid_ec_values };
 };
 
 sub list_valid_ec_values {
@@ -100,13 +80,11 @@ sub ec_description {
     return $Value_To_Description{ defined $value ? $value : $self->{ec} };
 };
 
-sub _build_hashref_ec {
+after _make_hashref => sub {
     my ($self, $hashref) = @_;
     if (defined $hashref->{ec}) {
         $hashref->{ec_description} = $self->ec_description;
     };
-    return $self;
 };
-
 
 1;

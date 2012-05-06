@@ -1,39 +1,37 @@
 package Protocol::EMIUCP::Message::Role::Field::dscts;
 
-use 5.006;
+use Mouse::Role;
 
-use strict;
-use warnings;
+use Protocol::EMIUCP::Message::Field;
 
-our $VERSION = '0.01';
+has_field 'dscts' => (isa => 'EMIUCP_Num_12');
 
-use constant field => do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
+use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::DSCTS };
 
-use Protocol::EMIUCP::OO::Role;
+around BUILDARGS => sub {
+    my ($orig, $class, %args) = @_;
 
-with qw(
-    Protocol::EMIUCP::Message::Role::Field::Base::scts
-    Protocol::EMIUCP::Message::Role
-);
+    $args{dscts} = DateTime::Format::EMIUCP::DSCTS->format_datetime($args{dscts})
+        if blessed $args{dscts} and $args{dscts}->isa('DateTime');
 
-has field;
+    return $class->$orig(%args);
+};
 
-eval { require DateTime::Format::EMIUCP::DSCTS };
+sub dscts_datetime {
+    my ($self) = @_;
 
-my %Methods = (
-    _import_dscts        => '_import_base_scts',
-    _build_args_dscts    => '_build_args_base_scts',
-    _validate_dscts      => '_validate_base_scts',
-    dscts_datetime       => '_base_scts_datetime',
-    _build_hashref_dscts => '_build_hashref_base_scts',
-);
+    return unless defined $self->{dscts};
 
-while (my ($method, $base_method) = each %Methods) {
-    no strict 'refs';
-    *$method = sub {
-        my ($self, @args) = @_;
-        return $self->$base_method(field, @args);
-    };
+    return DateTime::Format::EMIUCP::DSCTS->parse_datetime($self->{dscts});
+};
+
+after _make_hashref => sub {
+    my ($self, $hashref) = @_;
+
+    $hashref->{dscts_datetime} = $self->dscts_datetime->datetime
+        if HAVE_DATETIME and defined $hashref->{dscts};
+
+    return $self;
 };
 
 1;

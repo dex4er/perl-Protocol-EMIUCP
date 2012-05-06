@@ -1,27 +1,11 @@
 package Protocol::EMIUCP::Message::Role::Field::xser;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
-
-has 'xser';
-
-use Carp qw(confess);
-
-sub _validate_xser {
-    my ($self) = @_;
-
-    confess "Attribute (xser) is invalid"
-        if defined $self->{xser} and not $self->{xser} =~ /^\d{1,400}$/;
-
-    return $self;
-};
+has_field 'xser' => (isa => 'EMIUCP_Hex400');
 
 1;

@@ -1,27 +1,11 @@
 package Protocol::EMIUCP::Message::Role::Field::mms;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
-
-has 'mms';
-
-use Carp qw(confess);
-
-sub _validate_mms {
-    my ($self) = @_;
-
-    confess "Attribute (mms) is invalid"
-        if defined $self->{mms} and not $self->{mms} =~ /^\d$/;
-
-    return $self;
-};
+has_field 'mms' => (isa => 'EMIUCP_Num1');
 
 1;

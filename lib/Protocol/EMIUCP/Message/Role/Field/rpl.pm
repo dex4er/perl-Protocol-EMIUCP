@@ -1,19 +1,16 @@
 package Protocol::EMIUCP::Message::Role::Field::rpl;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Mouse::Util::TypeConstraints;
 
-with qw(Protocol::EMIUCP::Message::Role);
+enum 'EMIUCP_RPl' => [qw( 1 2 )];
 
-has 'rpl';
+use Protocol::EMIUCP::Message::Field;
 
-use Carp qw(confess);
+has_field 'rpl' => (isa => 'EMIUCP_RPl');
 
 my %Constant_To_Value;
 
@@ -27,31 +24,13 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub _import_rpl {
-    my ($class, $args) = @_;
-    my $caller = $args->{caller} || caller;
+sub import {
+    my ($class, %args) = @_;
+    my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::RPL_$name"} = sub () { $value };
     };
-};
-
-sub _build_args_rpl {
-    my ($class, $args) = @_;
-
-    $args->{mt} = $Constant_To_Value{$1}
-        if defined $args->{rpl} and $args->{rpl} =~ /^RPL_(.*)$/;
-
-    return $class;
-};
-
-sub _validate_rpl {
-    my ($self) = @_;
-
-    confess "Attribute (rpl) is invalid"
-        if defined $self->{rpl} and not exists $Value_To_Description{ $self->{rpl} };
-
-    return $self;
 };
 
 sub rpl_description {
@@ -59,12 +38,11 @@ sub rpl_description {
     return $Value_To_Description{ defined $code ? $code : $self->{rpl} };
 };
 
-sub _build_hashref_rpl {
+after _make_hashref => sub {
     my ($self, $hashref) = @_;
     if (defined $hashref->{rpl}) {
         $hashref->{rpl_description} = $self->rpl_description;
     };
-    return $self;
 };
 
 1;

@@ -1,41 +1,37 @@
 package Protocol::EMIUCP::Message::Role::Field::scts;
 
-use 5.006;
+use Mouse::Role;
 
-use strict;
-use warnings;
+use Protocol::EMIUCP::Message::Field;
 
-our $VERSION = '0.01';
+has_field 'scts' => (isa => 'EMIUCP_Num_12');
 
-use constant field => do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
+use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::SCTS };
 
-use Protocol::EMIUCP::OO::Role;
+around BUILDARGS => sub {
+    my ($orig, $class, %args) = @_;
 
-with qw(
-    Protocol::EMIUCP::Message::Role::Field::Base::scts
-    Protocol::EMIUCP::Message::Role
-);
+    $args{scts} = DateTime::Format::EMIUCP::SCTS->format_datetime($args{scts})
+        if blessed $args{scts} and $args{scts}->isa('DateTime');
 
-has field;
+    return $class->$orig(%args);
+};
 
-use Carp qw(confess);
+sub scts_datetime {
+    my ($self) = @_;
 
-eval { require DateTime::Format::EMIUCP::SCTS };
+    return unless defined $self->{scts};
 
-my %Methods = (
-    _import_scts        => '_import_base_scts',
-    _build_args_scts    => '_build_args_base_scts',
-    _validate_scts      => '_validate_base_scts',
-    scts_datetime       => '_base_scts_datetime',
-    _build_hashref_scts => '_build_hashref_base_scts',
-);
+    return DateTime::Format::EMIUCP::SCTS->parse_datetime($self->{scts});
+};
 
-while (my ($method, $base_method) = each %Methods) {
-    no strict 'refs';
-    *$method = sub {
-        my ($self, @args) = @_;
-        return $self->$base_method(field, @args);
-    };
+after _make_hashref => sub {
+    my ($self, $hashref) = @_;
+
+    $hashref->{scts_datetime} = $self->scts_datetime->datetime
+        if HAVE_DATETIME and defined $hashref->{scts};
+
+    return $self;
 };
 
 1;

@@ -1,36 +1,30 @@
 package Protocol::EMIUCP::Message::Role::Field::npwd;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use constant field => do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
+use Protocol::EMIUCP::Message::Field;
 
-use Protocol::EMIUCP::OO::Role;
+my $field = do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
 
-with qw(
-    Protocol::EMIUCP::Message::Role::Field::Base::pwd
-    Protocol::EMIUCP::Message::Role
-);
+has_field $field => (isa => 'EMIUCP_Hex16');
 
-has field;
+with qw(Protocol::EMIUCP::Message::Role::Field::Base::pwd);
 
-my %Methods = (
-    _build_args_npwd    => '_build_args_base_pwd',
-    _validate_npwd      => '_validate_base_pwd',
-    npwd_utf8           => '_base_npwd_utf8',
-    _build_hashref_npwd => '_build_hashref_base_pwd',
-);
+around BUILDARGS => sub {
+    my ($orig, $class, %args) = @_;
+    return $class->$orig( $class->_BUILDARGS_base_pwd($field, %args) );
+};
 
-while (my ($method, $base_method) = each %Methods) {
-    no strict 'refs';
-    *$method = sub {
-        my ($self, @args) = @_;
-        return $self->$base_method(field, @args);
-    };
+sub npwd_utf8 {
+    my ($self, $value) = @_;
+    return $self->_base_pwd_utf8($field, $value);
+};
+
+after _make_hashref => sub {
+    my ($self, $hashref) = @_;
+    $self->_make_hashref_base_pwd($field, $hashref);
 };
 
 1;

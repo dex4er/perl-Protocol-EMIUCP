@@ -1,37 +1,35 @@
 package Protocol::EMIUCP::Message::Role::Field::lpid;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use constant field => do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
+use Protocol::EMIUCP::Message::Field;
 
-use Protocol::EMIUCP::OO::Role;
+my $field = do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
 
-with qw(
-    Protocol::EMIUCP::Message::Role::Field::Base::pid
-    Protocol::EMIUCP::Message::Role
-);
+has_field $field => (isa => 'EMIUCP_Num04', coerce => 1);
 
-has field;
+with qw(Protocol::EMIUCP::Message::Role::Field::Base::pid);
 
-my %Methods = (
-    _import_lpid        => '_import_base_pid',
-    _build_args_lpid    => '_build_args_base_pid',
-    _validate_lpid      => '_validate_base_pid',
-    lpid_description    => '_base_pid_description',
-    _build_hashref_lpid => '_build_hashref_base_pid',
-);
+sub import {
+    my ($self, %args) = @_;
+    $self->_import_base_pid($field, %args);
+};
 
-while (my ($method, $base_method) = each %Methods) {
-    no strict 'refs';
-    *$method = sub {
-        my ($self, @args) = @_;
-        return $self->$base_method(field, @args);
-    };
+before BUILD => sub {
+    my ($self) = @_;
+    $self->_BUILD_base_pid($field);
+};
+
+sub lpid_description {
+    my ($self, $value) = @_;
+    return $self->_base_pid_description($field, $value);
+};
+
+after _make_hashref => sub {
+    my ($self, $hashref) = @_;
+    $self->_make_hashref_base_pid($field, $hashref);
 };
 
 1;

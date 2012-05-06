@@ -1,27 +1,11 @@
 package Protocol::EMIUCP::Message::Role::Field::sm_str;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
-
-has 'sm';
-
-use Carp qw(confess);
-
-sub _validate_sm_str {
-    my ($self) = @_;
-
-    confess "Attribute (sm) is invalid"
-        if defined $self->{sm} and $self->{sm} =~ m{/};
-
-    return $self;
-};
+has_field 'sm' => (isa => 'EMIUCP_Str');
 
 1;

@@ -2,20 +2,15 @@ package Protocol::EMIUCP::Message::Role::R_5x_N;
 
 use 5.006;
 
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+with qw(Protocol::EMIUCP::Message::Role::R_N);
+
 use Protocol::EMIUCP::Message::Field;
 
-with qw(
-    Protocol::EMIUCP::Message::Role::R_N
-    Protocol::EMIUCP::Message::Role::OT_5x
-);
-
-has_field [qw( ec sm_str )];
+with_field [qw( ec sm_str )];
 
 use constant list_data_field_names => [qw( nack ec sm )];
 

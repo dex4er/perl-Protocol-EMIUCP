@@ -1,26 +1,73 @@
 package Protocol::EMIUCP::Message::Field;
 
-use 5.006;
-
 use strict;
 use warnings;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO ();
+use Mouse::Exporter;
 
-use Exporter qw(import);
-our @EXPORT = qw(has_field);
+use Protocol::EMIUCP::Message::Types;
+use Mouse::Util qw(apply_all_roles);
 
-sub has_field ($) {
-    my ($attrs) = @_;
+Mouse::Exporter->setup_import_methods(
+    as_is => [qw( has_field required_field empty_field with_field )],
+);
+
+sub has_field {
+    my ($name, %opts) = @_;
+
+    my $meta = caller->meta;
+
+    for my $n (ref $name ? @$name : $name) {
+        $meta->add_attribute(
+            $n,
+            is        => 'ro',
+            isa       => 'EMIUCP_Str',
+            predicate => "has_$n",
+            clearer   => "clear_$n",
+            %opts,
+        );
+    };
+};
+
+sub required_field {
+    my ($name, %opts) = @_;
+
+    my $meta = caller->meta;
+
+    for my $n (ref $name ? @$name : $name) {
+        $meta->add_attribute(
+            "+$n",
+            required => 1,
+            %opts,
+        );
+    };
+};
+
+sub empty_field {
+    my ($name, %opts) = @_;
+
+    my $meta = caller->meta;
+
+    for my $n (ref $name ? @$name : $name) {
+        $meta->add_attribute(
+            "+$n",
+            isa => 'EMIUCP_Nul',
+            %opts,
+        );
+    };
+};
+
+sub with_field {
+    my ($name, %opts) = @_;
+
+    my @roles = map { $_ => { -excludes => [qw( import HAVE_DATETIME )] } }
+        map { "Protocol::EMIUCP::Message::Role::Field::$_" }
+        ref $name ? @$name : $name;
 
     my $caller = caller;
-    my @roles = map { "Protocol::EMIUCP::Message::Role::Field::$_" }
-        ref $attrs ? @$attrs : $attrs;
-
-    @_ = @roles;
-    goto &Protocol::EMIUCP::OO::with;
+    apply_all_roles($caller, @roles);
 };
 
 1;

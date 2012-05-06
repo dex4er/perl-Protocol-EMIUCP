@@ -11,15 +11,14 @@ use Test::More;
 
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP };
 
-BEGIN { use_ok 'Protocol::EMIUCP' };
+BEGIN { use_ok 'Protocol::EMIUCP::Message' };
 
 sub test_message ($$$;$$) {
     my ($class, $str, $fields, $args, $code) = @_;
     $args = $fields unless defined $args;
     do {
-        my $msg = Protocol::EMIUCP->new_message_from_string($str);
+        my $msg = Protocol::EMIUCP::Message->new_from_string($str);
         isa_ok $msg, $class;
-        isa_ok $msg->validate, $class, "$str validated";
         is_deeply $msg->as_hashref, $fields, "$str fields matched";
         is $msg->as_string, $str, "$str as string matched";
         my $msg_hashref = $msg->as_hashref;
@@ -30,9 +29,8 @@ sub test_message ($$$;$$) {
         $code->($class, $str, $fields, $args, $msg) if $code;
     };
     do {
-        my $msg = Protocol::EMIUCP->new_message(%$args);
+        my $msg = Protocol::EMIUCP::Message->new(%$args);
         isa_ok $msg, $class;
-        isa_ok $msg->validate, $class, "$str validated";
         is_deeply $msg->as_hashref, $fields, "$str fields matched";
         is $msg->as_string, $str, "$str as string matched";
         my $msg_hashref = $msg->as_hashref;
@@ -117,7 +115,7 @@ do {
     );
     my %args = %fields;
     delete $args{ec_message};
-    $args{ec} = 'EC_SYNTAX_ERROR';
+    $args{ec} = eval 'EC_SYNTAX_ERROR';
     test_message 'Protocol::EMIUCP::Message::R_01_N', $str, \%fields, \%args;
 };
 
@@ -136,7 +134,7 @@ do {
     );
     my %args = %fields;
     delete $args{pid_message};
-    $args{pid} = 'PID_PC_VIA_PSTN';
+    $args{pid} = eval 'PID_PC_VIA_PSTN';
     test_message 'Protocol::EMIUCP::Message::O_31', $str, \%fields, \%args;
 };
 
@@ -170,7 +168,7 @@ do {
     );
     my %args = %fields;
     delete $args{ec_message};
-    $args{ec} = 'EC_ADC_INVALID';
+    $args{ec} = eval 'EC_ADC_INVALID';
     test_message 'Protocol::EMIUCP::Message::R_31_N', $str, \%fields, \%args;
 };
 
@@ -204,9 +202,9 @@ do {
     %args = (
         %args,
         nadc => '192.87.34.12:5000',
-        nt   => 'NT_ND',
-        npid => 'NPID_PC_VIA_TCP_IP',
-        mt   => 'MT_ALPHANUMERIC',
+        nt   => eval 'NT_ND',
+        npid => eval 'NPID_PC_VIA_TCP_IP',
+        mt   => eval 'MT_ALPHANUMERIC',
     );
     test_message 'Protocol::EMIUCP::Message::O_51', $str, \%fields, \%args;
 };
@@ -243,9 +241,9 @@ do {
     delete $args{$_} foreach (qw( nt_description lpid_description mt_description nb tmsg ));
     %args = (
         %args,
-        nt   => 'NT_ND_DN_BN',
-        lpid => 'LPID_FAX_GROUP_3',
-        mt   => 'MT_TRANSPARENT',
+        nt   => eval 'NT_ND_DN_BN',
+        lpid => eval 'LPID_FAX_GROUP_3',
+        mt   => eval 'MT_TRANSPARENT',
     );
     test_message 'Protocol::EMIUCP::Message::O_51', $str, \%fields, \%args;
 };
@@ -285,7 +283,7 @@ do {
     );
     my %args = %fields;
     delete $args{ec_description};
-    $args{ec} = 'EC_FAX_GROUP_NOT_SUPPORTED';
+    $args{ec} = eval 'EC_FAX_GROUP_NOT_SUPPORTED';
     test_message 'Protocol::EMIUCP::Message::R_51_N', $str, \%fields, \%args;
 };
 
@@ -313,8 +311,8 @@ do {
     delete $args{$_} foreach (qw( mt_description amsg dcs_description ));
     %args = (
         %args,
-        mt   => 'MT_ALPHANUMERIC',
-        dcs  => 'DCS_DEFAULT_ALPHABET',
+        mt   => eval 'MT_ALPHANUMERIC',
+        dcs  => eval 'DCS_DEFAULT_ALPHABET',
     );
     test_message 'Protocol::EMIUCP::Message::O_52', $str, \%fields, \%args;
 };
@@ -354,7 +352,7 @@ do {
     );
     my %args = %fields;
     delete $args{ec_description};
-    $args{ec} = 'EC_CHECKSUM_ERROR';
+    $args{ec} = eval 'EC_CHECKSUM_ERROR';
     test_message 'Protocol::EMIUCP::Message::R_52_N', $str, \%fields, \%args;
 };
 
@@ -385,8 +383,8 @@ do {
     delete $args{$_} foreach (qw( dsc_description mt_description amsg ));
     %args = (
         %args,
-        dst  => 'DST_BUFFERED',
-        mt   => 'MT_ALPHANUMERIC',
+        dst  => eval 'DST_BUFFERED',
+        mt   => eval 'MT_ALPHANUMERIC',
     );
     test_message 'Protocol::EMIUCP::Message::O_53', $str, \%fields, \%args;
 };
@@ -425,7 +423,7 @@ do {
     );
     my %args = %fields;
     delete $args{ec_description};
-    $args{ec} = 'EC_SYNTAX_ERROR';
+    $args{ec} = eval 'EC_SYNTAX_ERROR';
     test_message 'Protocol::EMIUCP::Message::R_53_N', $str, \%fields, \%args;
 };
 
@@ -453,9 +451,9 @@ do {
     delete $args{$_} foreach (qw( oton_description onpi_description styp_description pwd ));
     %args = (
         %args,
-        oton => 'OTON_NATIONAL',
-        onpi => 'ONPI_E_164_ADDRESS',
-        styp => 'STYP_ADD_ITEM_TO_MO_LIST',
+        oton => eval 'OTON_NATIONAL',
+        onpi => eval 'ONPI_E_164_ADDRESS',
+        styp => eval 'STYP_ADD_ITEM_TO_MO_LIST',
     );
     test_message 'Protocol::EMIUCP::Message::O_60', $str, \%fields, \%args;
 };
@@ -490,7 +488,7 @@ do {
     );
     my %args = %fields;
     delete $args{ec_description};
-    $args{ec} = 'EC_CHECKSUM_ERROR';
+    $args{ec} = eval 'EC_CHECKSUM_ERROR';
     test_message 'Protocol::EMIUCP::Message::R_60_N', $str, \%fields, \%args;
 };
 

@@ -1,31 +1,23 @@
 package Protocol::EMIUCP::Message::Role::Field::nadc;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
+has_field 'nadc' => (isa => 'EMIUCP_Num16');
 
-has 'nadc';
+around BUILDARGS => sub {
+    my ($orig, $class, %args) = @_;
 
-use Carp qw(confess);
+    if (defined $args{nadc_addr}) {
+        my $nadc_addr = delete $args{nadc_addr};
+        $args{nadc} = $class->_from_addr_to_nadc($nadc_addr)
+            || confess "Attribute (nadc_addr) is invalid with value $nadc_addr";
+    };
 
-use Protocol::EMIUCP::Message::Role::Field::npid;
-BEGIN { Protocol::EMIUCP::Message::Role::Field::npid->_import_npid };
-
-sub _build_args_nadc {
-    my ($class, $args) = @_;
-
-    $args->{nadc} = $class->_from_addr_to_nadc($args->{nadc_addr})
-        || confess "Attribute (nadc_addr) is invalid"
-        if defined $args->{nadc_addr};
-
-    return $class;
+    return $class->$orig(%args);
 };
 
 {
@@ -50,16 +42,16 @@ sub _build_args_nadc {
     };
 }
 
-sub _validate_nadc {
+before BUILD => sub {
     my ($self) = @_;
 
     if (defined $self->{nadc}) {
-        if ($self->{npid} eq NPID_PC_VIA_TCP_IP) {
-            confess "Attribute (nadc) is invalid"
+        if ($self->{npid} eq '0539') {
+            confess "Attribute (nadc) is invalid with value " . $self->{nadc}
                 unless defined $self->_from_nadc_to_addr($self->{nadc});
         }
         else {
-            confess "Attribute (nadc) is invalid"
+            confess "Attribute (nadc) is invalid with value " . $self->{nadc}
                 unless $self->{nadc} =~ /^\d{1,16}$/;
         };
     };
@@ -72,14 +64,12 @@ sub nadc_addr {
     return $self->_from_nadc_to_addr($self->{nadc});
 };
 
-sub _build_hashref_nadc {
+after _make_hashref => sub {
     my ($self, $hashref) = @_;
-
     if (defined $self->{nadc}) {
         $hashref->{nadc_addr} = $self->nadc_addr
-            if defined $self->{npid} and $self->{npid} eq NPID_PC_VIA_TCP_IP;
+            if defined $self->{npid} and $self->{npid} eq '0539';
     };
-    return $self;
 };
 
 1;

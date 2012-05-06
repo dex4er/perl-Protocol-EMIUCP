@@ -141,7 +141,7 @@ eval q{
     };
     sub as_string {
         my ($self) = @_;
-        $ucp->{TRN_OBJ}->set_trn(99);
+        $ucp->{TRN_OBJ}->set_trn( ($self->{trn} - 1) % 100 );
         return $ucp->make_message(%$self, op=>$self->{ot}, operation=>$self->{type}?1:0, trn=>0);
     };
 };
@@ -149,7 +149,7 @@ eval q{
 use Protocol::EMIUCP::Message;
 
 my $str_01 = '00/00070/O/01/01234567890/09876543210//3/53686F7274204D657373616765/D9';
-my $str_31 = '02/00035/O/31/0234765439845/0139/A0';
+my $str_51 = '39/00099/O/51/0657467/078769//1//7//1/0545765/0122/1/0808971800///////4/32/F5AA34DE////1/////////65';
 
 my %tests = (
     '01_Blessed' => sub {
@@ -211,29 +211,30 @@ my %tests = (
     },
     ) : (),
     Net::UCP->VERSION ? (
-    '09_NetUCP' => sub {
+    '09_NetUCP_01' => sub {
 
         my $msg = My::NetUCP->new($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
+    '10_NetUCP_51' => sub {
+
+        my $msg = My::NetUCP->new($str_51);
+        die $msg->as_string if $msg->as_string ne $str_51;
+
+    },
     ) : (),
-    '10_EMIUCP_01' => sub {
+    '11_EMIUCP_01' => sub {
 
         my $msg = Protocol::EMIUCP::Message->new_from_string($str_01);
         die $msg->as_string if $msg->as_string ne $str_01;
 
     },
-    '11_EMIUCP_31' => sub {
+    '12_EMIUCP_51' => sub {
 
-        my $msg = Protocol::EMIUCP::Message->new_from_string($str_31);
-        die $msg->as_string if $msg->as_string ne $str_31;
-
-    },
-    '12_EMIUCP_31_v' => sub {
-
-        my $msg = Protocol::EMIUCP::Message->new_from_string($str_31)->validate;
-        die $msg->as_string if $msg->as_string ne $str_31;
+        my $msg = Protocol::EMIUCP::Message->new_from_string($str_51);
+        $msg->{oadc} =
+        die $msg->as_string if $msg->as_string ne $str_51;
 
     },
 );

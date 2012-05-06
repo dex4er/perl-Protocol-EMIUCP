@@ -1,19 +1,12 @@
 package Protocol::EMIUCP::Message::Role::Field::otoa;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
-
-has 'otoa';
-
-use Carp qw(confess);
+has_field 'otoa' => (isa => 'EMIUCP_Num04', coerce => 1);
 
 my %Constant_To_Value;
 
@@ -27,31 +20,20 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub _import_otoa {
-    my ($class, $args) = @_;
-    my $caller = $args->{caller} || caller;
+sub import {
+    my ($class, %args) = @_;
+    my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::OTOA_$name"} = sub () { $value };
     };
 };
 
-sub _build_args_otoa {
-    my ($class, $args) = @_;
-
-    $args->{otoa} = $Constant_To_Value{$1}
-        if defined $args->{otoa} and $args->{otoa} =~ /^OTOA_(.*)$/;
-
-    return $class;
-};
-
-sub _validate_otoa {
+before BUILD => sub {
     my ($self) = @_;
 
-    confess "Attribute (otoa) is invalid"
+    confess "Attribute (otoa) is invalid with value " . $self->{otoa}
         if defined $self->{otoa} and not exists $Value_To_Description{ $self->{otoa} };
-
-    return $self;
 };
 
 sub otoa_description {
@@ -59,12 +41,11 @@ sub otoa_description {
     return $Value_To_Description{ defined $code ? $code : $self->{otoa} };
 };
 
-sub _build_hashref_otoa {
+after _make_hashref => sub {
     my ($self, $hashref) = @_;
     if (defined $hashref->{otoa}) {
         $hashref->{otoa_description} = $self->otoa_description;
     };
-    return $self;
 };
 
 1;

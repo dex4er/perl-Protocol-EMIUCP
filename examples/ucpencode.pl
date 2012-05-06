@@ -12,5 +12,3 @@ my %fields = map { /^(.*)=(.*)$/ and ($1, $2) } @ARGV;
 my $msg = Protocol::EMIUCP->new_message(%fields);
 
 print $msg->as_string, "\n";
-
-$msg->validate;

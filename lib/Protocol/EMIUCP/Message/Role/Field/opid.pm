@@ -1,19 +1,12 @@
 package Protocol::EMIUCP::Message::Role::Field::opid;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
-
-has 'opid';
-
-use Carp qw(confess);
+has_field 'opid' => (isa => 'EMIUCP_Num02', coerce => 1);
 
 my %Constant_To_Value;
 
@@ -28,31 +21,20 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub _import_opid {
-    my ($class, $args) = @_;
-    my $caller = $args->{caller} || caller;
+sub import {
+    my ($class, %args) = @_;
+    my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::OPID_$name"} = sub () { $value };
     };
 };
 
-sub _build_args_opid {
-    my ($class, $args) = @_;
-
-    $args->{opid} = $Constant_To_Value{$1}
-        if defined $args->{opid} and $args->{opid} =~ /^OPID_(.*)$/;
-
-    return $class;
-};
-
-sub _validate_opid {
+before BUILD => sub {
     my ($self) = @_;
 
-    confess "Attribute (opid) is invalid"
-        if defined $self->{opid} and not grep { $_ eq $self->{opid} } keys %Value_To_Description;
-
-    return $self;
+    confess "Attribute (opid) is invalid with value " . $self->{opid}
+        if defined $self->{opid} and not exists $Value_To_Description{ $self->{opid} };
 };
 
 sub opid_description {
@@ -60,12 +42,11 @@ sub opid_description {
     return $Value_To_Description{ defined $code ? $code : $self->{opid} };
 };
 
-sub _build_hashref_opid {
+after _make_hashref => sub {
     my ($self, $hashref) = @_;
     if (defined $hashref->{opid}) {
         $hashref->{opid_description} = $self->opid_description;
     };
-    return $self;
 };
 
 1;

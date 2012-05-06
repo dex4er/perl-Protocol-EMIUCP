@@ -2,8 +2,7 @@ package Protocol::EMIUCP;
 
 use 5.006;
 
-use strict;
-use warnings;
+use Mouse;
 
 our $VERSION = '0.01';
 

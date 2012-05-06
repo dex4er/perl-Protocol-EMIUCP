@@ -1,33 +1,16 @@
 package Protocol::EMIUCP::Message::Role::OT_53;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+has '+ot' => (default => '53');
 
-with qw(Protocol::EMIUCP::Message::Role::OT_5x);
-
-use Carp qw(confess);
-
-sub _build_args_ot_53 {
-    my ($class, $args) = @_;
-
-    $args->{ot} = '53' unless defined $args->{ot};
-
-    return $class;
-};
-
-sub _validate_ot_53 {
+before BUILD => sub {
     my ($self) = @_;
 
-    confess "Attribute (ot) is invalid, should be '53'"
+    confess "Attribute (ot) is invalid with value" . $self->{ot} . ", should be 53"
         if defined $self->{ot} and $self->{ot} ne '53';
-
-    return $self;
 };
 
 1;

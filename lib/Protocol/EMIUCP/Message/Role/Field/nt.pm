@@ -1,19 +1,16 @@
 package Protocol::EMIUCP::Message::Role::Field::nt;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Mouse::Util::TypeConstraints;
 
-with qw(Protocol::EMIUCP::Message::Role);
+enum 'EMIUCP_NT' => [( 0 .. 7 )];
 
-has 'nt';
+use Protocol::EMIUCP::Message::Field;
 
-use Carp qw(confess);
+has_field 'nt' => (isa => 'EMIUCP_NT');
 
 my %Constant_To_Value = (
     NT_NONE => 0,
@@ -35,31 +32,13 @@ foreach my $value (1..7) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub _import_nt {
-    my ($class, $args) = @_;
-    my $caller = $args->{caller} || caller;
+sub import {
+    my ($class, %args) = @_;
+    my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::NT_$name"} = sub () { $value };
     };
-};
-
-sub _build_args_nt {
-    my ($class, $args) = @_;
-
-    $args->{nt} = $Constant_To_Value{$1}
-        if defined $args->{nt} and $args->{nt} =~ /^NT_(.*)$/;
-
-    return $class;
-};
-
-sub _validate_nt {
-    my ($self) = @_;
-
-    confess "Attribute (nt) is invalid"
-        if defined $self->{nt} and not grep { $_ eq $self->{nt} } 0..7;
-
-    return $self;
 };
 
 sub nt_description {
@@ -67,12 +46,11 @@ sub nt_description {
     return $Value_To_Description{ defined $value ? $value : $self->{nt} };
 };
 
-sub _build_hashref_nt {
+after _make_hashref => sub {
     my ($self, $hashref) = @_;
     if (defined $hashref->{nt}) {
         $hashref->{nt_description} = $self->nt_description;
     };
-    return $self;
 };
 
 1;

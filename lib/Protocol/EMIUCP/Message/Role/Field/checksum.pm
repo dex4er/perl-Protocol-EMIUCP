@@ -1,30 +1,22 @@
 package Protocol::EMIUCP::Message::Role::Field::checksum;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
+has_field 'checksum' => (isa => 'EMIUCP_Hex02');
 
-has 'checksum';
-
-use Carp qw(confess);
 use List::Util qw(sum);
 
-sub _validate_checksum {
+after BUILD => sub {
     my ($self) = @_;
 
-    confess "Attribute (checksum) is invalid"
-        if defined $self->{checksum} and not $self->{checksum} =~ /^[\d[A-F]{2}$/;
-    confess "Attribute (checksum) is invalid, should be " . $self->_calculate_checksum
+    confess "Attribute (checksum) has invalid value " . $self->{checksum} .
+        ", should be " . $self->_calculate_checksum .
+        " for message " . $self->as_string
         if defined $self->{checksum} and $self->{checksum} ne $self->_calculate_checksum;
-
-    return $self;
 };
 
 sub _calculate_checksum {

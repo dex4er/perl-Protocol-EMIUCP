@@ -1,13 +1,9 @@
 package Protocol::EMIUCP::Message::R_31_A;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO;
 use Protocol::EMIUCP::Message::Field;
 
 extends qw(Protocol::EMIUCP::Message::Object);
@@ -16,8 +12,10 @@ with qw(
     Protocol::EMIUCP::Message::Role::R_A
 );
 
-has_field 'sm_num4';
+with_field 'sm_num4';
 
 use constant list_data_field_names => [qw( ack sm )];
+
+__PACKAGE__->meta->make_immutable();
 
 1;

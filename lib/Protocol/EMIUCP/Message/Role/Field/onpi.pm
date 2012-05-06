@@ -1,19 +1,12 @@
 package Protocol::EMIUCP::Message::Role::Field::onpi;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
-
-has 'onpi';
-
-use Carp qw(confess);
+has_field 'onpi' => (isa => 'EMIUCP_Num1');
 
 my %Constant_To_Value;
 
@@ -29,31 +22,20 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub _import_onpi {
-    my ($class, $args) = @_;
-    my $caller = $args->{caller} || caller;
+sub import {
+    my ($class, %args) = @_;
+    my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::ONPI_$name"} = sub () { $value };
     };
 };
 
-sub _build_args_onpi {
-    my ($class, $args) = @_;
-
-    $args->{onpi} = $Constant_To_Value{$1}
-        if defined $args->{onpi} and $args->{onpi} =~ /^ONPI_(.*)$/;
-
-    return $class;
-};
-
-sub _validate_onpi {
+before BUILD => sub {
     my ($self) = @_;
 
-    confess "Attribute (onpi) is invalid"
-        if defined $self->{onpi} and not grep { $_ eq $self->{onpi} } keys %Value_To_Description;
-
-    return $self;
+    confess "Attribute (onpi) is invalid with value " . $self->{onpi}
+        if defined $self->{onpi} and not exists $Value_To_Description{ $self->{onpi} };
 };
 
 sub onpi_description {
@@ -61,12 +43,11 @@ sub onpi_description {
     return $Value_To_Description{ defined $code ? $code : $self->{onpi} };
 };
 
-sub _build_hashref_onpi {
+after _make_hashref => sub {
     my ($self, $hashref) = @_;
     if (defined $hashref->{onpi}) {
         $hashref->{onpi_description} = $self->onpi_description;
     };
-    return $self;
 };
 
 1;

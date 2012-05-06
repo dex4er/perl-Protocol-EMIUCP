@@ -1,27 +1,15 @@
 package Protocol::EMIUCP::Message::Role::Field::mcls;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Mouse::Util::TypeConstraints;
 
-with qw(Protocol::EMIUCP::Message::Role);
+enum 'EMIUCP_MCLs' => [( 0 .. 3 )];
 
-has 'mcls';
+use Protocol::EMIUCP::Message::Field;
 
-use Carp qw(confess);
-
-sub _validate_mcls {
-    my ($self) = @_;
-
-    confess "Attribute (mcls) is invalid"
-        if defined $self->{mcls} and not $self->{mcls} =~ /^[0-3]$/;
-
-    return $self;
-};
+has_field 'mcls' => (isa => 'EMIUCP_MCLs');
 
 1;

@@ -1,26 +1,19 @@
 package Protocol::EMIUCP::Message::Role::O_5x;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+with qw(Protocol::EMIUCP::Message::Role::O);
+
 use Protocol::EMIUCP::Message::Field;
 
-with qw(
-    Protocol::EMIUCP::Message::Role::O
-    Protocol::EMIUCP::Message::Role::OT_5x
-);
-
-has [qw( res4 res5 )];
-has_field [qw(
+with_field [qw(
     adc oadc_alphanum ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid scts
-    dst rsn dscts mt nmsg amsg tmsg mms pr dcs mcls rpl cpg rply otoa hplmn
+    dst rsn dscts mt nb nmsg amsg tmsg mms pr dcs mcls rpl cpg rply otoa hplmn
     xser
 )];
+has_field [qw( res4 res5 )] => (isa => 'EMIUCP_Nul');
 
 use constant list_valid_mt_values => [qw( 2 3 4 )];
 
@@ -34,9 +27,14 @@ sub list_data_field_names {
            : $fields->{mt};
     no warnings 'numeric';
     return [
-        qw( adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid scts dst rsn dscts mt nb ),
+        qw(
+            adc oadc ac nrq nadc nt npid lrq lrad lpid dd ddt vp rpid scts dst
+            rsn dscts mt nb
+        ),
         $MT_To_Field[$mt||0] || '-msg',
-        qw( mms pr dcs mcls rpl cpg rply otoa hplmn xser res4 res5 ),
+        qw(
+            mms pr dcs mcls rpl cpg rply otoa hplmn xser res4 res5
+        ),
     ];
 };
 

@@ -1,19 +1,12 @@
 package Protocol::EMIUCP::Message::Role::Field::oton;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
-
-has 'oton';
-
-use Carp qw(confess);
+has_field 'oton' => (isa => 'EMIUCP_Num1');
 
 my %Constant_To_Value;
 
@@ -28,31 +21,20 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub _import_oton {
-    my ($class, $args) = @_;
-    my $caller = $args->{caller} || caller;
+sub import {
+    my ($class, %args) = @_;
+    my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::OTON_$name"} = sub () { $value };
     };
 };
 
-sub _build_args_oton {
-    my ($class, $args) = @_;
-
-    $args->{oton} = $Constant_To_Value{$1}
-        if defined $args->{oton} and $args->{oton} =~ /^OTON_(.*)$/;
-
-    return $class;
-};
-
-sub _validate_oton {
+before BUILD => sub {
     my ($self) = @_;
 
-    confess "Attribute (oton) is invalid"
-        if defined $self->{oton} and not grep { $_ eq $self->{oton} } keys %Value_To_Description;
-
-    return $self;
+    confess "Attribute (oton) is invalid with value " . $self->{oton}
+        if defined $self->{oton} and not exists $Value_To_Description{ $self->{oton} };
 };
 
 sub oton_description {
@@ -60,12 +42,11 @@ sub oton_description {
     return $Value_To_Description{ defined $code ? $code : $self->{oton} };
 };
 
-sub _build_hashref_oton {
+after _make_hashref => sub {
     my ($self, $hashref) = @_;
     if (defined $hashref->{oton}) {
         $hashref->{oton_description} = $self->oton_description;
     };
-    return $self;
 };
 
 1;

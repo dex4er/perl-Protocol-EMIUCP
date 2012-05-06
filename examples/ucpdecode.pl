@@ -19,5 +19,3 @@ my $dump = Data::Dumper->new([ $msg->as_hashref ])
 $dump =~ s/^{\n(.*)\n}$/$1/s;
 $dump =~ s/^\s\s(.*?),?$/$1/mg;
 print $dump;
-
-$msg->validate;

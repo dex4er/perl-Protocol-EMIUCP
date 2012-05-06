@@ -1,38 +1,20 @@
 package Protocol::EMIUCP::Message::Role::Field::len;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
+has_field 'len' => (isa => 'EMIUCP_Num05', coerce => 1);
 
-has 'len';
-
-use Carp qw(confess);
-
-sub _build_args_len {
-    my ($class, $args) = @_;
-
-    no warnings 'numeric';
-    $args->{len} = sprintf "%05d", $args->{len} if defined $args->{len};
-
-    return $class;
-};
-
-sub _validate_len {
+after BUILD => sub {
     my ($self) = @_;
 
-    confess "Attribute (len) is invalid"
-        if defined $self->{len} and not $self->{len} =~ /^\d{5}$/;
-    confess "Attribute (len) has invalid value, should be " . $self->_calculate_len
+    confess "Attribute (len) has invalid value " . $self->{len} .
+        ", should be " . $self->_calculate_len .
+        " for message " . $self->as_string
         if defined $self->{len} and $self->{len} ne $self->_calculate_len;
-
-    return $self;
 };
 
 sub _calculate_len {

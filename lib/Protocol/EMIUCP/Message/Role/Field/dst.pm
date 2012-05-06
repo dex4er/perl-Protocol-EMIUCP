@@ -1,17 +1,16 @@
 package Protocol::EMIUCP::Message::Role::Field::dst;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Mouse::Util::TypeConstraints;
 
-with qw(Protocol::EMIUCP::Message::Role);
+enum 'EMIUCP_Dst' => [qw( 0 1 2 )];
 
-has 'dst';
+use Protocol::EMIUCP::Message::Field;
+
+has_field 'dst' => (isa => 'EMIUCP_Dst');
 
 use Carp qw(confess);
 
@@ -28,31 +27,13 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
-sub _import_dst {
-    my ($class, $args) = @_;
-    my $caller = $args->{caller} || caller;
+sub import {
+    my ($class, %args) = @_;
+    my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::DST_$name"} = sub () { $value };
     };
-};
-
-sub _build_args_dst {
-    my ($class, $args) = @_;
-
-    $args->{dst} = $Constant_To_Value{$1}
-        if defined $args->{dst} and $args->{dst} =~ /^DST_(.*)$/;
-
-    return $class;
-};
-
-sub _validate_dst {
-    my ($self) = @_;
-
-    confess "Attribute (dst) is invalid"
-        if defined $self->{dst} and not grep { $_ eq $self->{dst} } keys %Value_To_Description;
-
-    return $self;
 };
 
 sub dst_description {
@@ -60,12 +41,11 @@ sub dst_description {
     return $Value_To_Description{ defined $code ? $code : $self->{dst} };
 };
 
-sub _build_hashref_dst {
+after _make_hashref => sub {
     my ($self, $hashref) = @_;
     if (defined $hashref->{dst}) {
         $hashref->{dst_description} = $self->dst_description;
     };
-    return $self;
 };
 
 1;

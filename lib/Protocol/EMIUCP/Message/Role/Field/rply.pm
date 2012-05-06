@@ -1,27 +1,11 @@
 package Protocol::EMIUCP::Message::Role::Field::rply;
 
-use 5.006;
-
-use strict;
-use warnings;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::OO::Role;
+use Protocol::EMIUCP::Message::Field;
 
-with qw(Protocol::EMIUCP::Message::Role);
-
-has 'rply';
-
-use Carp qw(confess);
-
-sub _validate_rply {
-    my ($self) = @_;
-
-    confess "Attribute (rply) is invalid"
-        if defined $self->{rply} and not $self->{rply} =~ /^\d$/;
-
-    return $self;
-};
+has_field 'rply' => (isa => 'EMIUCP_Num1');
 
 1;
