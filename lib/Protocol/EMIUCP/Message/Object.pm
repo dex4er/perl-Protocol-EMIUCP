@@ -19,6 +19,16 @@ sub import {
     # export constants with roles
 };
 
+sub BUILDARGS {
+    my ($self, %args) = @_;
+
+    foreach my $name (keys %args) {
+        delete $args{$name} if not defined $args{$name} or $args{$name} eq '';
+    };
+
+    return \%args;
+};
+
 sub BUILD {
     my ($self, $args) = @_;
 
@@ -66,13 +76,17 @@ sub _parse_string {
     return \%args;
 };
 
+sub _as_string {
+    my ($self) = @_;
+    return join '/', map { defined $self->{$_} ? $self->{$_} : '' } @{ $self->list_field_names };
+};
+
 sub as_string {
     my ($self) = @_;
 
     return $self->{_string_cached} if exists $self->{_string_cached};
 
-    return $self->{_string_cached} =
-        join '/', map { defined $self->{$_} ? $self->{$_} : '' } @{ $self->list_field_names };
+    return $self->{_string_cached} = $self->_as_string;
 };
 
 sub _make_hashref {
