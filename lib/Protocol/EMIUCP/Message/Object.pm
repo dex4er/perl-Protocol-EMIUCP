@@ -12,8 +12,9 @@ with_field [qw( o_r trn len ot checksum )];
 has '_string_cached' => (
     is        => 'ro',
     isa       => 'Str',
-    predicate => '_has_string_cached',
-    clearer   => '_clear_string_cached'
+    lazy      => 1,
+    reader    => 'as_string',
+    default   => sub { $_[0]->_as_string },
 );
 
 sub import {
@@ -80,14 +81,6 @@ sub _parse_string {
 sub _as_string {
     my ($self) = @_;
     return join '/', map { defined $self->{$_} ? $self->{$_} : '' } @{ $self->list_field_names };
-};
-
-sub as_string {
-    my ($self) = @_;
-
-    return $self->{_string_cached} if exists $self->{_string_cached};
-
-    return $self->{_string_cached} = $self->_as_string;
 };
 
 sub _make_hashref {
