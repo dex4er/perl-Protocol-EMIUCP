@@ -59,7 +59,8 @@ do {
         checksum       => 'D9',
     );
     my %args = %fields;
-    delete $args{amsg};
+    delete $args{$_} foreach (qw( amsg mt_description ));
+    $args{mt} = eval 'MT_ALPHANUMERIC';
     test_message 'Protocol::EMIUCP::Message::O_01', $str, \%fields, \%args;
 };
 
@@ -77,7 +78,10 @@ do {
         nmsg           => '716436383334',
         checksum       => 'C5',
     );
-    test_message 'Protocol::EMIUCP::Message::O_01', $str, \%fields;
+    my %args = %fields;
+    delete $args{mt_description};
+    $args{mt} = eval 'MT_NUMERIC';
+    test_message 'Protocol::EMIUCP::Message::O_01', $str, \%fields, \%args;
 };
 
 # 4.2.1 Call Input Operation (Positive Result) (p.11)
@@ -96,7 +100,7 @@ do {
         checksum => '4E',
     );
     my %args = %fields;
-    delete $args{sm};
+    delete $args{$_} foreach (qw( sm sm_scts_datetime ));
     test_message 'Protocol::EMIUCP::Message::R_01_A', $str, \%fields, \%args;
 };
 
@@ -114,7 +118,7 @@ do {
         checksum       => '03',
     );
     my %args = %fields;
-    delete $args{ec_message};
+    delete $args{ec_description};
     $args{ec} = eval 'EC_SYNTAX_ERROR';
     test_message 'Protocol::EMIUCP::Message::R_01_N', $str, \%fields, \%args;
 };
@@ -133,7 +137,7 @@ do {
         checksum        => 'A0',
     );
     my %args = %fields;
-    delete $args{pid_message};
+    delete $args{pid_description};
     $args{pid} = eval 'PID_PC_VIA_PSTN';
     test_message 'Protocol::EMIUCP::Message::O_31', $str, \%fields, \%args;
 };
@@ -167,7 +171,7 @@ do {
         checksum       => '07',
     );
     my %args = %fields;
-    delete $args{ec_message};
+    delete $args{ec_description};
     $args{ec} = eval 'EC_ADC_INVALID';
     test_message 'Protocol::EMIUCP::Message::R_31_N', $str, \%fields, \%args;
 };
@@ -198,7 +202,7 @@ do {
         checksum         => 'CD',
     );
     my %args = %fields;
-    delete $args{$_} foreach (qw( nt_description ntpid_description mt_description amsg nadc ));
+    delete $args{$_} foreach (qw( nt_description npid_description vp_datetime mt_description amsg nadc ));
     %args = (
         %args,
         nadc => '192.87.34.12:5000',
@@ -238,7 +242,7 @@ do {
         checksum         => '65',
     );
     my %args = %fields;
-    delete $args{$_} foreach (qw( nt_description lpid_description mt_description nb tmsg ));
+    delete $args{$_} foreach (qw( nt_description lpid_description ddt_datetime mt_description nb tmsg ));
     %args = (
         %args,
         nt   => eval 'NT_ND_DN_BN',
@@ -264,7 +268,7 @@ do {
         checksum       => '68',
     );
     my %args = %fields;
-    delete $args{sm};
+    delete $args{$_} foreach (qw( sm sm_scts_datetime ));
     test_message 'Protocol::EMIUCP::Message::R_51_A', $str, \%fields, \%args;
 };
 
@@ -308,7 +312,7 @@ do {
         checksum         => 'A3',
     );
     my %args = %fields;
-    delete $args{$_} foreach (qw( mt_description amsg dcs_description ));
+    delete $args{$_} foreach (qw( scts_datetime mt_description amsg dcs_description ));
     %args = (
         %args,
         mt   => eval 'MT_ALPHANUMERIC',
@@ -333,7 +337,7 @@ do {
         checksum       => '6C',
     );
     my %args = %fields;
-    delete $args{sm};
+    delete $args{$_} foreach (qw( sm sm_scts_datetime ));
     test_message 'Protocol::EMIUCP::Message::R_52_A', $str, \%fields, \%args;
 };
 
@@ -380,7 +384,7 @@ do {
         checksum         => '1F',
     );
     my %args = %fields;
-    delete $args{$_} foreach (qw( dsc_description mt_description amsg ));
+    delete $args{$_} foreach (qw( scts_datetime dst_description dscts_datetime mt_description amsg ));
     %args = (
         %args,
         dst  => eval 'DST_BUFFERED',
@@ -404,7 +408,7 @@ do {
         checksum       => 'F2',
     );
     my %args = %fields;
-    delete $args{sm};
+    delete $args{$_} foreach (qw( sm sm_scts_datetime ));
     test_message 'Protocol::EMIUCP::Message::R_53_A', $str, \%fields, \%args;
 };
 
