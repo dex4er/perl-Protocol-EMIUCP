@@ -1,6 +1,6 @@
 package Protocol::EMIUCP::Message::Role::Field::sm_maybe_adc_scts;
 
-use Mouse::Role;
+use Moose::Role;
 
 our $VERSION = '0.01';
 

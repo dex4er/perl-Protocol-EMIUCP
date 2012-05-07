@@ -2,7 +2,7 @@ package Protocol::EMIUCP;
 
 use 5.006;
 
-use Mouse;
+use Moose;
 
 our $VERSION = '0.01';
 

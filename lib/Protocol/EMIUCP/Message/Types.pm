@@ -1,6 +1,6 @@
 package Protocol::EMIUCP::Message::Types;
 
-use Mouse::Util::TypeConstraints;
+use Moose::Util::TypeConstraints;
 
 our $VERSION = '0.01';
 

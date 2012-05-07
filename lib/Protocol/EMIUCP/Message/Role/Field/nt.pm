@@ -1,10 +1,10 @@
 package Protocol::EMIUCP::Message::Role::Field::nt;
 
-use Mouse::Role;
+use Moose::Role;
 
 our $VERSION = '0.01';
 
-use Mouse::Util::TypeConstraints;
+use Moose::Util::TypeConstraints;
 
 enum 'EMIUCP_NT' => [( 0 .. 7 )];
 

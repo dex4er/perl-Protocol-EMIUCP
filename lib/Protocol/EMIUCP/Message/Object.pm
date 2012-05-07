@@ -1,7 +1,7 @@
 package Protocol::EMIUCP::Message::Object;
 
-use Mouse;
-use MouseX::StrictConstructor;
+use Moose;
+use MooseX::StrictConstructor;
 
 our $VERSION = '0.01';
 

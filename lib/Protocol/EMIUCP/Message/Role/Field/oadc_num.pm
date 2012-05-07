@@ -1,6 +1,6 @@
 package Protocol::EMIUCP::Message::Role::Field::oadc_num;
 
-use Mouse::Role;
+use Moose::Role;
 
 our $VERSION = '0.01';
 

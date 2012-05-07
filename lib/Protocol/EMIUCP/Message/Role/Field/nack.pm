@@ -1,10 +1,10 @@
 package Protocol::EMIUCP::Message::Role::Field::nack;
 
-use Mouse::Role;
+use Moose::Role;
 
 our $VERSION = '0.01';
 
-use Mouse::Util::TypeConstraints;
+use Moose::Util::TypeConstraints;
 
 enum    'EMIUCP_N'       => [qw( N )];
 coerce  'EMIUCP_N'       => from 'Bool' => via   { $_ ? 'N' : '' };

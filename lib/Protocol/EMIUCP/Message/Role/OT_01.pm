@@ -1,6 +1,6 @@
 package Protocol::EMIUCP::Message::Role::OT_01;
 
-use Mouse::Role;
+use Moose::Role;
 
 our $VERSION = '0.01';
 

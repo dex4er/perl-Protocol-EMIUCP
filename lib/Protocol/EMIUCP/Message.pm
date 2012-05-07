@@ -1,18 +1,13 @@
 package Protocol::EMIUCP::Message;
 
-use Mouse;
+use Moose;
 
 our $VERSION = '0.01';
-
-use Mouse::Util qw(load_class);
-
-use Mouse::Util qw(load_class);
-use Carp qw(confess);
 
 sub import {
     foreach my $field (qw( dcs dst ec lpid mt nt npid onpi opid otoa oton pid rpl styp )) {
         my $class = "Protocol::EMIUCP::Message::Role::Field::$field";
-        load_class($class);
+        Class::MOP::load_class($class);
         $class->import(caller => caller);
     }
 };
@@ -36,7 +31,7 @@ sub _find_new_class_from_args {
     $new_class .= '_A' if $args->{ack};
     $new_class .= '_N' if $args->{nack};
 
-    load_class($new_class);
+    Class::MOP::load_class($new_class);
 
     return $new_class;
 };

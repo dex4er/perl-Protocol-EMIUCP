@@ -1,6 +1,6 @@
 package Protocol::EMIUCP::Message::O_51;
 
-use Mouse;
+use Moose;
 
 our $VERSION = '0.01';
 

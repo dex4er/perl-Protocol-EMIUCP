@@ -1,10 +1,10 @@
 package Protocol::EMIUCP::Message::Role::Field::dst;
 
-use Mouse::Role;
+use Moose::Role;
 
 our $VERSION = '0.01';
 
-use Mouse::Util::TypeConstraints;
+use Moose::Util::TypeConstraints;
 
 enum 'EMIUCP_Dst' => [qw( 0 1 2 )];
 

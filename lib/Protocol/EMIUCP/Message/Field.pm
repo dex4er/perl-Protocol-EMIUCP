@@ -5,12 +5,12 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use Mouse::Exporter;
+use Moose::Exporter;
 
 use Protocol::EMIUCP::Message::Types;
-use Mouse::Util qw(apply_all_roles);
+use Moose::Util qw(apply_all_roles);
 
-Mouse::Exporter->setup_import_methods(
+Moose::Exporter->setup_import_methods(
     as_is => [qw( has_field required_field empty_field with_field )],
 );
 

@@ -1,10 +1,10 @@
 package Protocol::EMIUCP::Message::Role::Field::sm_adc_scts;
 
-use Mouse::Role;
+use Moose::Role;
 
 our $VERSION = '0.01';
 
-use Mouse::Util::TypeConstraints;
+use Moose::Util::TypeConstraints;
 
 subtype 'EMIUCP_SM_AdC_SCTS' => as 'Str' => where { /^\d{1,16}:\d{12}$/ };
 

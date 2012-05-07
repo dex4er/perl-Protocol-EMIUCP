@@ -2,7 +2,7 @@ package Protocol::EMIUCP::Message::Role::R_5x_N;
 
 use 5.006;
 
-use Mouse::Role;
+use Moose::Role;
 
 our $VERSION = '0.01';
 

@@ -1,10 +1,10 @@
 package Protocol::EMIUCP::Message::Role::Field::rpl;
 
-use Mouse::Role;
+use Moose::Role;
 
 our $VERSION = '0.01';
 
-use Mouse::Util::TypeConstraints;
+use Moose::Util::TypeConstraints;
 
 enum 'EMIUCP_RPl' => [qw( 1 2 )];
 

@@ -19,8 +19,8 @@ my $build = Module::Build->new(
         'constant'                  => 1.04,   # use constant { LIST }
         'Encode'                    => 0,
         'Exporter'                  => 5.566,  # use Exporter qw(import)
-        'Mouse'                     => 0,
-        'MouseX::StrictConstructor' => 0,
+        'Moose'                     => 0,
+        'MooseX::StrictConstructor' => 0,
     },
     recommends              => {
         'DateTime::Format::EMIUCP'  => 0.0300, # ::DDT, ::DSCTS, ::SCTS, ::VP

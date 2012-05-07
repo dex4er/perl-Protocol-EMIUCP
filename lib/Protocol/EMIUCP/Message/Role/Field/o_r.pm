@@ -1,10 +1,10 @@
 package Protocol::EMIUCP::Message::Role::Field::o_r;
 
-use Mouse::Role;
+use Moose::Role;
 
 our $VERSION = '0.01';
 
-use Mouse::Util::TypeConstraints;
+use Moose::Util::TypeConstraints;
 
 enum    'EMIUCP_O_R'     => [qw( O R )];
 

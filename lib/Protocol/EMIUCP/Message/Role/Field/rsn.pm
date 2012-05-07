@@ -1,10 +1,10 @@
 package Protocol::EMIUCP::Message::Role::Field::rsn;
 
-use Mouse::Role;
+use Moose::Role;
 
 our $VERSION = '0.01';
 
-use Mouse::Util::TypeConstraints;
+use Moose::Util::TypeConstraints;
 
 enum   'EMIUCP_Rsn' => [ map { sprintf '%03d', $_ } ( 0 .. 255 ) ];
 coerce 'EMIUCP_Rsn' => from 'Num' => via { sprintf '%03d', $_ };

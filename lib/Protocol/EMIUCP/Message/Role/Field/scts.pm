@@ -1,6 +1,6 @@
 package Protocol::EMIUCP::Message::Role::Field::scts;
 
-use Mouse::Role;
+use Moose::Role;
 
 use Protocol::EMIUCP::Message::Field;
 
