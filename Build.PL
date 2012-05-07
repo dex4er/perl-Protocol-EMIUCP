@@ -15,18 +15,19 @@ my $build = Module::Build->new(
     module_name             => $module,
     license                 => 'perl',
     requires                => {
-        'perl'                     => 5.006,
-        'constant'                 => 1.04,   # use constant { LIST }
-        'Encode'                   => 0,
-        'Exporter'                 => 5.566,  # use Exporter qw(import)
-        'Mouse'                    => 0,
+        'perl'                      => 5.006,
+        'constant'                  => 1.04,   # use constant { LIST }
+        'Encode'                    => 0,
+        'Exporter'                  => 5.566,  # use Exporter qw(import)
+        'Mouse'                     => 0,
+        'MouseX::StrictConstructor' => 0,
     },
     recommends              => {
-        'DateTime::Format::EMIUCP' => 0.0300, # ::DDT, ::DSCTS, ::SCTS, ::VP
-        'MRO::Compat'              => 0,      # mro::get_linear_isa
+        'DateTime::Format::EMIUCP'  => 0.0300, # ::DDT, ::DSCTS, ::SCTS, ::VP
+        'MRO::Compat'               => 0,      # mro::get_linear_isa
     },
     build_requires          => {
-        'Test::More'               => 0,
+        'Test::More'                => 0,
     },
     auto_configure_requires => 0,
     create_makefile_pl      => 'traditional',
@@ -39,7 +40,7 @@ my $build = Module::Build->new(
         "$dist-*",
     ],
     meta_merge              => {
-        resources                  => {
+        resources                   => {
             bugtracker => "http://rt.cpan.org/NoAuth/Bugs.html?Dist=$dist",
             repository => "http://github.com/dex4er/perl-$dist",
         },
