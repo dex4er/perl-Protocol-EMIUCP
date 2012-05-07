@@ -6,7 +6,7 @@ our $VERSION = '0.01';
 
 use Protocol::EMIUCP::Message::Field;
 
-has_field 'oadc' => (isa => 'EMIUCP_Num16 | EMIUCP_Hex22', coerce => 1);
+has_field 'oadc' => (isa => 'EMIUCP_Num16 | EMIUCP_Hex22');
 
 use Protocol::EMIUCP::Encode qw( from_7bit_hex_to_utf8 from_utf8_to_7bit_hex );
 
