@@ -1,16 +1,21 @@
 package Protocol::EMIUCP::Message::R_01_A;
 
 use Mouse;
+use MouseX::StrictConstructor;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::Message::Field;
-
-extends qw(Protocol::EMIUCP::Message::Object);
 with qw(
-    Protocol::EMIUCP::Message::Role::OT_01
+    Protocol::EMIUCP::Message::Role
     Protocol::EMIUCP::Message::Role::R_A
 );
+
+use Mouse::Util::TypeConstraints;
+
+has '+o_r' => (isa => enum(['R']),  default => 'R');
+has '+ot'  => (isa => enum(['01']), default => '01');
+
+use Protocol::EMIUCP::Message::Field;
 
 with_field 'sm_adc_scts';
 

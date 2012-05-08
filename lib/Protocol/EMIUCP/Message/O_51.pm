@@ -1,14 +1,19 @@
 package Protocol::EMIUCP::Message::O_51;
 
 use Mouse;
+use MouseX::StrictConstructor;
 
 our $VERSION = '0.01';
 
-extends qw(Protocol::EMIUCP::Message::Object);
 with qw(
-    Protocol::EMIUCP::Message::Role::OT_51
+    Protocol::EMIUCP::Message::Role
     Protocol::EMIUCP::Message::Role::O_5x
 );
+
+use Mouse::Util::TypeConstraints;
+
+has '+o_r' => (isa => enum(['O']),  default => 'O');
+has '+ot'  => (isa => enum(['51']), default => '51');
 
 use Protocol::EMIUCP::Message::Field;
 

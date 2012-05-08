@@ -1,16 +1,21 @@
 package Protocol::EMIUCP::Message::R_31_N;
 
 use Mouse;
+use MouseX::StrictConstructor;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::Message::Field;
-
-extends qw(Protocol::EMIUCP::Message::Object);
 with qw(
-    Protocol::EMIUCP::Message::Role::OT_31
+    Protocol::EMIUCP::Message::Role
     Protocol::EMIUCP::Message::Role::R_N
 );
+
+use Mouse::Util::TypeConstraints;
+
+has '+o_r' => (isa => enum(['R']),  default => 'R');
+has '+ot'  => (isa => enum(['31']), default => '31');
+
+use Protocol::EMIUCP::Message::Field;
 
 with_field [qw( ec sm_str )];
 

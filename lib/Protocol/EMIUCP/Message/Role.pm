@@ -1,7 +1,6 @@
-package Protocol::EMIUCP::Message::Object;
+package Protocol::EMIUCP::Message::Role;
 
-use Mouse;
-use MouseX::StrictConstructor;
+use Mouse::Role;
 
 our $VERSION = '0.01';
 
@@ -56,9 +55,7 @@ sub new_from_string {
     return $class->new( %{ $class->_parse_string($str) } );
 };
 
-sub list_data_field_names {
-    confess "Method (list_data_field_names) have to be overrided by derived class method";
-};
+requires 'list_data_field_names';
 
 sub list_field_names {
     my ($self, $fields) = @_;
@@ -109,7 +106,5 @@ sub Dump {
         YAML::Dump(@_);
     };
 };
-
-__PACKAGE__->meta->make_immutable();
 
 1;

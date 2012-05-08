@@ -1,16 +1,18 @@
 package Protocol::EMIUCP::Message::O_31;
 
 use Mouse;
+use MouseX::StrictConstructor;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::Message::Field;
+with qw(Protocol::EMIUCP::Message::Role);
 
-extends qw(Protocol::EMIUCP::Message::Object);
-with qw(
-    Protocol::EMIUCP::Message::Role::OT_31
-    Protocol::EMIUCP::Message::Role::O
-);
+use Mouse::Util::TypeConstraints;
+
+has '+o_r' => (isa => enum(['O']),  default => 'O');
+has '+ot'  => (isa => enum(['31']), default => '31');
+
+use Protocol::EMIUCP::Message::Field;
 
 with_field [qw( adc pid )];
 required_field [qw( adc pid )];
