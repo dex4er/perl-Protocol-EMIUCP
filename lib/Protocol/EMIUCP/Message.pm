@@ -6,9 +6,6 @@ our $VERSION = '0.01';
 
 use Mouse::Util qw(load_class);
 
-use Mouse::Util qw(load_class);
-use Carp qw(confess);
-
 sub import {
     foreach my $field (qw( dcs dst ec lpid mt nt npid onpi opid otoa oton pid rpl styp )) {
         my $class = "Protocol::EMIUCP::Message::Role::Field::$field";
