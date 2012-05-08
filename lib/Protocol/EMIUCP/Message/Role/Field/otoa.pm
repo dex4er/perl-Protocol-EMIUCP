@@ -4,10 +4,6 @@ use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::Message::Field;
-
-has_field 'otoa' => (isa => 'EMIUCP_Num04', coerce => 1);
-
 my %Constant_To_Value;
 
 my %Value_To_Description = (
@@ -20,6 +16,11 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
+use Mouse::Util::TypeConstraints;
+use Protocol::EMIUCP::Message::Field;
+
+has_field 'otoa' => (isa => enum([ keys %Value_To_Description ]));
+
 sub import {
     my ($class, %args) = @_;
     my $caller = $args{caller} || caller;
@@ -27,13 +28,6 @@ sub import {
         no strict 'refs';
         *{"${caller}::OTOA_$name"} = sub () { $value };
     };
-};
-
-before BUILD => sub {
-    my ($self) = @_;
-
-    confess "Attribute (otoa) is invalid with value " . $self->{otoa}
-        if defined $self->{otoa} and not exists $Value_To_Description{ $self->{otoa} };
 };
 
 sub otoa_description {

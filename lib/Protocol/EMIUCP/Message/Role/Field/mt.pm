@@ -4,10 +4,6 @@ use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::Message::Field;
-
-has_field 'mt' => (isa => 'EMIUCP_Num1');
-
 my %Constant_To_Value;
 
 my %Value_To_Description = (
@@ -21,6 +17,11 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
+use Mouse::Util::TypeConstraints;
+use Protocol::EMIUCP::Message::Field;
+
+has_field 'mt' => (isa => enum([ keys %Value_To_Description ]));
+
 sub import {
     my ($class, %args) = @_;
     my $caller = $args{caller} || caller;
@@ -28,17 +29,6 @@ sub import {
         no strict 'refs';
         *{"${caller}::MT_$name"} = sub () { $value };
     };
-};
-
-before BUILD => sub {
-    my ($self) = @_;
-
-    confess "Attribute (mt) is invalid with value " . $self->{mt}
-        if defined $self->{mt} and not grep { $_ eq $self->{mt} } @{ $self->list_valid_mt_values };
-};
-
-sub list_valid_mt_values {
-    return [ keys %Value_To_Description ];
 };
 
 sub mt_description {

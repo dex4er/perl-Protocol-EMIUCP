@@ -13,8 +13,6 @@ with_field [qw(
 )];
 has_field [qw( res4 res5 )] => (isa => 'EMIUCP_Nul');
 
-use constant list_valid_mt_values => [qw( 2 3 4 )];
-
 my @MT_To_Field;
 @MT_To_Field[2, 3, 4] = qw( nmsg amsg tmsg );
 

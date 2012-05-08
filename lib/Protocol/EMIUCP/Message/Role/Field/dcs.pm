@@ -4,10 +4,6 @@ use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::Message::Field;
-
-has_field 'dcs' => (isa => 'EMIUCP_Bool');
-
 my %Constant_To_Value;
 
 my %Value_To_Description = (
@@ -20,6 +16,11 @@ while (my ($value, $name) = each %Value_To_Description) {
     $name =~ s/\W/_/g;
     $Constant_To_Value{$name} = $value;
 };
+
+use Mouse::Util::TypeConstraints;
+use Protocol::EMIUCP::Message::Field;
+
+has_field 'dcs' => (isa => enum([ keys %Value_To_Description ]));
 
 sub import {
     my ($class, %args) = @_;

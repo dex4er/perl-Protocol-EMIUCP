@@ -4,14 +4,6 @@ use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Mouse::Util::TypeConstraints;
-
-enum 'EMIUCP_NT' => [( 0 .. 7 )];
-
-use Protocol::EMIUCP::Message::Field;
-
-has_field 'nt' => (isa => 'EMIUCP_NT');
-
 my %Constant_To_Value = (
     NT_NONE => 0,
     NT_ALL  => 7,
@@ -31,6 +23,11 @@ foreach my $value (1..7) {
     (my $name = $message) =~ s/\W/_/g;
     $Constant_To_Value{$name} = $value;
 };
+
+use Mouse::Util::TypeConstraints;
+use Protocol::EMIUCP::Message::Field;
+
+has_field 'nt' => (isa => enum([ keys %Value_To_Description ]));
 
 sub import {
     my ($class, %args) = @_;
