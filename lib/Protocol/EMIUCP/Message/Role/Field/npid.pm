@@ -4,22 +4,17 @@ use Moose::Role;
 
 our $VERSION = '0.01';
 
+with qw(Protocol::EMIUCP::Message::Role::Field::Base::pid);
+
 use Protocol::EMIUCP::Message::Field;
 
 my $field = do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
 
-has_field $field => (isa => 'EMIUCP_Num04', coerce => 1);
-
-with qw(Protocol::EMIUCP::Message::Role::Field::Base::pid);
+has_field $field => (isa => 'EMIUCP_PID');
 
 sub import {
     my ($self, %args) = @_;
     $self->_import_base_pid($field, %args);
-};
-
-before BUILD => sub {
-    my ($self) = @_;
-    $self->_BUILD_base_pid($field);
 };
 
 sub npid_description {

@@ -4,10 +4,6 @@ use Moose::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::Message::Field;
-
-has_field 'ec' => (isa => 'EMIUCP_Num02', coerce => 1);
-
 my %Constant_To_Value;
 
 my %Value_To_Description = (
@@ -55,6 +51,11 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
+use Moose::Util::TypeConstraints;
+use Protocol::EMIUCP::Message::Field;
+
+has_field 'ec' => (isa => enum([ keys %Value_To_Description ]));
+
 sub import {
     my ($class, %args) = @_;
     my $caller = $args{caller} || caller;
@@ -62,17 +63,6 @@ sub import {
         no strict 'refs';
         *{"${caller}::EC_$name"} = sub () { $value };
     };
-};
-
-before BUILD => sub {
-    my ($self) = @_;
-
-    confess "Attribute (ec) is invalid with value " . $self->{ec}
-        if defined $self->{ec} and not grep { $_ eq $self->{ec} } @{ $self->list_valid_ec_values };
-};
-
-sub list_valid_ec_values {
-    return [ keys %Value_To_Description ];
 };
 
 sub ec_description {

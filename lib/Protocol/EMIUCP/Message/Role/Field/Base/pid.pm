@@ -24,6 +24,10 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
+use Moose::Util::TypeConstraints;
+
+enum 'EMIUCP_PID' => [ keys %Value_To_Description ];
+
 sub _import_base_pid {
     my ($class, $field, %args) = @_;
 
@@ -34,15 +38,6 @@ sub _import_base_pid {
         no strict 'refs';
         *{"${caller}::${uc_field}_$name"} = sub () { $value };
     };
-};
-
-sub _BUILD_base_pid {
-    my ($self, $field) = @_;
-
-    my $validator = "list_valid_${field}_values";
-
-    confess "Attribute ($field) is invalid"
-        if defined $self->{$field} and not grep { $_ eq $self->{$field} } @{ $self->$validator };
 };
 
 sub _base_pid_description {

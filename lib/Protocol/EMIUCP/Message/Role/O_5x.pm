@@ -4,8 +4,6 @@ use Moose::Role;
 
 our $VERSION = '0.01';
 
-with qw(Protocol::EMIUCP::Message::Role::O);
-
 use Protocol::EMIUCP::Message::Field;
 
 with_field [qw(
@@ -14,8 +12,6 @@ with_field [qw(
     xser
 )];
 has_field [qw( res4 res5 )] => (isa => 'EMIUCP_Nul');
-
-use constant list_valid_mt_values => [qw( 2 3 4 )];
 
 my @MT_To_Field;
 @MT_To_Field[2, 3, 4] = qw( nmsg amsg tmsg );

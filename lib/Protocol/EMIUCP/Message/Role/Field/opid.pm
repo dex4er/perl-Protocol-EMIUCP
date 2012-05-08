@@ -4,10 +4,6 @@ use Moose::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::Message::Field;
-
-has_field 'opid' => (isa => 'EMIUCP_Num02', coerce => 1);
-
 my %Constant_To_Value;
 
 my %Value_To_Description = (
@@ -21,6 +17,11 @@ while (my ($value, $name) = each %Value_To_Description) {
     $Constant_To_Value{$name} = $value;
 };
 
+use Moose::Util::TypeConstraints;
+use Protocol::EMIUCP::Message::Field;
+
+has_field 'opid' => (isa => enum([ keys %Value_To_Description ]));
+
 sub import {
     my ($class, %args) = @_;
     my $caller = $args{caller} || caller;
@@ -28,13 +29,6 @@ sub import {
         no strict 'refs';
         *{"${caller}::OPID_$name"} = sub () { $value };
     };
-};
-
-before BUILD => sub {
-    my ($self) = @_;
-
-    confess "Attribute (opid) is invalid with value " . $self->{opid}
-        if defined $self->{opid} and not exists $Value_To_Description{ $self->{opid} };
 };
 
 sub opid_description {

@@ -4,16 +4,6 @@ use Moose::Role;
 
 our $VERSION = '0.01';
 
-use Moose::Util::TypeConstraints;
-
-enum 'EMIUCP_Dst' => [qw( 0 1 2 )];
-
-use Protocol::EMIUCP::Message::Field;
-
-has_field 'dst' => (isa => 'EMIUCP_Dst');
-
-use Carp qw(confess);
-
 my %Constant_To_Value;
 
 my %Value_To_Description = (
@@ -26,6 +16,11 @@ while (my ($value, $name) = each %Value_To_Description) {
     $name =~ tr/a-z/A-Z/;
     $Constant_To_Value{$name} = $value;
 };
+
+use Moose::Util::TypeConstraints;
+use Protocol::EMIUCP::Message::Field;
+
+has_field 'dst' => (isa => enum([ keys %Value_To_Description ]));
 
 sub import {
     my ($class, %args) = @_;

@@ -1,14 +1,19 @@
 package Protocol::EMIUCP::Message::R_60_A;
 
 use Moose;
+use MooseX::StrictConstructor;
 
 our $VERSION = '0.01';
 
-extends qw(Protocol::EMIUCP::Message::Object);
 with qw(
-    Protocol::EMIUCP::Message::Role::OT_60
+    Protocol::EMIUCP::Message::Role
     Protocol::EMIUCP::Message::Role::R_6x_A
 );
+
+use Moose::Util::TypeConstraints;
+
+has '+o_r' => (isa => enum(['R']),  default => 'R');
+has '+ot'  => (isa => enum(['60']), default => '60');
 
 use Protocol::EMIUCP::Message::Field;
 
