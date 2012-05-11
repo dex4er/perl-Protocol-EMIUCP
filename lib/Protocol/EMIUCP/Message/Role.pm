@@ -13,7 +13,7 @@ has '_string_cached' => (
     isa       => 'Str',
     lazy      => 1,
     reader    => 'as_string',
-    default   => sub { $_[0]->_as_string },
+    builder   => '_as_string',
 );
 
 sub import {
@@ -77,7 +77,9 @@ sub _parse_string {
 
 sub _as_string {
     my ($self) = @_;
-    return join '/', map { defined $self->{$_} ? $self->{$_} : '' } @{ $self->list_field_names };
+    return join '/',
+        map { my $f = $self->$_; defined $f ? $f : '' }
+        @{ $self->list_field_names };
 };
 
 sub _make_hashref {
@@ -90,7 +92,12 @@ sub as_hashref {
     my ($self) = @_;
     my $hashref = +{ %$self };
 
-    delete $hashref->{$_} foreach grep { /^_/ } keys %$hashref;
+    my @attrs = grep { not /^_/ } map { $_->name } $self->meta->get_all_attributes;
+
+    foreach my $name (@attrs) {
+        my $value = $self->$name;
+        $hashref->{$name} = $value if defined $value;
+    };
 
     $self->_make_hashref($hashref);
 
