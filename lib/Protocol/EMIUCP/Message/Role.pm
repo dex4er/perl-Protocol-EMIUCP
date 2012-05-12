@@ -18,27 +18,8 @@ has '_string_cached' => (
 
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::DDT };
 
-sub import {
-    # export constants with roles
-};
-
-sub BUILDARGS {
-    my ($self, %args) = @_;
-
-    foreach my $name (keys %args) {
-        delete $args{$name} if not defined $args{$name} or $args{$name} eq '';
-    };
-
-    return \%args;
-};
-
 sub BUILD {
     my ($self, $args) = @_;
-
-    for my $n ($self->list_field_names($args)) {
-        delete $self->{"clear_$n"}
-            if exists $self->{"clear_$n"} and (not defined $self->{$n} or $self->{$n} eq '');
-    };
 
     if (not defined $self->{len}) {
         $self->{len} = $self->_calculate_len;
@@ -84,12 +65,6 @@ sub _as_string {
         @{ $self->list_field_names };
 };
 
-sub _make_hashref {
-    my ($self, $hashref) = @_;
-    # should be overrided by roles
-    return $hashref;
-};
-
 sub as_hashref {
     my ($self) = @_;
     my $hashref = +{ %$self };
@@ -104,8 +79,6 @@ sub as_hashref {
                 if HAVE_DATETIME and blessed $value and $value->isa('DateTime');
         };
     };
-
-    $self->_make_hashref($hashref);
 
     return $hashref;
 };
