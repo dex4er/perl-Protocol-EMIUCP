@@ -16,6 +16,8 @@ has '_string_cached' => (
     builder   => '_as_string',
 );
 
+use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::DDT };
+
 sub import {
     # export constants with roles
 };
@@ -96,7 +98,11 @@ sub as_hashref {
 
     foreach my $name (@attrs) {
         my $value = $self->$name;
-        $hashref->{$name} = $value if defined $value;
+        if (defined $value) {
+            $hashref->{$name} = $value;
+            $hashref->{$name} = $hashref->{$name}->datetime
+                if HAVE_DATETIME and blessed $value and $value->isa('DateTime');
+        };
     };
 
     $self->_make_hashref($hashref);

@@ -10,7 +10,10 @@ use Protocol::EMIUCP::Message::Field;
 
 has_field 'amsg' => (
     isa       => 'EMIUCP_Hex640',
-    is        => 'ro',
+    trigger   => sub {
+        confess "Attribute (amsg) is invalid, should be undefined if mt != 3"
+            if defined $_[0]->{mt} and $_[0]->{mt} ne 3;
+    },
 );
 
 has 'amsg_utf8' => (
@@ -19,14 +22,7 @@ has 'amsg_utf8' => (
     predicate => 'has_amsg_utf8',
     trigger   => sub { $_[0]->{amsg} = from_utf8_to_hex $_[1] },
     lazy      => 1,
-    default   => sub { defined $_[0]->{amsg} ? from_hex_to_utf8 $_[0]->{amsg} : undef }
+    default   => sub { defined $_[0]->{amsg} ? from_hex_to_utf8 $_[0]->{amsg} : undef },
 );
-
-before BUILD => sub {
-    my ($self) = @_;
-
-    confess "Attribute (amsg) is invalid, should be undefined if mt != 3"
-        if defined $self->{mt} and $self->{mt} ne 3 and defined $self->{amsg};
-};
 
 1;

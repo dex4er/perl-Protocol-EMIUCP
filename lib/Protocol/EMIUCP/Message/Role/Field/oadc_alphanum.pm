@@ -4,45 +4,34 @@ use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::Message::Field;
-
-has_field 'oadc' => (isa => 'EMIUCP_Num16 | EMIUCP_Hex22');
-
 use Protocol::EMIUCP::Encode qw( from_7bit_hex_to_utf8 from_utf8_to_7bit_hex );
 
-around BUILDARGS => sub {
-    my ($orig, $class, %args) = @_;
+use Protocol::EMIUCP::Message::Field;
 
-    $args{oadc} = from_utf8_to_7bit_hex delete $args{oadc_utf8}
-        if defined $args{oadc_utf8};
+has_field 'oadc' => (
+    isa => 'EMIUCP_Num16 | EMIUCP_Hex22',
+    trigger   => sub {
+        if (defined $_[0]->{otoa} and $_[0]->{otoa} eq '5039') {
+            confess "Attribute (oadc) is invalid with value " . $_[1]
+                unless $_[1] =~ /^[\dA-F]{2,22}$/;
+        }
+        else {
+            confess "Attribute (oadc) is invalid with value " . $_[1]
+                unless $_[1] =~ /^\d{1,16}$/;
+        };
+    },
+);
 
-    return $class->$orig(%args);
-};
-
-before BUILD => sub {
-    my ($self) = @_;
-
-    if (defined $self->{otoa} and $self->{otoa} eq '5039') {
-        confess "Attribute (oadc) is invalid"
-            if defined $self->{oadc} and not $self->{oadc} =~ /^[\dA-F]{2,22}$/;
-    }
-    else {
-        confess "Attribute (oadc) is invalid"
-            if defined $self->{oadc} and not $self->{oadc} =~ /^\d{1,16}$/;
-    };
-};
-
-sub oadc_utf8 {
-    my ($self) = @_;
-    return from_7bit_hex_to_utf8 $self->{oadc};
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-    if (defined $hashref->{oadc}) {
-        $hashref->{oadc_utf8} = $self->oadc_utf8
-            if defined $self->{otoa} and $self->{otoa} eq '5039';
-    };
-};
+has 'oadc_utf8' => (
+    isa       => 'Maybe[Str]',
+    is        => 'ro',
+    predicate => 'has_oadc_utf8',
+    trigger   => sub { $_[0]->{oadc} = from_utf8_to_7bit_hex $_[1] },
+    lazy      => 1,
+    default   => sub {
+        defined $_[0]->{oadc} and ($_[0]->{otoa}||0) eq '5039'
+            ? from_7bit_hex_to_utf8 $_[0]->{oadc} : undef
+    },
+);
 
 1;

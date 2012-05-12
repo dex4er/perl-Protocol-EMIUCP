@@ -22,24 +22,21 @@ use Protocol::EMIUCP::Message::Field;
 
 has_field 'oton' => (isa => enum([ keys %Value_To_Description ]));
 
+has 'oton_description' => (
+    isa       => 'Maybe[Str]',
+    is        => 'ro',
+    predicate => 'has_oton_description',
+    init_arg  => undef,
+    lazy      => 1,
+    default   => sub { defined $_[0]->{oton} ? $Value_To_Description{ $_[0]->{oton} } : undef },
+);
+
 sub import {
     my ($class, %args) = @_;
     my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::OTON_$name"} = sub () { $value };
-    };
-};
-
-sub oton_description {
-    my ($self, $code) = @_;
-    return $Value_To_Description{ defined $code ? $code : $self->{oton} };
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-    if (defined $hashref->{oton}) {
-        $hashref->{oton_description} = $self->oton_description;
     };
 };
 

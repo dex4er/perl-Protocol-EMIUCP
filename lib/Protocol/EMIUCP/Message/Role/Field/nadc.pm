@@ -6,19 +6,31 @@ our $VERSION = '0.01';
 
 use Protocol::EMIUCP::Message::Field;
 
-has_field 'nadc' => (isa => 'EMIUCP_Num16');
+has_field 'nadc' => (
+    isa       => 'EMIUCP_Num16',
+    trigger   => sub {
+        if ($_[0]->{npid}||0 eq '0539') {
+            confess "Attribute (nadc) is invalid with value " . $_[0]->{nadc}
+                unless defined $_[0]->_from_nadc_to_addr($_[0]->{nadc});
+        }
+        else {
+            confess "Attribute (nadc) is invalid with value " . $_[0]->{nadc}
+                unless $_[0]->{nadc} =~ /^\d{1,16}$/;
+        };
+    },
+);
 
-around BUILDARGS => sub {
-    my ($orig, $class, %args) = @_;
-
-    if (defined $args{nadc_addr}) {
-        my $nadc_addr = delete $args{nadc_addr};
-        $args{nadc} = $class->_from_addr_to_nadc($nadc_addr)
-            || confess "Attribute (nadc_addr) is invalid with value $nadc_addr";
-    };
-
-    return $class->$orig(%args);
-};
+has 'nadc_addr' => (
+    isa       => 'Maybe[Str]',
+    is        => 'ro',
+    predicate => 'has_nadc_addr',
+    trigger   => sub {
+        $_[0]->{nadc} = $_[0]->_from_addr_to_nadc($_[1])
+            || confess "Attribute (nadc_addr) is invalid with value " . $_[1];
+    },
+    lazy      => 1,
+    default   => sub { defined $_[0]->{nadc} ? $_[0]->_from_nadc_to_addr($_[0]->{nadc}) : undef }
+);
 
 {
     my $ip4dec   = '(25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})';
@@ -41,35 +53,5 @@ around BUILDARGS => sub {
         return sprintf '%d.%d.%d.%d:%d', $1, $2, $3, $4, $5;
     };
 }
-
-before BUILD => sub {
-    my ($self) = @_;
-
-    if (defined $self->{nadc}) {
-        if ($self->{npid} eq '0539') {
-            confess "Attribute (nadc) is invalid with value " . $self->{nadc}
-                unless defined $self->_from_nadc_to_addr($self->{nadc});
-        }
-        else {
-            confess "Attribute (nadc) is invalid with value " . $self->{nadc}
-                unless $self->{nadc} =~ /^\d{1,16}$/;
-        };
-    };
-
-    return $self;
-};
-
-sub nadc_addr {
-    my ($self) = @_;
-    return $self->_from_nadc_to_addr($self->{nadc});
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-    if (defined $self->{nadc}) {
-        $hashref->{nadc_addr} = $self->nadc_addr
-            if defined $self->{npid} and $self->{npid} eq '0539';
-    };
-};
 
 1;

@@ -41,18 +41,8 @@ sub _import_base_pid {
 };
 
 sub _base_pid_description {
-    my ($self, $field, $value) = @_;
-    return $Value_To_Description{ defined $value ? $value : $self->{$field} };
-};
-
-sub _make_hashref_base_pid {
-    my ($self, $field, $hashref) = @_;
-
-    my $field_description = "${field}_description";
-
-    if (defined $hashref->{$field}) {
-        $hashref->{$field_description} = $self->$field_description;
-    };
+    my ($self, $field) = @_;
+    return defined $self->{$field} ? $Value_To_Description{ $self->{$field} } : undef;
 };
 
 1;

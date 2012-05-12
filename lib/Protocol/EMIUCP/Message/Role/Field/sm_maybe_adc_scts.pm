@@ -10,58 +10,49 @@ has_field 'sm' => (isa => 'EMIUCP_Str');
 
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::SCTS };
 
-around BUILDARGS => sub {
-    my ($orig, $class, %args) = @_;
+has 'sm_adc' => (
+    isa       => 'Maybe[EMIUCP_Num16]',
+    is        => 'ro',
+    predicate => 'has_sm_adc',
+    trigger   => sub {
+        $_[0]->{sm} = sprintf '%s:%s', $_[1], $_[0]->{sm_scts}
+            if defined $_[1] and defined $_[0]->{sm_scts};
+    },
+    lazy      => 1,
+    default   => sub {
+        return unless defined $_[0]->{sm} and $_[0]->{sm} =~ / ^ ( \d{1,16} ) : \d{12} $ /x;
+        return $1;
+    },
+);
 
-    if (defined $args{sm_scts}) {
-        $args{sm_scts} = DateTime::Format::EMIUCP::SCTS->format_datetime($args{sm_scts})
-            if blessed $args{sm_scts} and $args{sm_scts}->isa('DateTime');
+has 'sm_scts' => (
+    isa       => 'Maybe[EMIUCP_SCTS]',
+    is        => 'ro',
+    predicate => 'has_sm_scts',
+    trigger   => sub {
+        $_[0]->{sm} = defined $_[0]->{sm_adc}
+            ? sprintf '%s:%s', $_[0]->{sm_adc}, $_[1]
+            : $_[1];
+    },
+    lazy      => 1,
+    default   => sub {
+       return unless defined $_[0]->{sm} and $_[0]->{sm} =~ / ^ (?: \d{1,16} : )? ( \d{12} ) $ /x;
+       return $1;
+    },
+);
 
-        $args{sm} = defined $args{sm_adc}
-                  ? sprintf '%s:%s', delete $args{sm_adc}, delete $args{sm_scts}
-                  : delete $args{sm_scts};
-    };
-
-    return $class->$orig(%args);
-};
-
-sub sm_adc {
-    my ($self) = @_;
-
-    return unless defined $self->{sm} and $self->{sm} =~ / ^ ( \d{1,16} ) : \d{12} $ /x;
-
-    return $1;
-};
-
-sub sm_scts {
-    my ($self) = @_;
-
-    return unless defined $self->{sm} and $self->{sm} =~ / ^ (?: \d{1,16} : )? ( \d{12} ) $ /x;
-
-    return $1;
-};
-
-sub sm_scts_datetime {
-    my ($self) = @_;
-
-    return unless my $scts = $self->sm_scts;
-
-    return DateTime::Format::EMIUCP::SCTS->parse_datetime($scts);
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-    if (defined $hashref->{sm}) {
-        my $adc  = $self->sm_adc;
-        $hashref->{sm_adc}  = $adc  if defined $adc;
-
-        my $scts = $self->sm_scts;
-        $hashref->{sm_scts} = $scts if defined $scts;
-
-        $hashref->{sm_scts_datetime} = $self->sm_scts_datetime->datetime
-            if HAVE_DATETIME and defined $scts;
-    };
-    return $self;
-};
+has 'sm_scts_datetime' => (
+    isa       => 'Maybe[DateTime]',
+    is        => 'ro',
+    predicate => 'has_sm_scts_datetime',
+    init_arg  => undef,
+    HAVE_DATETIME ? (
+        lazy      => 1,
+        default   => sub {
+            my $sm_scts = $_[0]->sm_scts;
+            defined $sm_scts ? DateTime::Format::EMIUCP::SCTS->parse_datetime($sm_scts) : undef
+        },
+    ) : (),
+);
 
 1;

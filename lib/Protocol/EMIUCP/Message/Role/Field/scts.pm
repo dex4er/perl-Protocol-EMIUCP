@@ -2,36 +2,33 @@ package Protocol::EMIUCP::Message::Role::Field::scts;
 
 use Mouse::Role;
 
+use Mouse::Util::TypeConstraints;
+
+subtype 'EMIUCP_SCTS' => as 'EMIUCP_Num_12';
+
+class_type 'DateTime';
+
+coerce  'EMIUCP_SCTS'
+    => from 'DateTime'
+    => via { DateTime::Format::EMIUCP::SCTS->format_datetime($_) };
+
 use Protocol::EMIUCP::Message::Field;
 
-has_field 'scts' => (isa => 'EMIUCP_Num_12');
+has_field 'scts' => (isa => 'EMIUCP_SCTS');
 
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::SCTS };
 
-around BUILDARGS => sub {
-    my ($orig, $class, %args) = @_;
-
-    $args{scts} = DateTime::Format::EMIUCP::SCTS->format_datetime($args{scts})
-        if blessed $args{scts} and $args{scts}->isa('DateTime');
-
-    return $class->$orig(%args);
-};
-
-sub scts_datetime {
-    my ($self) = @_;
-
-    return unless defined $self->{scts};
-
-    return DateTime::Format::EMIUCP::SCTS->parse_datetime($self->{scts});
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-
-    $hashref->{scts_datetime} = $self->scts_datetime->datetime
-        if HAVE_DATETIME and defined $hashref->{scts};
-
-    return $self;
-};
+has 'scts_datetime' => (
+    isa       => 'Maybe[DateTime]',
+    is        => 'ro',
+    predicate => 'has_scts_datetime',
+    init_arg  => undef,
+    HAVE_DATETIME ? (
+        lazy      => 1,
+        default   => sub {
+            defined $_[0]->{scts} ? DateTime::Format::EMIUCP::SCTS->parse_datetime($_[0]->{scts}) : undef
+        },
+    ) : (),
+);
 
 1;

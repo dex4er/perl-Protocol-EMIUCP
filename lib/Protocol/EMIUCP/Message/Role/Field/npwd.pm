@@ -4,27 +4,19 @@ use Mouse::Role;
 
 our $VERSION = '0.01';
 
+use Protocol::EMIUCP::Encode qw( from_hex_to_utf8 from_utf8_to_hex );
+
 use Protocol::EMIUCP::Message::Field;
 
-my $field = do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
+has_field 'npwd' => (isa => 'EMIUCP_Hex16');
 
-has_field $field => (isa => 'EMIUCP_Hex16');
-
-with qw(Protocol::EMIUCP::Message::Role::Field::Base::pwd);
-
-around BUILDARGS => sub {
-    my ($orig, $class, %args) = @_;
-    return $class->$orig( $class->_BUILDARGS_base_pwd($field, %args) );
-};
-
-sub npwd_utf8 {
-    my ($self, $value) = @_;
-    return $self->_base_pwd_utf8($field, $value);
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-    $self->_make_hashref_base_pwd($field, $hashref);
-};
+has 'npwd_utf8' => (
+    isa       => 'Maybe[Str]',
+    is        => 'ro',
+    predicate => 'has_npwd_utf8',
+    trigger   => sub { $_[0]->{npwd} = from_utf8_to_hex $_[1] },
+    lazy      => 1,
+    default   => sub { defined $_[0]->{npwd} ? from_hex_to_utf8 $_[0]->{npwd} : undef }
+);
 
 1;

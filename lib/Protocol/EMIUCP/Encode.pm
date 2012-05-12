@@ -43,11 +43,11 @@ sub encode_7bit_hex {
 
 # Decode from ESTI GSM 03.38 7-bit hex string
 sub decode_7bit_hex {
-    my ($str) = @_;
-    $str =~ s/^(..)//;
+    my ($hex) = @_;
+    $hex =~ s/^(..)//;
 
     my $len = (hex($1)+2)*4;
-    my $bits = unpack 'b*', pack 'H*', $str;
+    my $bits = unpack 'b*', pack 'H*', $hex;
     $bits =~ s/(.{7})/$1./g;
     $bits = substr $bits, 0, $len;
     $bits = substr $bits, 0, int(length($bits) / 8) * 8;
