@@ -11,10 +11,11 @@ has_field 'len' => (isa => 'EMIUCP_Num05', coerce => 1);
 after BUILD => sub {
     my ($self) = @_;
 
+    my $len = $self->_calculate_len;
     confess "Attribute (len) has invalid value " . $self->{len} .
-        ", should be " . $self->_calculate_len .
+        ", should be " . $len .
         " for message " . $self->as_string
-        if defined $self->{len} and $self->{len} ne $self->_calculate_len;
+        if defined $self->{len} and $self->{len} ne $len;
 };
 
 sub _calculate_len {

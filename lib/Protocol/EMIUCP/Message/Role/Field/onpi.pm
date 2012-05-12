@@ -23,24 +23,21 @@ use Protocol::EMIUCP::Message::Field;
 
 has_field 'onpi' => (isa => enum([ keys %Value_To_Description ]));
 
+has 'onpi_description' => (
+    isa       => 'Maybe[Str]',
+    is        => 'ro',
+    predicate => 'has_onpi_description',
+    init_arg  => undef,
+    lazy      => 1,
+    default   => sub { defined $_[0]->{onpi} ? $Value_To_Description{ $_[0]->{onpi} } : undef },
+);
+
 sub import {
     my ($class, %args) = @_;
     my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::ONPI_$name"} = sub () { $value };
-    };
-};
-
-sub onpi_description {
-    my ($self, $code) = @_;
-    return $Value_To_Description{ defined $code ? $code : $self->{onpi} };
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-    if (defined $hashref->{onpi}) {
-        $hashref->{onpi_description} = $self->onpi_description;
     };
 };
 

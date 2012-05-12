@@ -7,7 +7,7 @@ use Data::Dumper ();
 
 die "Usage: $0 field=value field=value\n" unless @ARGV;
 
-my %fields = map { /^(.*)=(.*)$/ and ($1, $2) } @ARGV;
+my %fields = map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { not /^[^=]*_description=/ } @ARGV;
 
 my $msg = Protocol::EMIUCP->new_message(%fields);
 

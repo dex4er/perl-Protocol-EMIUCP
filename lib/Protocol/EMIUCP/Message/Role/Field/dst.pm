@@ -22,24 +22,21 @@ use Protocol::EMIUCP::Message::Field;
 
 has_field 'dst' => (isa => enum([ keys %Value_To_Description ]));
 
+has 'dst_description' => (
+    isa       => 'Maybe[Str]',
+    is        => 'ro',
+    predicate => 'has_dst_description',
+    init_arg  => undef,
+    lazy      => 1,
+    default   => sub { defined $_[0]->{dst} ? $Value_To_Description{ $_[0]->{dst} } : undef },
+);
+
 sub import {
     my ($class, %args) = @_;
     my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::DST_$name"} = sub () { $value };
-    };
-};
-
-sub dst_description {
-    my ($self, $code) = @_;
-    return $Value_To_Description{ defined $code ? $code : $self->{dst} };
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-    if (defined $hashref->{dst}) {
-        $hashref->{dst_description} = $self->dst_description;
     };
 };
 

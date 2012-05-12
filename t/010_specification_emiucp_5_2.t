@@ -205,7 +205,6 @@ do {
     delete $args{$_} foreach (qw( nt_description npid_description vp_datetime mt_description amsg nadc ));
     %args = (
         %args,
-        nadc => '192.87.34.12:5000',
         nt   => eval 'NT_ND',
         npid => eval 'NPID_PC_VIA_TCP_IP',
         mt   => eval 'MT_ALPHANUMERIC',

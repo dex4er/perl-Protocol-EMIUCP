@@ -26,24 +26,21 @@ use Protocol::EMIUCP::Message::Field;
 
 has_field 'styp' => (isa => enum([ keys %Value_To_Description ]));
 
+has 'styp_description' => (
+    isa       => 'Maybe[Str]',
+    is        => 'ro',
+    predicate => 'has_styp_description',
+    init_arg  => undef,
+    lazy      => 1,
+    default   => sub { defined $_[0]->{styp} ? $Value_To_Description{ $_[0]->{styp} } : undef },
+);
+
 sub import {
     my ($class, %args) = @_;
     my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::STYP_$name"} = sub () { $value };
-    };
-};
-
-sub styp_description {
-    my ($self, $code) = @_;
-    return $Value_To_Description{ defined $code ? $code : $self->{styp} };
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-    if (defined $hashref->{styp}) {
-        $hashref->{styp_description} = $self->styp_description;
     };
 };
 

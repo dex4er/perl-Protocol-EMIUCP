@@ -12,19 +12,18 @@ my $field = do { __PACKAGE__ =~ /^ .* :: (.*?) $/x; $1 };
 
 has_field $field => (isa => 'EMIUCP_PID');
 
+has "${field}_description" => (
+    isa       => 'Maybe[Str]',
+    is        => 'ro',
+    predicate => "has_${field}_description",
+    init_arg  => undef,
+    lazy      => 1,
+    default   => sub { defined $_[0]->{$field} ? $_[0]->_base_pid_description($field) : undef },
+);
+
 sub import {
     my ($self, %args) = @_;
     $self->_import_base_pid($field, %args);
-};
-
-sub pid_description {
-    my ($self, $value) = @_;
-    return $self->_base_pid_description($field, $value);
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-    $self->_make_hashref_base_pid($field, $hashref);
 };
 
 1;

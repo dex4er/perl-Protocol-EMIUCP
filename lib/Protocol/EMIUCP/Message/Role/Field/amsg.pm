@@ -4,36 +4,25 @@ use Moose::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::Message::Field;
-
-has_field 'amsg' => (isa => 'EMIUCP_Hex640');
-
 use Protocol::EMIUCP::Encode qw( from_hex_to_utf8 from_utf8_to_hex );
 
-around BUILDARGS => sub {
-    my ($orig, $class, %args) = @_;
+use Protocol::EMIUCP::Message::Field;
 
-    $args{amsg} = from_utf8_to_hex delete $args{amsg_utf8}
-        if defined $args{amsg_utf8};
+has_field 'amsg' => (
+    isa       => 'EMIUCP_Hex640',
+    trigger   => sub {
+        confess "Attribute (amsg) is invalid, should be undefined if mt != 3"
+            if defined $_[0]->{mt} and $_[0]->{mt} ne 3;
+    },
+);
 
-    return $class->$orig(%args);
-};
-
-before BUILD => sub {
-    my ($self) = @_;
-
-    confess "Attribute (amsg) is invalid, should be undefined if mt != 3"
-        if defined $self->{mt} and $self->{mt} ne 3 and defined $self->{amsg};
-};
-
-sub amsg_utf8 {
-    my ($self) = @_;
-    return from_hex_to_utf8 $self->{amsg}
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-    $hashref->{amsg_utf8} = $self->amsg_utf8 if defined $hashref->{amsg};
-};
+has 'amsg_utf8' => (
+    isa       => 'Maybe[Str]',
+    is        => 'ro',
+    predicate => 'has_amsg_utf8',
+    trigger   => sub { $_[0]->{amsg} = from_utf8_to_hex $_[1] },
+    lazy      => 1,
+    default   => sub { defined $_[0]->{amsg} ? from_hex_to_utf8 $_[0]->{amsg} : undef },
+);
 
 1;

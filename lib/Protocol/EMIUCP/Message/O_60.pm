@@ -12,13 +12,15 @@ with qw(
 
 use Moose::Util::TypeConstraints;
 
-has '+o_r' => (isa => enum(['O']),  default => 'O');
-has '+ot'  => (isa => enum(['60']), default => '60');
+has '+o_r'  => (isa => enum(['O']),  default => 'O');
+has '+ot'   => (isa => enum(['60']), default => '60');
 
 use Protocol::EMIUCP::Message::Field;
 
 required_field [qw( oadc styp pwd vers )];
 empty_field [qw( ladc lton lnpi res1 )];
+
+has '+vers' => (default => '0100');
 
 __PACKAGE__->meta->make_immutable();
 

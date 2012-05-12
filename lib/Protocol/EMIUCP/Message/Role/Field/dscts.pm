@@ -2,36 +2,33 @@ package Protocol::EMIUCP::Message::Role::Field::dscts;
 
 use Moose::Role;
 
+use Moose::Util::TypeConstraints;
+
+subtype 'EMIUCP_DSCTS' => as 'EMIUCP_Num_12';
+
+class_type 'DateTime';
+
+coerce  'EMIUCP_DSCTS'
+    => from 'DateTime'
+    => via { DateTime::Format::EMIUCP::DSCTS->format_datetime($_) };
+
 use Protocol::EMIUCP::Message::Field;
 
 has_field 'dscts' => (isa => 'EMIUCP_Num_12');
 
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::DSCTS };
 
-around BUILDARGS => sub {
-    my ($orig, $class, %args) = @_;
-
-    $args{dscts} = DateTime::Format::EMIUCP::DSCTS->format_datetime($args{dscts})
-        if blessed $args{dscts} and $args{dscts}->isa('DateTime');
-
-    return $class->$orig(%args);
-};
-
-sub dscts_datetime {
-    my ($self) = @_;
-
-    return unless defined $self->{dscts};
-
-    return DateTime::Format::EMIUCP::DSCTS->parse_datetime($self->{dscts});
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-
-    $hashref->{dscts_datetime} = $self->dscts_datetime->datetime
-        if HAVE_DATETIME and defined $hashref->{dscts};
-
-    return $self;
-};
+has 'dscts_datetime' => (
+    isa       => 'Maybe[DateTime]',
+    is        => 'ro',
+    predicate => 'has_dscts_datetime',
+    init_arg  => undef,
+    HAVE_DATETIME ? (
+        lazy      => 1,
+        default   => sub {
+            defined $_[0]->{dscts} ? DateTime::Format::EMIUCP::DSCTS->parse_datetime($_[0]->{dscts}) : undef
+        },
+    ) : (),
+);
 
 1;

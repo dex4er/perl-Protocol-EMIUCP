@@ -29,24 +29,21 @@ use Protocol::EMIUCP::Message::Field;
 
 has_field 'nt' => (isa => enum([ keys %Value_To_Description ]));
 
+has 'nt_description' => (
+    isa       => 'Maybe[Str]',
+    is        => 'ro',
+    predicate => 'has_nt_description',
+    init_arg  => undef,
+    lazy      => 1,
+    default   => sub { defined $_[0]->{nt} ? $Value_To_Description{ $_[0]->{nt} } : undef },
+);
+
 sub import {
     my ($class, %args) = @_;
     my $caller = $args{caller} || caller;
     while (my ($name, $value) = each %Constant_To_Value) {
         no strict 'refs';
         *{"${caller}::NT_$name"} = sub () { $value };
-    };
-};
-
-sub nt_description {
-    my ($self, $value) = @_;
-    return $Value_To_Description{ defined $value ? $value : $self->{nt} };
-};
-
-after _make_hashref => sub {
-    my ($self, $hashref) = @_;
-    if (defined $hashref->{nt}) {
-        $hashref->{nt_description} = $self->nt_description;
     };
 };
 
