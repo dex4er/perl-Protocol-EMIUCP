@@ -8,12 +8,12 @@ use Protocol::EMIUCP::Message::Field;
 
 with_field [qw( o_r trn len ot checksum )];
 
-has '_string_cached' => (
+has '_string' => (
     is        => 'ro',
     isa       => 'Str',
     lazy      => 1,
     reader    => 'as_string',
-    builder   => '_as_string',
+    builder   => '_build_string',
 );
 
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::DDT };
@@ -58,7 +58,7 @@ sub _parse_string {
     return \%args;
 };
 
-sub _as_string {
+sub _build_string {
     my ($self) = @_;
     return join '/',
         map { my $f = $self->$_; defined $f ? $f : '' }

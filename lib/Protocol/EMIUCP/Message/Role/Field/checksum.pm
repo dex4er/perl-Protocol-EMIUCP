@@ -22,7 +22,7 @@ after BUILD => sub {
 
 sub _calculate_checksum {
     my ($self, $str) = @_;
-    $str = $self->_as_string if not defined $str;
+    $str = $self->_build_string if not defined $str;
     $str =~ m{ ^ (.* / ) (?: [0-9A-F]{2} )? $ }x
         or confess "Invalid EMI-UCP message '$str'";
     my $c += sum unpack "C*", $1;
