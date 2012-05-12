@@ -8,37 +8,18 @@ use Protocol::EMIUCP::Message::Field;
 
 with_field [qw( o_r trn len ot checksum )];
 
-has '_string_cached' => (
+has '_string' => (
     is        => 'ro',
     isa       => 'Str',
     lazy      => 1,
     reader    => 'as_string',
-    builder   => '_as_string',
+    builder   => '_build_string',
 );
 
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP::DDT };
 
-sub import {
-    # export constants with roles
-};
-
-sub BUILDARGS {
-    my ($self, %args) = @_;
-
-    foreach my $name (keys %args) {
-        delete $args{$name} if not defined $args{$name} or $args{$name} eq '';
-    };
-
-    return \%args;
-};
-
 sub BUILD {
     my ($self, $args) = @_;
-
-    for my $n ($self->list_field_names($args)) {
-        delete $self->{"clear_$n"}
-            if exists $self->{"clear_$n"} and (not defined $self->{$n} or $self->{$n} eq '');
-    };
 
     if (not defined $self->{len}) {
         $self->{len} = $self->_calculate_len;
@@ -77,17 +58,11 @@ sub _parse_string {
     return \%args;
 };
 
-sub _as_string {
+sub _build_string {
     my ($self) = @_;
     return join '/',
         map { my $f = $self->$_; defined $f ? $f : '' }
         @{ $self->list_field_names };
-};
-
-sub _make_hashref {
-    my ($self, $hashref) = @_;
-    # should be overrided by roles
-    return $hashref;
 };
 
 sub as_hashref {
@@ -104,8 +79,6 @@ sub as_hashref {
                 if HAVE_DATETIME and blessed $value and $value->isa('DateTime');
         };
     };
-
-    $self->_make_hashref($hashref);
 
     return $hashref;
 };

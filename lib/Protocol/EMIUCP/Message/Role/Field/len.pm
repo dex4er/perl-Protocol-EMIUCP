@@ -20,7 +20,7 @@ after BUILD => sub {
 
 sub _calculate_len {
     my ($self, $str) = @_;
-    $str = $self->_as_string if not defined $str;
+    $str = $self->_build_string if not defined $str;
 
     my $len = length $str;
 
