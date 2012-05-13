@@ -4,6 +4,8 @@ use Mouse;
 
 our $VERSION = '0.01';
 
+use Protocol::EMIUCP::Message::Exception;
+
 use Mouse::Util qw(load_class);
 
 sub import {
@@ -38,11 +40,13 @@ sub _find_new_class_from_args {
     return $new_class;
 };
 
-sub _find_new_class_from_string {
+sub _parse_args_from_string {
     my ($class, $str) = @_;
 
     $str =~ m{ ^ \d{2} / \d{5} / ( [OR] ) / ( \d{2} ) / (?: ( [AN] ) / )? .* / [0-9A-F]{2} $ }x
-        or confess "Invalid EMI-UCP message '$str'";
+        or Protocol::EMIUCP::Message::Exception->throw(
+               message => "Invalid EMI-UCP message", emiucp_string => $str
+           );
 
     my %args = (
         o_r => $1,
@@ -54,19 +58,26 @@ sub _find_new_class_from_string {
         $args{nack} = $3 if $3 eq 'N';
     };
 
-    return $class->_find_new_class_from_args(\%args);
+    return \%args;
 };
 
 
 sub new {
     my ($class, %args) = @_;
-    return $class->_find_new_class_from_args(\%args)->new(%args);
+    return eval { $class->_find_new_class_from_args(\%args)->new(%args) }
+        || Protocol::EMIUCP::Message::Exception->rethrow(
+               %args, message => 'Invalid EMI-UCP message'
+           );
 };
 
 
 sub new_from_string {
     my ($class, $str) = @_;
-    return $class->_find_new_class_from_string($str)->new_from_string($str);
+    my $args = $class->_parse_args_from_string($str);
+    return eval { $class->_find_new_class_from_args($args)->new_from_string($str) }
+        || Protocol::EMIUCP::Message::Exception->rethrow(
+               %$args, message => 'Invalid EMI-UCP message', emiucp_string => $str
+           );
 };
 
 1;

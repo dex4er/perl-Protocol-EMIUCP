@@ -6,7 +6,7 @@ our $VERSION = '0.01';
 
 use Protocol::EMIUCP::Message::Field;
 
-with_field [qw( o_r trn len ot checksum )];
+with_field [qw( trn len o_r ot checksum )];
 
 has '_string' => (
     is        => 'ro',

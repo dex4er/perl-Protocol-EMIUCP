@@ -11,6 +11,6 @@ coerce  'EMIUCP_A'       => from 'Bool' => via   { $_ ? 'A' : '' };
 
 use Protocol::EMIUCP::Message::Field;
 
-has_field 'ack' => (isa => 'EMIUCP_A', coerce => 1, required => 1, default => 'A');
+has_field 'ack' => (isa => 'EMIUCP_A', coerce => 1);
 
 1;

@@ -12,8 +12,9 @@ with qw(
 
 use Mouse::Util::TypeConstraints;
 
-has '+o_r' => (isa => enum(['R']),  default => 'R');
-has '+ot'  => (isa => enum(['51']), default => '51');
+has '+o_r'  => (isa => enum(['R']),  required => 1, default => 'R');
+has '+ot'   => (isa => enum(['51']), required => 1, default => '51');
+has '+nack' => (                     required => 1, default => 'N');
 
 __PACKAGE__->meta->make_immutable();
 

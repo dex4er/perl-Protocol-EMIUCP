@@ -9,8 +9,8 @@ with qw(Protocol::EMIUCP::Message::Role);
 
 use Mouse::Util::TypeConstraints;
 
-has '+o_r' => (isa => enum(['O']),  default => 'O');
-has '+ot'  => (isa => enum(['01']), default => '01');
+has '+o_r' => (isa => enum(['O']),  required => 1, default => 'O');
+has '+ot'  => (isa => enum(['01']), required => 1, default => '01');
 
 use Protocol::EMIUCP::Message::Field;
 
