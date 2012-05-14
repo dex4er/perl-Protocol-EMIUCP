@@ -1,7 +1,7 @@
 package Protocol::EMIUCP::Exception;
 
 use Mouse;
-use MouseX::AttributeHelpers;
+use MouseX::NativeTraits;
 
 use overload '""' => 'as_string', fallback => 1;
 
@@ -9,12 +9,12 @@ has message => (isa => 'Str', is => 'ro', predicate => 'has_message');
 has error   => (isa => 'Any', is => 'ro', predicate => 'has_error');
 
 has _string_attributes => (
-    metaclass => 'Collection::Array',
-    isa => 'ArrayRef[Str]',
-    is => 'ro',
+    traits  => ['Array'],
+    isa     => 'ArrayRef[Str]',
+    is      => 'ro',
     default => sub { [qw( message error )] },
-    provides => {
-        elements => 'string_attributes',
+    handles => {
+        string_attributes => 'elements',
     },
 );
 

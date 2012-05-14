@@ -20,6 +20,7 @@ my $build = Module::Build->new(
         'Encode'                    => 0,
         'Exporter'                  => 5.566,  # use Exporter qw(import)
         'Mouse'                     => 0,
+        'MouseX::NativeTraits'      => 0,
         'MouseX::StrictConstructor' => 0,
     },
     recommends              => {
