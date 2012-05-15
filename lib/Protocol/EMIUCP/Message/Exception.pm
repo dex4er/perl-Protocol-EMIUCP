@@ -10,7 +10,7 @@ with_field [qw( trn o_r ot ack nack )];
 
 has emiucp_string => (isa => 'Str', is => 'ro', predicate => 'has_emiucp_string');
 
-has '+_string_attributes' => (
+has '+string_attributes' => (
     default => sub { [qw( message emiucp_string error )] },
 );
 
