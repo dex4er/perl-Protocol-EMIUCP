@@ -15,13 +15,8 @@ has string_attributes => (
 
 sub throw {
     my ($self, @args) = @_;
-    $self = $self->new(@args) unless ref $self;
+    $self = $self->new($@ ? (error => $@) : (), @args) unless ref $self;
     die $self;
-};
-
-sub rethrow {
-    push @_, error => $@;
-    goto &throw;
 };
 
 sub as_string {
