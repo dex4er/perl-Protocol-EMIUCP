@@ -17,7 +17,7 @@ use IO::Select;
 
 use Scalar::Util qw(blessed);
 
-die "Usage: $0 Opt=value Opt=value\n\tSee IO::Socket::INET for accepted options\n" unless @ARGV;
+die "Usage: $0 Listen=1 LocalAddr=0.0.0.0:12345\n\tSee IO::Socket::INET for accepted options\n" unless @ARGV;
 
 my %opts = map { /^(.*?)=(.*)$/ and ($1 => $2) } @ARGV;
 
