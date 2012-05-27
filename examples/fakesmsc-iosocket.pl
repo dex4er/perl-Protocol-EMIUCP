@@ -3,7 +3,7 @@
 # The simplest fake SMSC
 #
 # Example:
-#     fakesmsc.pl Listen=1 LocalAddr=localhost:5000
+#     fakesmsc-iosocket.pl Listen=1 LocalAddr=localhost:5000
 
 use strict;
 use warnings;
@@ -64,10 +64,10 @@ while (my $fh = $opts{Listen} ? $server->accept : $server) {
                             # Not allowed by SMSC
                             Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, o_r => 'R', nack => 1, ec => EC_OPERATION_NOT_ALLOWED);
                         };
-                    }
+                    };
                 };
                 $wbuf .= sprintf "\x02%s\x03", $rpl->as_string if $rpl;
-            }
+            };
             $eof = 1 unless $len;
         };
     };
