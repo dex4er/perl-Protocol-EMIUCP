@@ -43,7 +43,7 @@ tcp_server $opts{Host}, $opts{Port}, sub {
                 my $rpl = do {
                     if (my $e = $@) {
                         # Cannot parse EMI-UCP message
-                        AE::log error => $e;
+                        AE::log error => "$e";
                         Protocol::EMIUCP::Message->new(trn => $e->trn, ot => $e->ot, o_r => 'R', nack => 1, ec => EC_SYNTAX_ERROR)
                             if (($e->o_r||'') eq 'O');
                     }
