@@ -25,7 +25,7 @@ use Protocol::EMIUCP::Message::Types;
 use Mouse::Util::TypeConstraints;
 
 has 'fh' => (
-    isa       => 'GlobRef',
+    isa       => 'FileHandle',
     is        => 'ro',
     required  => 1,
 );
@@ -91,7 +91,9 @@ sub _build_hdl {
                 my ($hdl, $data) = @_;
 
                 my $str = $1;
+                AE::log info => "<<< [%s]", $str;
                 my $msg = eval { Protocol::EMIUCP::Message->new_from_string($str) };
+                $self->on_message->($msg) if $msg and $self->has_on_message;
                 my $rpl = do {
                     if (my $e = $@) {
                         # Cannot parse EMI-UCP message
@@ -107,8 +109,6 @@ sub _build_hdl {
                         ) if (($e->o_r||'') eq 'O');
                     }
                     elsif ($msg and $msg->o_r eq 'O') {
-                        # Send to session object
-                        $self->on_message($msg) if $self->has_on_message;
                         # Reply only for Operation
                         if ($msg->ot =~ /^(01|51|60)$/) {
                             # OT allowed by SMSC
@@ -148,8 +148,10 @@ sub BUILD {
 sub write_message {
     my ($self, $msg) = @_;
 
-    confess "$msg is not a message"
+    confess "$msg is not an EMI-UCP message"
         unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
+
+    AE::log info => ">>> [%s]", $msg->as_string;
 
     $self->_hdl->push_write(sprintf "\x02%s\x03", $msg->as_string) if $msg;
 };
