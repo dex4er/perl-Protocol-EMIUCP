@@ -3,7 +3,6 @@
 use lib 'lib', '../lib';
 
 use Protocol::EMIUCP;
-use Data::Dumper ();
 
 die "Usage: $0 field=value field=value\n" unless @ARGV;
 
