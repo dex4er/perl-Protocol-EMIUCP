@@ -33,7 +33,13 @@ has 'timeout' => (
     default   => 15,
 );
 
-has 'slots' => (
+has 'on_timeout' => (
+    isa       => 'CodeRef',
+    is        => 'ro',
+    predicate => 'has_on_timeout',
+);
+
+has '_slots' => (
     isa       => 'ArrayRef',
     is        => 'ro',
     default   => sub { [] },
@@ -47,12 +53,6 @@ has '_count_free_slots' => (
     default   => sub { $_[0]->window },
 );
 
-has 'on_timeout' => (
-    isa       => 'CodeRef',
-    is        => 'ro',
-    predicate => 'has_on_timeout',
-);
-
 sub reserve {
     my ($self, $trn) = @_;
 
@@ -61,12 +61,12 @@ sub reserve {
     
     if (defined $trn) {
         Protocol::EMIUCP::Exception->throw( message => 'This TRN already exists' )
-            if defined $self->slots->[$trn];
+            if defined $self->_slots->[$trn];
     }
     else {
         FIND: {
             for ($trn=0; $trn < 100; $trn++) {
-                if (not defined $self->slots->[$trn]) {
+                if (not defined $self->_slots->[$trn]) {
                     last FIND;
                 };
             };
@@ -75,7 +75,7 @@ sub reserve {
     };
  
     $self->_set_count_free_slots($self->_count_free_slots-1);
-    $self->slots->[$trn] = AE::timer $self->timeout, 0, sub {
+    $self->_slots->[$trn] = AE::timer $self->timeout, 0, sub {
         $self->free($trn);
         $self->on_timeout->($trn) if $self->has_on_timeout;
     };
@@ -86,10 +86,10 @@ sub reserve {
 sub free {
     my ($self, $trn) = @_;
     
-    Protocol::EMIUCP::Exception->throw( message => 'No such TRN exists' )
-        unless defined $self->slots->[$trn];
+    Protocol::EMIUCP::Exception->throw( message => 'No such TRN is reserved' )
+        unless defined $self->_slots->[$trn];
 
-    undef $self->slots->[$trn];
+    undef $self->_slots->[$trn];
     $self->_set_count_free_slots($self->_count_free_slots+1);
 
     return $trn;
