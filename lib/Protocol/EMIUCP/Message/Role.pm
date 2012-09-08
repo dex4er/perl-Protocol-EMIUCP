@@ -4,6 +4,8 @@ use Mouse::Role;
 
 our $VERSION = '0.01';
 
+use Protocol::EMIUCP::Message;
+use Protocol::EMIUCP::Message::Exception;
 use Protocol::EMIUCP::Message::Field;
 
 with_field [qw( trn len o_r ot checksum )];
@@ -81,6 +83,28 @@ sub as_hashref {
     };
 
     return $hashref;
+};
+
+sub clone {
+    my ($self, %args) = @_;
+    my %attrs = map { $_ => $self->{$_} } grep { /^o_r$/ or !/_|^(len|checksum)$/ } keys %$self;
+    return Protocol::EMIUCP::Message->new(%attrs, %args);
+};
+
+sub new_response {
+    my ($self, %args) = @_;
+
+    Protocol::EMIUCP::Message::Exception->new(
+        message       => 'The message is already a reponse',
+        emiucp_string => $self->as_string,
+    ) if $self->o_r eq 'R';
+
+    return Protocol::EMIUCP::Message->new(
+        trn => $self->trn,
+        ot  => $self->ot,
+        o_r => 'R',
+        %args,
+    );
 };
 
 sub Dump {

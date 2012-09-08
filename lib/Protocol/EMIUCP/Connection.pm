@@ -10,7 +10,9 @@ package Protocol::EMIUCP::Connection;
           window => 10,
           login  => 1234,
           pwd    => 'SECRET',
+          on_message => sub { my $msg = shift; cb() },
       );
+      $conn->write_message($msg);
   };
 
 =cut

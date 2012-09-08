@@ -61,22 +61,21 @@ sub _parse_args_from_string {
     return \%args;
 };
 
-
+# TODO BUILDARGS
 sub new {
     my ($class, %args) = @_;
     return eval { $class->_find_new_class_from_args(\%args)->new(%args) }
         || Protocol::EMIUCP::Message::Exception->throw(
-               %args, message => 'Invalid EMI-UCP message'
+               message => 'Cannot create EMI-UCP message'
            );
 };
-
 
 sub new_from_string {
     my ($class, $str) = @_;
     my $args = $class->_parse_args_from_string($str);
     return eval { $class->_find_new_class_from_args($args)->new_from_string($str) }
         || Protocol::EMIUCP::Message::Exception->throw(
-               %$args, message => 'Invalid EMI-UCP message', emiucp_string => $str
+               message => 'Invalid EMI-UCP message', emiucp_string => $str
            );
 };
 
