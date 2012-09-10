@@ -75,7 +75,9 @@ sub new_from_string {
     my $args = $class->_parse_args_from_string($str);
     return eval { $class->_find_new_class_from_args($args)->new_from_string($str) }
         || Protocol::EMIUCP::Message::Exception->throw(
-               message => 'Invalid EMI-UCP message', emiucp_string => $str
+               message => 'Invalid EMI-UCP message',
+               emiucp_string => $str,
+               %$args,
            );
 };
 

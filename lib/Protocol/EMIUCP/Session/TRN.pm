@@ -56,9 +56,11 @@ has '_count_free_slots' => (
 sub reserve {
     my ($self, $trn) = @_;
 
+    AE::log debug => 'reserve %s', $trn;
+
     Protocol::EMIUCP::Exception->throw( message => 'No free TRN found' )
         unless $self->is_free;
-    
+
     if (defined $trn) {
         Protocol::EMIUCP::Exception->throw( message => 'This TRN already exists' )
             if defined $self->_slots->[$trn];
@@ -73,19 +75,21 @@ sub reserve {
             Protocol::EMIUCP::Exception->throw( message => 'No free TRN found' );
         };
     };
- 
+
     $self->_set_count_free_slots($self->_count_free_slots-1);
     $self->_slots->[$trn] = AE::timer $self->timeout, 0, sub {
         $self->free($trn);
         $self->on_timeout->($trn) if $self->has_on_timeout;
     };
-   
+
     return $trn;
 };
 
 sub free {
     my ($self, $trn) = @_;
-    
+
+    AE::log debug => 'free %s', $trn;
+
     Protocol::EMIUCP::Exception->throw( message => 'No such TRN is reserved' )
         unless defined $self->_slots->[$trn];
 

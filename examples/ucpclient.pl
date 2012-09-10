@@ -30,13 +30,21 @@ my $msg = Protocol::EMIUCP::Message->new(%fields);
 my $cv = AE::cv;
 
 my $conn = Protocol::EMIUCP::Connection->new(
-    fh         => $sock,
-    on_message => sub {
-        $cv->send;
-    },
+    fh          => $sock,
+    defined $opts{Window} ? (
+        window  => $opts{Window},
+    ) : (),
+    defined $opts{Pwd} ? (
+        login   => defined $opts{Login} ? $opts{Login} : $fields{oadc},
+        pwd     => $opts{Pwd},
+    ) : (),
 );
 
-$conn->write_message($msg);
+$conn->open_session;
 
-$cv->recv;
+for (my $i = 1; $i <= ($opts{Requests}||1); $i++) {
+    $conn->wait_for_any_trn;
+    $conn->write_message($msg)
+};
 
+$conn->wait_for_all_trn;

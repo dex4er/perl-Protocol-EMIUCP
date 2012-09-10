@@ -22,45 +22,17 @@ use Mouse;
 our $VERSION = '0.01';
 
 use Protocol::EMIUCP::Message;
-use Protocol::EMIUCP::Message::Types;
+use Protocol::EMIUCP::Session;
 
+with qw(Protocol::EMIUCP::OO::Role::BuildArgs);
+
+use Protocol::EMIUCP::Message::Types;
 use Mouse::Util::TypeConstraints;
 
 has 'fh' => (
     isa       => 'FileHandle',
     is        => 'ro',
     required  => 1,
-);
-
-has 'login' => (
-    isa       => 'EMIUCP_Num16',
-    is        => 'ro',
-);
-
-has 'pwd' => (
-    isa       => 'Str',
-    is        => 'ro',
-);
-
-has 'window' => (
-    isa       => subtype( as 'Int', where { $_ > 0 && $_ <= 100 } ),
-    is        => 'ro',
-);
-
-has 'o60' => (
-    isa       => 'Protocom::EMIUCP::Message',
-    is        => 'ro',
-    lazy      => 1,
-    default   => sub { Protocol::EMIUCP::Message->new(
-        o_r      => 'O',
-        ot       => 60,
-        oadc     => $_[0]->login,
-        oton     => OTON_ABBREVIATED,
-        onpi     => ONPI_PRIVATE,
-        styp     => STYP_ADD_ITEM_TO_MO_LIST,
-        pwd_utf8 => $_[0]->pwd,
-        vers     => '0100',
-    ) },
 );
 
 has 'on_message' => (
@@ -73,6 +45,12 @@ has '_hdl' => (
     isa       => 'AnyEvent::Handle',
     is        => 'ro',
     builder   => '_build_hdl',
+);
+
+has '_sess' => (
+    isa       => 'Protocol::EMIUCP::Session',
+    is        => 'ro',
+    builder   => '_build_sess',
 );
 
 use AnyEvent;
@@ -95,44 +73,26 @@ sub _build_hdl {
                 my $str = $1;
                 AE::log info => "<<< [%s]", $str;
                 my $msg = eval { Protocol::EMIUCP::Message->new_from_string($str) };
-                $self->on_message->($msg) if $msg and $self->has_on_message;
-                my $rpl = do {
-                    if (my $e = $@) {
+                if ($msg) {
+                    $self->_sess->read_message($msg);
+                    $self->on_message->($self, $msg) if $self->has_on_message;
+                }
+                else {
+                    my $e = $@;
+                    if ($e and ($e->o_r||'') eq 'O') {
                         # Cannot parse EMI-UCP message
                         AE::log error => "$e";
-                        my $sm = $e->error;
-                        Protocol::EMIUCP::Message->new(
+                        my $rpl = Protocol::EMIUCP::Message->new(
                             trn  => $e->trn,
                             ot   => $e->ot,
                             o_r  => 'R',
                             nack => 1,
                             ec   => EC_SYNTAX_ERROR,
                             sm   => sprintf ' %s: %s', $e->message, $e->error,
-                        ) if (($e->o_r||'') eq 'O');
-                    }
-                    elsif ($msg and $msg->o_r eq 'O') {
-                        # Reply only for Operation
-                        if ($msg->ot =~ /^(01|51|60)$/) {
-                            # OT allowed by SMSC
-                            my %sm = do {
-                                if ($msg->ot =~ /^(01|51)$/) {
-                                    my @t = localtime;
-                                    $t[5] %= 100;
-                                    +(sm => $msg->oadc . ':' . sprintf '%02d%02d%02d%02d%02d%02d', @t[3,4,5,2,1,0]);
-                                }
-                                else {
-                                    +();
-                                };
-                            };
-                            Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, o_r => 'R', ack => 1, %sm);
-                        }
-                        else {
-                            # Not allowed by SMSC
-                            Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, o_r => 'R', nack => 1, ec => EC_OPERATION_NOT_ALLOWED);
-                        };
+                        );
+                        $self->write_message($rpl);
                     };
                 };
-                $self->write_message($rpl) if $rpl;
             });
         },
         on_eof   => sub {
@@ -141,21 +101,46 @@ sub _build_hdl {
     );
 };
 
-sub BUILD {
+sub _build_sess {
     my ($self) = @_;
 
-    $self->_hdl->push_write(sprintf "\x02%s\x03", $self->o60->as_string) if $self->login;
+    return Protocol::EMIUCP::Session->new(
+        $self->_build_args,
+        on_write => sub {
+            my ($sess, $msg) = @_;
+            AE::log info => ">>> [%s]", $msg->as_string;
+            $self->_hdl->push_write(sprintf "\x02%s\x03", $msg->as_string) if $msg;
+        },
+        on_timeout => sub {
+            my ($sess, $what, $msg) = @_;
+            AE::log info => "??? [%s]", $msg->as_string;
+        },
+    );
 };
 
 sub write_message {
     my ($self, $msg) = @_;
+    $self->_sess->write_message($msg);
+};
 
-    confess "$msg is not an EMI-UCP message"
-        unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
+sub open_session {
+    my ($self, $msg) = @_;
+    $self->_sess->open_session;
+};
 
-    AE::log info => ">>> [%s]", $msg->as_string;
+sub wait_for_trn {
+    my ($self, $trn) = @_;
+    $self->_sess->wait_for_trn($trn);
+};
 
-    $self->_hdl->push_write(sprintf "\x02%s\x03", $msg->as_string) if $msg;
+sub wait_for_all_trn {
+    my ($self) = @_;
+    $self->_sess->wait_for_all_trn;
+};
+
+sub wait_for_any_trn {
+    my ($self) = @_;
+    $self->_sess->wait_for_any_trn;
 };
 
 1;

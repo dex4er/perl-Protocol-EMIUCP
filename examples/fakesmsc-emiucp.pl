@@ -11,6 +11,7 @@ use warnings;
 use lib 'lib', '../lib';
 
 use Protocol::EMIUCP::Connection;
+use Protocol::EMIUCP::Message;
 
 use AnyEvent;
 use AnyEvent::Socket;
@@ -28,6 +29,33 @@ tcp_server $opts{Host}, $opts{Port}, sub {
 
     my $conn = Protocol::EMIUCP::Connection->new(
         fh => $fh,
+        on_message => sub {
+            my ($self, $msg) = @_;
+            if ($msg->o_r eq 'O') {
+                my $rpl = do {
+                    # Reply only for Operation
+                    if ($msg->ot =~ /^(01|51|60)$/) {
+                        # OT allowed by SMSC
+                        my %sm = do {
+                            if ($msg->ot =~ /^(01|51)$/) {
+                                my @t = localtime;
+                                $t[5] %= 100;
+                                +(sm => $msg->oadc . ':' . sprintf '%02d%02d%02d%02d%02d%02d', @t[3,4,5,2,1,0]);
+                            }
+                            else {
+                                +();
+                            };
+                        };
+                        Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, o_r => 'R', ack => 1, %sm);
+                    }
+                    else {
+                        # Not allowed by SMSC
+                        Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, o_r => 'R', nack => 1, ec => EC_OPERATION_NOT_ALLOWED);
+                    };
+                };
+                $self->write_message($rpl);
+            };
+        },
     );
 };
 
