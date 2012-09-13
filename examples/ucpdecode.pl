@@ -14,6 +14,7 @@ my $dump = Data::Dumper->new([ $msg->as_hashref ])
     ->Pair('=')
     ->Quotekeys(0)
     ->Sortkeys(1)
+    ->Useqq(1)
     ->Terse(1)
     ->Dump;
 $dump =~ s/^{\n(.*)\n}$/$1/s;
