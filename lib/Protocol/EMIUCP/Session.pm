@@ -45,7 +45,7 @@ has 'o60' => (
     lazy      => 1,
     default   => sub {
         Protocol::EMIUCP::Message->new(
-            o_r      => 'O',
+            o        => 'O',
             ot       => 60,
             oadc     => $_[0]->login,
             oton     => OTON_ABBREVIATED,
@@ -135,7 +135,7 @@ sub write_message {
     confess "$msg is not an EMI-UCP message"
         unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
 
-    if ($msg->o_r eq 'O') {
+    if ($msg->o) {
         my $trn = $self->_trn_out->reserve;
         my $msg_with_trn = $msg->clone( trn => $trn );
         $self->_msg_out->[$trn] = $msg_with_trn;
@@ -155,7 +155,7 @@ sub write_message {
 sub read_message {
     my ($self, $msg) = @_;
 
-    if ($msg->o_r eq 'R') {
+    if ($msg->r) {
         $self->_trn_out->free($msg->trn);
         undef $self->_msg_out->[$msg->trn];
         $self->_cv_out->[$msg->trn]->send;

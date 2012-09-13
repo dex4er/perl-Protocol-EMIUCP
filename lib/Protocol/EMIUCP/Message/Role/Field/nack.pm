@@ -7,7 +7,7 @@ our $VERSION = '0.01';
 use Mouse::Util::TypeConstraints;
 
 enum    'EMIUCP_N'       => [qw( N )];
-coerce  'EMIUCP_N'       => from 'Bool' => via   { $_ ? 'N' : '' };
+coerce  'EMIUCP_N'       => from 'Bool' => via { $_ ? 'N' : '' };
 
 use Protocol::EMIUCP::Message::Field;
 

@@ -4,6 +4,8 @@ use Mouse::Role;
 
 our $VERSION = '0.01';
 
+with qw(Protocol::EMIUCP::Message::Role::O);
+
 use Protocol::EMIUCP::Message::Field;
 
 with_field [qw(
@@ -18,8 +20,8 @@ my @MT_To_Field;
 
 sub list_data_field_names {
     my ($self, $fields) = @_;
-    my $mt = ref $self ? $self->{mt}
-           : (ref $fields || '') eq 'ARRAY' ? $fields->[22]
+    my $mt = ref $self ? $self->mt
+           : ref $fields eq 'ARRAY' ? $fields->[22]
            : $fields->{mt};
     no warnings 'numeric';
     return [

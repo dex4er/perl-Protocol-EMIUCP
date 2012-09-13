@@ -12,7 +12,7 @@ with qw(
 
 use Mouse::Util::TypeConstraints;
 
-has '+o_r'  => (isa => enum(['R']),  required => 1, default => 'R');
+has '+r'    => (                     required => 1, default => 'R');
 has '+ot'   => (isa => enum(['31']), required => 1, default => '31');
 has '+nack' => (                     required => 1, default => 'N');
 
@@ -22,7 +22,7 @@ with_field [qw( ec sm_str )];
 
 has '+ec'  => (isa => enum([qw( 01 02 04 05 06 07 08 24 26 )]));
 
-use constant list_data_field_names => [qw( nack ec sm )];
+use constant list_data_field_names => [qw( ec sm )];
 
 __PACKAGE__->meta->make_immutable();
 

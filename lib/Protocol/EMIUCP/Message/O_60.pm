@@ -12,8 +12,8 @@ with qw(
 
 use Mouse::Util::TypeConstraints;
 
-has '+o_r'  => (isa => enum(['O']),  required => 1, default => 'O');
-has '+ot'   => (isa => enum(['60']), required => 1, default => '60');
+has '+o'  => (                     required => 1, default => 'O');
+has '+ot' => (isa => enum(['60']), required => 1, default => '60');
 
 use Protocol::EMIUCP::Message::Field;
 

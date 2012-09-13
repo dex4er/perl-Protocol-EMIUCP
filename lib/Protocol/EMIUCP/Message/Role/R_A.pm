@@ -4,8 +4,6 @@ use Mouse::Role;
 
 our $VERSION = '0.01';
 
-use Protocol::EMIUCP::Message::Field;
-
-with_field 'ack';
+with qw(Protocol::EMIUCP::Message::Role::R);
 
 1;

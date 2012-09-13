@@ -12,7 +12,7 @@ with qw(
 
 use Mouse::Util::TypeConstraints;
 
-has '+o_r' => (isa => enum(['R']),  required => 1, default => 'R');
+has '+r'   => (                     required => 1, default => 'R');
 has '+ot'  => (isa => enum(['01']), required => 1, default => '01');
 has '+ack' => (                     required => 1, default => 'A');
 
@@ -20,7 +20,7 @@ use Protocol::EMIUCP::Message::Field;
 
 with_field 'sm_adc_scts';
 
-use constant list_data_field_names => [qw( ack sm )];
+use constant list_data_field_names => [qw( sm )];
 
 __PACKAGE__->meta->make_immutable();
 

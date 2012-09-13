@@ -24,16 +24,15 @@ sub _find_new_class_from_args {
         unless defined $args->{ot};
     confess "Attribute (ot) has invalid value '$args->{ot}', should be between 1 and 99"
         unless $args->{ot} =~ /^\d{1,2}$/;
-    confess "Attribute (o_r) is required"
-        unless defined $args->{o_r};
-    confess "Attribute (o_r) has invalid value '$args->{o_r}', should be 'O' or 'R'"
-        unless $args->{o_r} eq 'O' or $args->{o_r} eq 'R';
-    confess "Attribute (ack) xor (nack) is required if attribute (o_r) eq 'R'"
-        if $args->{o_r} eq 'R' and not ($args->{ack} xor $args->{nack});
+    confess "Attribute (o) xor (r) is required"
+        unless defined $args->{o} xor defined $args->{r};
+    confess "Attribute (ack) xor (nack) is required if attribute (r) is true"
+        if $args->{r} and not ($args->{ack} xor $args->{nack});
 
-    my $new_class = sprintf 'Protocol::EMIUCP::Message::%s_%02d', $args->{o_r}, $args->{ot};
-    $new_class .= '_A' if $args->{ack};
-    $new_class .= '_N' if $args->{nack};
+    my $new_class = sprintf 'Protocol::EMIUCP::Message::%s_%02d%s',
+        $args->{o} ? 'O' : $args->{r} ? 'R' : 'X',
+        $args->{ot},
+        $args->{ack} ? '_A' : $args->{nack} ? '_N' : '';
 
     load_class($new_class);
 
@@ -49,11 +48,12 @@ sub _parse_args_from_string {
            );
 
     my %args = (
-        o_r => $1,
+        $1 eq 'O' ? (o => $1) : (),
+        $1 eq 'R' ? (r => $1) : (),
         ot  => $2,
     );
 
-    if ($args{o_r} eq 'R' and defined $3) {
+    if ($args{r} and defined $3) {
         $args{ack}  = $3 if $3 eq 'A';
         $args{nack} = $3 if $3 eq 'N';
     };

@@ -8,7 +8,7 @@ use Protocol::EMIUCP::Message;
 use Protocol::EMIUCP::Message::Exception;
 use Protocol::EMIUCP::Message::Field;
 
-with_field [qw( trn len o_r ot checksum )];
+with_field [qw( trn len o r ot ack nack checksum )];
 
 has '_string' => (
     is        => 'ro',
@@ -44,11 +44,49 @@ requires 'list_data_field_names';
 
 sub list_field_names {
     my ($self, $fields) = @_;
-    return [
-        qw( trn len o_r ot ),
-        @{ $self->list_data_field_names($fields) },
-        qw( checksum ),
-    ];
+
+    if (ref $self) {
+        return [
+            qw( trn len ),
+            eval { $self->o } ? qw( o ) :
+            eval { $self->r } ? qw( r ) : qw( -or ),
+            qw( ot ),
+            eval { $self->r } ? (
+                eval { $self->ack } ? qw( ack ) :
+                eval { $self->nack } ? qw( nack ) : qw( -ack ),
+            ) : (),
+            @{ $self->list_data_field_names($fields) },
+            qw( checksum ),
+        ];
+    }
+    elsif (ref $fields eq 'ARRAY') {
+        return [
+            qw( trn len ),
+            $fields->[2] eq 'O' ? qw( o ) :
+            $fields->[2] eq 'R' ? qw( r ) : qw( -or ),
+            qw( ot ),
+            $fields->[2] eq 'R' ? (
+                $fields->[4] eq 'A' ? qw( ack ) :
+                $fields->[4] eq 'N' ? qw( nack ) : qw( -ack ),
+            ) : (),
+            @{ $self->list_data_field_names($fields) },
+            qw( checksum ),
+        ];
+    }
+    else {
+        return [
+            qw( trn len ),
+            $fields->{o} ? qw( o ) :
+            $fields->{r} ? qw( r ) : qw( -or ),
+            qw( ot ),
+            $fields->{r} ? (
+                $fields->{ack} ? qw( ack ) :
+                $fields->{nack} ? qw( nack ) : qw( -ack ),
+            ) : (),
+            @{ $self->list_data_field_names($fields) },
+            qw( checksum ),
+        ];
+    }
 };
 
 sub _parse_string {
@@ -87,7 +125,7 @@ sub as_hashref {
 
 sub clone {
     my ($self, %args) = @_;
-    my %attrs = map { $_ => $self->{$_} } grep { /^o_r$/ or !/_|^(len|checksum)$/ } keys %$self;
+    my %attrs = map { $_ => $self->{$_} } grep { !/_|^(len|checksum)$/ } keys %$self;
     return Protocol::EMIUCP::Message->new(%attrs, %args);
 };
 
@@ -97,12 +135,12 @@ sub new_response {
     Protocol::EMIUCP::Message::Exception->new(
         message       => 'The message is already a reponse',
         emiucp_string => $self->as_string,
-    ) if $self->o_r eq 'R';
+    ) if $self->r;
 
     return Protocol::EMIUCP::Message->new(
         trn => $self->trn,
         ot  => $self->ot,
-        o_r => 'R',
+        r   => 1,
         %args,
     );
 };

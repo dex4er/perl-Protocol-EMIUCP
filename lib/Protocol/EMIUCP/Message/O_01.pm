@@ -5,12 +5,15 @@ use MouseX::StrictConstructor;
 
 our $VERSION = '0.01';
 
-with qw(Protocol::EMIUCP::Message::Role);
+with qw(
+    Protocol::EMIUCP::Message::Role
+    Protocol::EMIUCP::Message::Role::O
+);
 
 use Mouse::Util::TypeConstraints;
 
-has '+o_r' => (isa => enum(['O']),  required => 1, default => 'O');
-has '+ot'  => (isa => enum(['01']), required => 1, default => '01');
+has '+o'  => (                     required => 1, default => 'O');
+has '+ot' => (isa => enum(['01']), required => 1, default => '01');
 
 use Protocol::EMIUCP::Message::Field;
 

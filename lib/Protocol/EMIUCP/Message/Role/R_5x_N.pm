@@ -12,6 +12,6 @@ use Protocol::EMIUCP::Message::Field;
 
 with_field [qw( ec sm_str )];
 
-use constant list_data_field_names => [qw( nack ec sm )];
+use constant list_data_field_names => [qw( ec sm )];
 
 1;

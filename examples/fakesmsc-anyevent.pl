@@ -44,10 +44,10 @@ tcp_server $opts{Host}, $opts{Port}, sub {
                     if (my $e = $@) {
                         # Cannot parse EMI-UCP message
                         AE::log error => "$e";
-                        Protocol::EMIUCP::Message->new(trn => $e->trn, ot => $e->ot, o_r => 'R', nack => 1, ec => EC_SYNTAX_ERROR)
-                            if (($e->o_r||'') eq 'O');
+                        Protocol::EMIUCP::Message->new(trn => $e->trn, ot => $e->ot, r => 1, nack => 1, ec => EC_SYNTAX_ERROR)
+                            if $e->o;
                     }
-                    elsif ($msg and $msg->o_r eq 'O') {
+                    elsif ($msg and $msg->o) {
                         # Reply only for Operation
                         if ($msg->ot =~ /^(01|51|60)$/) {
                             # OT allowed by SMSC
@@ -61,11 +61,11 @@ tcp_server $opts{Host}, $opts{Port}, sub {
                                     +();
                                 };
                             };
-                            Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, o_r => 'R', ack => 1, %sm);
+                            Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, r => 1, ack => 1, %sm);
                         }
                         else {
                             # Not allowed by SMSC
-                            Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, o_r => 'R', nack => 1, ec => EC_OPERATION_NOT_ALLOWED);
+                            Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, r => 1, nack => 1, ec => EC_OPERATION_NOT_ALLOWED);
                         };
                     };
                 };

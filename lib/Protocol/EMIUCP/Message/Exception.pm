@@ -6,7 +6,7 @@ extends 'Protocol::EMIUCP::Exception';
 
 use Protocol::EMIUCP::Message::Field;
 
-with_field [qw( trn o_r ot ack nack )];
+with_field [qw( trn o r ot ack nack )];
 
 has 'emiucp_string' => (
     isa       => 'Str',

@@ -31,7 +31,7 @@ tcp_server $opts{Host}, $opts{Port}, sub {
         fh => $fh,
         on_message => sub {
             my ($self, $msg) = @_;
-            if ($msg->o_r eq 'O') {
+            if ($msg->o) {
                 my $rpl = do {
                     # Reply only for Operation
                     if ($msg->ot =~ /^(01|51|60)$/) {
@@ -46,11 +46,11 @@ tcp_server $opts{Host}, $opts{Port}, sub {
                                 +();
                             };
                         };
-                        Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, o_r => 'R', ack => 1, %sm);
+                        Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, r => 1, ack => 1, %sm);
                     }
                     else {
                         # Not allowed by SMSC
-                        Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, o_r => 'R', nack => 1, ec => EC_OPERATION_NOT_ALLOWED);
+                        Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, r => 1, nack => 1, ec => EC_OPERATION_NOT_ALLOWED);
                     };
                 };
                 $self->write_message($rpl);

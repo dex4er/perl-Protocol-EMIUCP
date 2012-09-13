@@ -12,7 +12,7 @@ with qw(
 
 use Mouse::Util::TypeConstraints;
 
-has '+o_r' => (isa => enum(['R']),  required => 1, default => 'R');
+has '+r'   => (                     required => 1, default => 'R');
 has '+ot'  => (isa => enum(['51']), required => 1, default => '51');
 has '+ack' => (                     required => 1, default => 'A');
 

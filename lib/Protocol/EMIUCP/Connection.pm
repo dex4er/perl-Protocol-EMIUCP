@@ -79,14 +79,14 @@ sub _build_hdl {
                 }
                 else {
                     my $e = $@;
-                    if ($e and ($e->o_r||'') eq 'O') {
+                    if ($e and $e->o) {
                         # Cannot parse EMI-UCP message
                         AE::log error => "$e";
                         my $rpl = Protocol::EMIUCP::Message->new(
                             trn  => $e->trn,
                             ot   => $e->ot,
-                            o_r  => 'R',
-                            nack => 1,
+                            r    => 'R',
+                            nack => 'N',
                             ec   => EC_SYNTAX_ERROR,
                             sm   => sprintf ' %s: %s', $e->message, $e->error,
                         );

@@ -7,44 +7,44 @@ use lib 'lib', '../lib';
     sub new {
         my ($class, $str) = @_;
         my %msg;
-        @msg{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        @msg{qw( trn len o ot adc oadc ac mt amsg checksum )} = split '/', $str;
         return bless \%msg => $class;
     }
     sub as_string {
         my ($self) = @_;
-        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+        return join '/', @{$self}{qw( trn len o ot adc oadc ac mt amsg checksum )};
     }
 };
 
 eval q{
     package My::Moose;
     use Moose;
-    has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
+    has [qw( trn len o ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
     around BUILDARGS => sub {
         my ($orig, $class, $str) = @_;
         my %args;
-        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        @args{qw( trn len o ot adc oadc ac mt amsg checksum )} = split '/', $str;
         return $class->$orig(%args);
     };
     sub as_string {
         my ($self) = @_;
-        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+        return join '/', @{$self}{qw( trn len o ot adc oadc ac mt amsg checksum )};
     }
 };
 
 eval q{
     package My::MooseImmutable;
     use Moose;
-    has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
+    has [qw( trn len o ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
     around BUILDARGS => sub {
         my ($orig, $class, $str) = @_;
         my %args;
-        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        @args{qw( trn len o ot adc oadc ac mt amsg checksum )} = split '/', $str;
         return $class->$orig(%args);
     };
     sub as_string {
         my ($self) = @_;
-        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+        return join '/', @{$self}{qw( trn len o ot adc oadc ac mt amsg checksum )};
     }
     __PACKAGE__->meta->make_immutable();
 };
@@ -52,32 +52,32 @@ eval q{
 eval q{
     package My::Mouse;
     use Mouse;
-    has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
+    has [qw( trn len o ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
     around BUILDARGS => sub {
         my ($orig, $class, $str) = @_;
         my %args;
-        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        @args{qw( trn len o ot adc oadc ac mt amsg checksum )} = split '/', $str;
         return $class->$orig(%args);
     };
     sub as_string {
         my ($self) = @_;
-        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+        return join '/', @{$self}{qw( trn len o ot adc oadc ac mt amsg checksum )};
     }
 };
 
 eval q{
     package My::MouseImmutable;
     use Mouse;
-    has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
+    has [qw( trn len o ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
     around BUILDARGS => sub {
         my ($orig, $class, $str) = @_;
         my %args;
-        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        @args{qw( trn len o ot adc oadc ac mt amsg checksum )} = split '/', $str;
         return $class->$orig(%args);
     };
     sub as_string {
         my ($self) = @_;
-        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+        return join '/', @{$self}{qw( trn len o ot adc oadc ac mt amsg checksum )};
     }
     __PACKAGE__->meta->make_immutable();
 };
@@ -85,48 +85,48 @@ eval q{
 eval q{
     package My::Mousse;
     use Mousse;
-    has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
+    has [qw( trn len o ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
     around BUILDARGS => sub {
         my ($orig, $class, $str) = @_;
         my %args;
-        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        @args{qw( trn len o ot adc oadc ac mt amsg checksum )} = split '/', $str;
         return $class->$orig(%args);
     };
     sub as_string {
         my ($self) = @_;
-        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+        return join '/', @{$self}{qw( trn len o ot adc oadc ac mt amsg checksum )};
     }
 };
 
 eval q{
     package My::Mo;
     use Mo qw(is);
-    has [qw( trn len o_r ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
+    has [qw( trn len o ot adc oadc ac mt amsg checksum )] => (is => 'ro', isa => 'Str');
     sub new {
         my ($class, $str) = @_;
         my %args;
-        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        @args{qw( trn len o ot adc oadc ac mt amsg checksum )} = split '/', $str;
         return $class->SUPER::new(%args);
     };
     sub as_string {
         my ($self) = @_;
-        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+        return join '/', @{$self}{qw( trn len o ot adc oadc ac mt amsg checksum )};
     }
 };
 
 eval q{
     package My::VSO;
     use VSO;
-    has $_ => (is => 'ro', isa => 'Str') foreach qw( trn len o_r ot adc oadc ac mt amsg checksum );
+    has $_ => (is => 'ro', isa => 'Str') foreach qw( trn len o ot adc oadc ac mt amsg checksum );
     sub new {
         my ($class, $str) = @_;
         my %args;
-        @args{qw( trn len o_r ot adc oadc ac mt amsg checksum )} = split '/', $str;
+        @args{qw( trn len o ot adc oadc ac mt amsg checksum )} = split '/', $str;
         return $class->SUPER::new(%args);
     };
     sub as_string {
         my ($self) = @_;
-        return join '/', @{$self}{qw( trn len o_r ot adc oadc ac mt amsg checksum )};
+        return join '/', @{$self}{qw( trn len o ot adc oadc ac mt amsg checksum )};
     }
 };
 
@@ -161,7 +161,6 @@ my %tests = (
     '02_EMIUCP_51' => sub {
 
         my $msg = Protocol::EMIUCP::Message->new_from_string($str_51);
-        $msg->{oadc} =
         die $msg->as_string if $msg->as_string ne $str_51;
 
     },
