@@ -68,6 +68,17 @@ sub with_field {
 
     my $caller = caller;
     apply_all_roles($caller, @roles);
+
+    if (%opts) {
+        my $meta = caller->meta;
+
+        for my $n (ref $name ? @$name : $name) {
+            $meta->add_attribute(
+                "+$n",
+                %opts,
+            );
+        };
+    };
 };
 
 1;
