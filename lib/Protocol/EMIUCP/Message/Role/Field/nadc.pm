@@ -45,7 +45,7 @@ has 'nadc_addr' => (
 
 {
     my $ip4dec0  = '(25[0-5]|2[0-4][0-9]|[0-1][0-9]{1,2})';
-    my $tcpport0 = '([0-9]{4})';
+    my $tcpport0 = '([0-9]{1,4})';
 
     sub _from_nadc_to_addr {
         my ($self, $nadc) = @_;
