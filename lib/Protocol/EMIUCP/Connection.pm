@@ -51,7 +51,7 @@ has '_sess' => (
     isa       => 'Protocol::EMIUCP::Session',
     is        => 'ro',
     builder   => '_build_sess',
-    handles   => [qw( write_message open_session wait_for_trn wait_for_all_trn wait_for_any_trn )],
+    handles   => [qw( write_message open_session wait_for_trn wait_for_all_trns wait_for_any_trn )],
 );
 
 use AnyEvent;

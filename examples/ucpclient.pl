@@ -27,8 +27,6 @@ my $sock = IO::Socket::INET->new(%opts) or die "Can't connect EMI-UCP server: $!
 
 my $msg = Protocol::EMIUCP::Message->new(%fields);
 
-my $cv = AE::cv;
-
 my $conn = Protocol::EMIUCP::Connection->new(
     fh          => $sock,
     defined $opts{Window} ? (
@@ -47,4 +45,4 @@ for (my $i = 1; $i <= ($opts{Requests}||1); $i++) {
     $conn->write_message($msg)
 };
 
-$conn->wait_for_all_trn;
+$conn->wait_for_all_trns;

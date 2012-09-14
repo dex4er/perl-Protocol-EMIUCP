@@ -179,7 +179,7 @@ sub wait_for_trn {
     };
 };
 
-sub wait_for_all_trn {
+sub wait_for_all_trns {
     my ($self) = @_;
     for (my $trn = 0; $trn < $self->_window_out->window; $trn++) {
         $self->wait_for_trn($trn);
