@@ -1,12 +1,12 @@
-package Protocol::EMIUCP::Session::TRN;
+package Protocol::EMIUCP::Session::Window;
 
 =head1 SYNOPSIS
 
-  my $sess = Protocol::EMIUCP::Session::TRN->new(
-      window   => 10,
+  my $sess = Protocol::EMIUCP::Session::Window->new(
+      window => 10,
   );
-  my $trn = $sess->reserve;
-  $sess->free($trn);
+  my $trn = $sess->reserve_trn;
+  $sess->free_trn($trn);
 
 =cut
 
@@ -39,36 +39,36 @@ has 'on_timeout' => (
     predicate => 'has_on_timeout',
 );
 
-has '_slots' => (
+has '_trns' => (
     isa       => 'ArrayRef',
     is        => 'ro',
     default   => sub { [] },
 );
 
-has '_count_free_slots' => (
+has '_count_free_trns' => (
     isa       => 'Int',
     is        => 'ro',
-    writer    => '_set_count_free_slots',
+    writer    => '_set_count_free_trns',
     lazy      => 1,
     default   => sub { $_[0]->window },
 );
 
-sub reserve {
+sub reserve_trn {
     my ($self, $trn) = @_;
 
-    AE::log debug => 'reserve %s', $trn;
+    AE::log debug => 'reserve_trn(%s)', $trn;
 
     Protocol::EMIUCP::Exception->throw( message => 'No free TRN found' )
-        unless $self->is_free;
+        unless $self->is_free_trn;
 
     if (defined $trn) {
         Protocol::EMIUCP::Exception->throw( message => 'This TRN already exists' )
-            if defined $self->_slots->[$trn];
+            if defined $self->_trns->[$trn];
     }
     else {
         FIND: {
             for ($trn=0; $trn < 100; $trn++) {
-                if (not defined $self->_slots->[$trn]) {
+                if (not defined $self->_trns->[$trn]) {
                     last FIND;
                 };
             };
@@ -76,32 +76,32 @@ sub reserve {
         };
     };
 
-    $self->_set_count_free_slots($self->_count_free_slots-1);
-    $self->_slots->[$trn] = AE::timer $self->timeout, 0, sub {
-        $self->free($trn);
+    $self->_set_count_free_trns($self->_count_free_trns-1);
+    $self->_trns->[$trn] = AE::timer $self->timeout, 0, sub {
+        $self->free_trn($trn);
         $self->on_timeout->($trn) if $self->has_on_timeout;
     };
 
     return $trn;
 };
 
-sub free {
+sub free_trn {
     my ($self, $trn) = @_;
 
-    AE::log debug => 'free %s', $trn;
+    AE::log debug => 'free_trn(%s)', $trn;
 
     Protocol::EMIUCP::Exception->throw( message => 'No such TRN is reserved' )
-        unless defined $self->_slots->[$trn];
+        unless defined $self->_trns->[$trn];
 
-    undef $self->_slots->[$trn];
-    $self->_set_count_free_slots($self->_count_free_slots+1);
+    undef $self->_trns->[$trn];
+    $self->_set_count_free_trns($self->_count_free_trns+1);
 
     return $trn;
 };
 
-sub is_free {
+sub is_free_trn {
     my ($self) = @_;
-    return $self->_count_free_slots > 0;
+    return $self->_count_free_trns > 0;
 };
 
 1;

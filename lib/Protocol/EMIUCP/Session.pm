@@ -19,7 +19,7 @@ use Mouse;
 our $VERSION = '0.01';
 
 use Protocol::EMIUCP::Message;
-use Protocol::EMIUCP::Session::TRN;
+use Protocol::EMIUCP::Session::Window;
 
 with qw(Protocol::EMIUCP::OO::Role::BuildArgs);
 
@@ -75,24 +75,24 @@ has 'on_timeout' => (
     predicate => 'has_on_timeout',
 );
 
-has '_trn_in' => (
-    isa       => 'Protocol::EMIUCP::Session::TRN',
+has '_window_in' => (
+    isa       => 'Protocol::EMIUCP::Session::Window',
     is        => 'ro',
     default   => sub {
         my ($self) = @_;
-        Protocol::EMIUCP::Session::TRN->new(
+        Protocol::EMIUCP::Session::Window->new(
             $self->_build_args,
             on_timeout => sub { $self->_on_timeout_in(@_) },
         );
     },
 );
 
-has '_trn_out' => (
-    isa       => 'Protocol::EMIUCP::Session::TRN',
+has '_window_out' => (
+    isa       => 'Protocol::EMIUCP::Session::Window',
     is        => 'ro',
     default   => sub {
         my ($self) = @_;
-        Protocol::EMIUCP::Session::TRN->new(
+        Protocol::EMIUCP::Session::Window->new(
             $self->_build_args,
             on_timeout => sub { $self->_on_timeout_out(@_) },
         );
@@ -136,16 +136,16 @@ sub write_message {
         unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
 
     if ($msg->o) {
-        my $trn = $self->_trn_out->reserve;
+        my $trn = $self->_window_out->reserve_trn;
         my $msg_with_trn = $msg->clone( trn => $trn );
         $self->_msg_out->[$trn] = $msg_with_trn;
         $self->_cv_out->[$trn] = AE::cv;
-        $self->_cv_out_any(AE::cv) if not $self->_trn_out->is_free;
+        $self->_cv_out_any(AE::cv) if not $self->_window_out->is_free_trn;
         $self->on_write->($self, $msg_with_trn) if $self->has_on_write;
         return $msg_with_trn;
     }
     else {
-        $self->_trn_in->free($msg->trn);
+        $self->_window_in->free_trn($msg->trn);
         undef $self->_msg_in->[$msg->trn];
         $self->on_write->($self, $msg) if $self->has_on_write;
         return $msg;
@@ -156,13 +156,13 @@ sub read_message {
     my ($self, $msg) = @_;
 
     if ($msg->r) {
-        $self->_trn_out->free($msg->trn);
+        $self->_window_out->free_trn($msg->trn);
         undef $self->_msg_out->[$msg->trn];
         $self->_cv_out->[$msg->trn]->send;
         $self->_cv_out_any->send if $self->_cv_out_any;
     }
     else {
-        $self->_trn_in->reserve($msg->trn);
+        $self->_window_in->reserve_trn($msg->trn);
         $self->_msg_in->[$msg->trn] = $msg;
     };
 
@@ -181,7 +181,7 @@ sub wait_for_trn {
 
 sub wait_for_all_trn {
     my ($self) = @_;
-    for (my $trn = 0; $trn < $self->_trn_out->window; $trn++) {
+    for (my $trn = 0; $trn < $self->_window_out->window; $trn++) {
         $self->wait_for_trn($trn);
     };
 };
