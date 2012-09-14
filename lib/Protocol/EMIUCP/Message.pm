@@ -20,12 +20,12 @@ sub _find_new_class_from_args {
     my ($class, $args) = @_;
 
     no warnings 'numeric';
+    confess "Attribute (o) xor (r) is required"
+        unless defined $args->{o} xor defined $args->{r};
     confess "Attribute (ot) is required"
         unless defined $args->{ot};
     confess "Attribute (ot) has invalid value '$args->{ot}', should be between 1 and 99"
         unless $args->{ot} =~ /^\d{1,2}$/;
-    confess "Attribute (o) xor (r) is required"
-        unless defined $args->{o} xor defined $args->{r};
     confess "Attribute (ack) xor (nack) is required if attribute (r) is true"
         if $args->{r} and not ($args->{ack} xor $args->{nack});
 
