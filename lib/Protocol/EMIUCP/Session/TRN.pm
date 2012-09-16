@@ -28,7 +28,7 @@ has 'timeout' => (
 
 has 'message' => (
     does      => 'Protocol::EMIUCP::Message::Role',
-    is        => 'ro',
+    is        => 'rw',
     clearer   => 'clear_message',
 );
 
