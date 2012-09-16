@@ -5,8 +5,8 @@ package Protocol::EMIUCP::Session::Window;
   my $sess = Protocol::EMIUCP::Session::Window->new(
       window => 10,
   );
-  my $n = $sess->reserve_trn;
-  $sess->free_trn($n);
+  my $trn = $sess->reserve_slot;
+  $sess->free_slot($trn);
 
 =cut
 
@@ -15,7 +15,7 @@ use Mouse;
 our $VERSION = '0.01';
 
 use Protocol::EMIUCP::Message;
-use Protocol::EMIUCP::Session::TRN;
+use Protocol::EMIUCP::Session::Slot;
 use Protocol::EMIUCP::Exception;
 
 with qw(Protocol::EMIUCP::OO::Role::BuildArgs);
@@ -36,80 +36,80 @@ has 'on_timeout' => (
     predicate => 'has_on_timeout',
 );
 
-has '_trns' => (
-    isa       => 'ArrayRef[Protocol::EMIUCP::Session::TRN]',
+has '_slots' => (
+    isa       => 'ArrayRef[Protocol::EMIUCP::Session::Slot]',
     is        => 'ro',
     default   => sub { [] },
 );
 
-has '_count_free_trns' => (
+has '_count_free_slots' => (
     isa       => 'Int',
     is        => 'rw',
     lazy      => 1,
     default   => sub { $_[0]->window },
 );
 
-sub trn {
-    my ($self, $n) = @_;
-    return $self->_trns->[$n];
+sub slot {
+    my ($self, $trn) = @_;
+    return $self->_slots->[$trn];
 };
 
-sub reserve_trn {
-    my ($self, $n) = @_;
+sub reserve_slot {
+    my ($self, $trn) = @_;
 
-    AE::log debug => 'reserve_trn %s', defined $n ? sprintf '%02d', $n : '';
+    AE::log debug => 'reserve_slot %s', defined $trn ? sprintf '%02d', $trn : '';
 
-    Protocol::EMIUCP::Exception->throw( message => 'No free TRN found' )
-        unless $self->is_free_trn;
+    Protocol::EMIUCP::Exception->throw( message => 'No free slot found' )
+        unless $self->is_free_slot;
 
-    if (defined $n) {
-        Protocol::EMIUCP::Exception->throw( message => 'This TRN already exists' )
-            if defined $self->_trns->[$n];
+    if (defined $trn) {
+        Protocol::EMIUCP::Exception->throw( message => 'This slot is already reserved' )
+            if defined $self->_slots->[$trn];
     }
     else {
         FIND: {
-            for ($n=0; $n < 100; $n++) {
-                if (not defined $self->_trns->[$n]) {
+            for ($trn=0; $trn < 100; $trn++) {
+                if (not defined $self->_slots->[$trn]) {
                     last FIND;
                 };
             };
-            Protocol::EMIUCP::Exception->throw( message => 'No free TRN found' );
+            Protocol::EMIUCP::Exception->throw( message => 'No free slot found' );
         };
     };
 
-    $self->_count_free_trns($self->_count_free_trns - 1);
-    $self->_trns->[$n] = Protocol::EMIUCP::Session::TRN->new(
+    $self->_count_free_slots($self->_count_free_slots - 1);
+    $self->_slots->[$trn] = Protocol::EMIUCP::Session::Slot->new(
         $self->_build_args,
         on_timeout => sub {
-            AE::log debug => 'reserve_trn on_timeout %02d', $n;
-            $self->on_timeout->($self, $n) if $self->has_on_timeout;
-            $self->free_trn($n);
+            AE::log debug => 'reserve_slot on_timeout %02d', $trn;
+            $self->on_timeout->($self, $trn) if $self->has_on_timeout;
+            $self->free_slot($trn);
         },
     );
 
-    return $n;
+    return $trn;
 };
 
-sub free_trn {
-    my ($self, $n) = @_;
+sub free_slot {
+    my ($self, $trn) = @_;
 
-    AE::log debug => 'free_trn %02d', $n;
+    AE::log debug => 'free_slot %02d', $trn;
 
-    Protocol::EMIUCP::Exception->throw( message => 'No such TRN is reserved' )
-        unless defined $self->_trns->[$n];
+    Protocol::EMIUCP::Exception->throw( message => 'No such slot is reserved' )
+        unless defined $self->_slots->[$trn];
 
-    $self->_trns->[$n]->free;
-    undef $self->_trns->[$n];
-    $self->_count_free_trns($self->_count_free_trns + 1);
+    $self->_slots->[$trn]->free;
+    undef $self->_slots->[$trn];
+    $self->_count_free_slots($self->_count_free_slots + 1);
 
-    AE::log debug => 'free_trn return %02d', $n;
+    AE::log debug => 'free_slot return %02d', $trn;
 
-    return $n;
+    return $trn;
 };
 
-sub is_free_trn {
+sub is_free_slot {
     my ($self) = @_;
-    return $self->_count_free_trns > 0;
+    return $self->_count_free_slots > 0;
 };
 
 1;

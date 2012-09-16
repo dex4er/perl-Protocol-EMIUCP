@@ -1,11 +1,11 @@
-package Protocol::EMIUCP::Session::TRN;
+package Protocol::EMIUCP::Session::Slot;
 
 =head1 SYNOPSIS
 
-  my $trn = Protocol::EMIUCP::Session::TRN->new(
-      on_timeout => sub { my ($trn) = @_; ... },
+  my $slot = Protocol::EMIUCP::Session::Slot->new(
+      on_timeout => sub { my ($slot) = @_; ... },
   );
-  $trn->wait_for_free;
+  $slot->wait_for_free;
 
 =cut
 

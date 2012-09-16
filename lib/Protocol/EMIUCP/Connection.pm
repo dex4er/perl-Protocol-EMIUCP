@@ -53,7 +53,7 @@ has '_sess' => (
     builder   => '_build_sess',
     handles   => [qw(
         write_message open_session
-        wait_for_free_trn wait_for_all_free_trns wait_for_any_free_trn
+        wait_for_free_slot wait_for_all_free_slots wait_for_any_free_slot
     )],
 );
 

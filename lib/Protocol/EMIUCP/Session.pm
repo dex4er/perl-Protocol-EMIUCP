@@ -83,8 +83,8 @@ has '_window_in' => (
         Protocol::EMIUCP::Session::Window->new(
             $self->_build_args,
             on_timeout => sub {
-                my ($window, $n) = @_;
-                $self->_on_timeout_in($n);
+                my ($window, $trn) = @_;
+                $self->_on_timeout_in($trn);
             },
         );
     },
@@ -98,8 +98,8 @@ has '_window_out' => (
         Protocol::EMIUCP::Session::Window->new(
             $self->_build_args,
             on_timeout => sub {
-                my ($window, $n) = @_;
-                $self->_on_timeout_out($n);
+                my ($window, $trn) = @_;
+                $self->_on_timeout_out($trn);
             },
         );
     },
@@ -112,8 +112,8 @@ has '_cv_out_any' => (
 sub open_session {
     my ($self) = @_;
     if ($self->has_o60 or $self->has_pwd) {
-        my $msg_with_trn = $self->write_message($self->o60);
-        $self->wait_for_free_trn($msg_with_trn->trn);
+        my $msg_with_msg = $self->write_message($self->o60);
+        $self->wait_for_free_slot($msg_with_msg->trn);
     };
 };
 
@@ -127,15 +127,15 @@ sub write_message {
     AE::log debug => 'write_message %s', $msg->as_string;
 
     if ($msg->o) {
-        my $n = $self->_window_out->reserve_trn;
-        my $msg_with_trn = $msg->clone( trn => $n );
-        $self->_window_out->trn($n)->message($msg_with_trn);
-        $self->_cv_out_any(AE::cv) if not $self->_window_out->is_free_trn;
+        my $trn = $self->_window_out->reserve_slot;
+        my $msg_with_trn = $msg->clone( trn => $trn );
+        $self->_window_out->slot($trn)->message($msg_with_trn);
+        $self->_cv_out_any(AE::cv) if not $self->_window_out->is_free_slot;
         $self->on_write->($self, $msg_with_trn) if $self->has_on_write;
         return $msg_with_trn;
     }
     else {
-        $self->_window_in->free_trn($msg->trn);
+        $self->_window_in->free_slot($msg->trn);
         $self->on_write->($self, $msg) if $self->has_on_write;
         return $msg;
     };
@@ -153,42 +153,42 @@ sub read_message {
 
     if ($msg->r) {
         $self->on_read->($self, $msg) if $self->has_on_read;
-        $self->_window_out->free_trn($msg->trn);
+        $self->_window_out->free_slot($msg->trn);
         $self->_cv_out_any->send if $self->_cv_out_any;
     }
     else {
-        $self->_window_in->reserve_trn($msg->trn);
-        $self->_window_in->trn($msg->trn)->message($msg);
+        $self->_window_in->reserve_slot($msg->trn);
+        $self->_window_in->slot($msg->trn)->message($msg);
         $self->on_read->($self, $msg) if $self->has_on_read;
     };
 
     return $msg;
 };
 
-sub wait_for_free_trn {
-    my ($self, $n) = @_;
-    $self->_window_out->trn($n)->wait_for_free
-        if $self->_window_out->trn($n);
+sub wait_for_free_slot {
+    my ($self, $trn) = @_;
+    $self->_window_out->slot($trn)->wait_for_free
+        if $self->_window_out->slot($trn);
 };
 
-sub wait_for_all_free_trns {
+sub wait_for_all_free_slots {
     my ($self) = @_;
-    for (my $n = 0; $n < $self->_window_out->window; $n++) {
-        $self->wait_for_free_trn($n);
+    for (my $trn = 0; $trn < $self->_window_out->window; $trn++) {
+        $self->wait_for_free_slot($trn);
     };
 };
 
-sub wait_for_any_free_trn {
+sub wait_for_any_free_slot {
     my ($self) = @_;
     $self->_cv_out_any->recv if $self->_cv_out_any;
 };
 
 sub _on_timeout_in {
-    my ($self, $n) = @_;
+    my ($self, $trn) = @_;
 
-    AE::log debug => '_on_timeout_in %02d', $n;
+    AE::log debug => '_on_timeout_in %02d', $trn;
 
-    my $msg = $self->_window_in->trn($n)->message;
+    my $msg = $self->_window_in->slot($trn)->message;
 
     return $self->on_timeout->($self, read => $msg) if $self->has_on_timeout;
 
@@ -201,11 +201,11 @@ sub _on_timeout_in {
 };
 
 sub _on_timeout_out {
-    my ($self, $n) = @_;
+    my ($self, $trn) = @_;
 
-    AE::log debug => '_on_timeout_out %02d', $n;
+    AE::log debug => '_on_timeout_out %02d', $trn;
 
-    my $msg = $self->_window_out->trn($n)->message;
+    my $msg = $self->_window_out->slot($trn)->message;
 
     return $self->on_timeout->($self, write => $msg) if $self->has_on_timeout;
 
