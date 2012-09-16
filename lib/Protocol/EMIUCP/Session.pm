@@ -150,7 +150,6 @@ sub read_message {
 
     AE::log debug => 'read_message %s', $msg->as_string;
 
-
     if ($msg->r) {
         $self->on_read->($self, $msg) if $self->has_on_read;
         $self->_window_out->free_slot($msg->trn);

@@ -20,11 +20,11 @@ use Scalar::Util qw(blessed);
 
 die "Usage: $0 0.0.0.0 12345\n" unless @ARGV;
 
-my %opts; @opts{qw(Host Port)} = @ARGV;
+my ($host, $port) = @ARGV;
 
 my $cv = AE::cv;
 
-tcp_server $opts{Host}, $opts{Port}, sub {
+tcp_server $host, $port, sub {
     my ($fh) = @_;
 
     my $conn = Protocol::EMIUCP::Connection->new(

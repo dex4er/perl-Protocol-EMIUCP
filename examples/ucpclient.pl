@@ -3,7 +3,7 @@
 # The simplest fake SMSC
 #
 # Example:
-#     ucpclient.pl PeerAddr=127.0.0.1:12345 ot=51 adc=123 oadc=456 amsg=TEST
+#     ucpclient.pl 127.0.0.1 12345 ot=51 adc=123 oadc=456 amsg=TEST
 
 use strict;
 use warnings;
@@ -18,15 +18,17 @@ use IO::Socket::INET;
 
 use Scalar::Util qw(blessed);
 
-die "Usage: $0 PeerAddr=ip:port field=value field=value...\n" unless @ARGV;
+die "Usage: $0 host port field=value field=value...\n" unless @ARGV;
 
-my %opts = map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { /^[A-Z]/ } @ARGV;
-my %fields = map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { not /^[^=]*_description=/ } grep { /^[a-z]/ } @ARGV;
+my ($host, $port, @args) = @ARGV;
+
+my %opts = (PeerAddr => "$host:$port", map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { /^[A-Z]/ } @args);
+my %fields = map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { not /^[^=]*_description=/ } grep { /^[a-z]/ } @args;
 
 my $sock = IO::Socket::INET->new(
-    Blocking => 0,
     %opts,
 ) or die "Can't connect EMI-UCP server: $!";
+$sock->blocking(0) or die "Can't set socket to non-blocking: $!'";
 
 my $msg = Protocol::EMIUCP::Message->new(%fields);
 

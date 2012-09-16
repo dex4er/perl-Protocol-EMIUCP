@@ -3,7 +3,7 @@
 # The simplest fake SMSC
 #
 # Example:
-#     fakesmsc-iosocket.pl Listen=1 LocalAddr=localhost:5000
+#     fakesmsc-iosocket.pl localhost 5000
 
 use strict;
 use warnings;
@@ -17,13 +17,23 @@ use IO::Select;
 
 use Scalar::Util qw(blessed);
 
-die "Usage: $0 Listen=1 LocalAddr=0.0.0.0:12345\n\tSee IO::Socket::INET for accepted options\n" unless @ARGV;
+die "Usage: $0 0.0.0.0 12345\n\tSee IO::Socket::INET for accepted options\n" unless @ARGV;
 
-my %opts = map { /^(.*?)=(.*)$/ and ($1 => $2) } @ARGV;
+my ($host, $port, @args) = @ARGV;
+
+$SIG{CHLD} = 'IGNORE';
+
+my %opts = (
+    Listen => 1,
+    LocalAddr => "$host:$port",
+    map { /^(.*?)=(.*)$/ and ($1 => $2) } @args
+);
 
 my $server = IO::Socket::INET->new(%opts) or die "$0: server: $!";
 
 while (my $fh = $opts{Listen} ? $server->accept : $server) {
+    next if fork;
+    $fh->blocking(0);
     my $rbuf = my $wbuf = my $eof = '';
     my $sel = IO::Select->new($fh);
     while (not $eof) {
@@ -71,4 +81,5 @@ while (my $fh = $opts{Listen} ? $server->accept : $server) {
             $eof = 1 unless $len;
         };
     };
+    last;
 };
