@@ -28,6 +28,7 @@ tcp_server $host, $port, sub {
     my ($fh) = @_;
 
     my $conn = Protocol::EMIUCP::Connection->new(
+        window => 100,
         fh => $fh,
         on_message => sub {
             my ($self, $msg) = @_;
