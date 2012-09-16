@@ -82,7 +82,10 @@ has '_window_in' => (
         my ($self) = @_;
         Protocol::EMIUCP::Session::Window->new(
             $self->_build_args,
-            on_timeout => sub { $self->_on_timeout_in(@_) },
+            on_timeout => sub {
+                my ($window, $n) = @_;
+                $self->_on_timeout_in($n);
+            },
         );
     },
 );
@@ -94,27 +97,12 @@ has '_window_out' => (
         my ($self) = @_;
         Protocol::EMIUCP::Session::Window->new(
             $self->_build_args,
-            on_timeout => sub { $self->_on_timeout_out(@_) },
+            on_timeout => sub {
+                my ($window, $n) = @_;
+                $self->_on_timeout_out($n);
+            },
         );
     },
-);
-
-has '_msg_in' => (
-    isa       => 'ArrayRef',
-    is        => 'ro',
-    default   => sub { [] },
-);
-
-has '_msg_out' => (
-    isa       => 'ArrayRef',
-    is        => 'ro',
-    default   => sub { [] },
-);
-
-has '_cv_out' => (
-    isa       => 'ArrayRef',
-    is        => 'ro',
-    default   => sub { [] },
 );
 
 has '_cv_out_any' => (
@@ -125,28 +113,29 @@ sub open_session {
     my ($self) = @_;
     if ($self->has_o60 or $self->has_pwd) {
         my $msg_with_trn = $self->write_message($self->o60);
-        $self->wait_for_trn($msg_with_trn->trn);
+        $self->wait_for_free_trn($msg_with_trn->trn);
     };
 };
 
 sub write_message {
     my ($self, $msg) = @_;
 
+    # TODO exception
     confess "$msg is not an EMI-UCP message"
         unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
 
+    AE::log debug => 'write_message %s', $msg->as_string;
+
     if ($msg->o) {
-        my $trn = $self->_window_out->reserve_trn;
-        my $msg_with_trn = $msg->clone( trn => $trn );
-        $self->_msg_out->[$trn] = $msg_with_trn;
-        $self->_cv_out->[$trn] = AE::cv;
+        my $n = $self->_window_out->reserve_trn;
+        my $msg_with_trn = $msg->clone( trn => $n );
+        $self->_window_out->trn($n)->message($msg_with_trn);
         $self->_cv_out_any(AE::cv) if not $self->_window_out->is_free_trn;
         $self->on_write->($self, $msg_with_trn) if $self->has_on_write;
         return $msg_with_trn;
     }
     else {
         $self->_window_in->free_trn($msg->trn);
-        undef $self->_msg_in->[$msg->trn];
         $self->on_write->($self, $msg) if $self->has_on_write;
         return $msg;
     };
@@ -155,45 +144,51 @@ sub write_message {
 sub read_message {
     my ($self, $msg) = @_;
 
+    # TODO exception
+    confess "$msg is not an EMI-UCP message"
+        unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
+
+    AE::log debug => 'read_message %s', $msg->as_string;
+
+
     if ($msg->r) {
+        $self->on_read->($self, $msg) if $self->has_on_read;
         $self->_window_out->free_trn($msg->trn);
-        undef $self->_msg_out->[$msg->trn];
-        $self->_cv_out->[$msg->trn]->send;
         $self->_cv_out_any->send if $self->_cv_out_any;
     }
     else {
         $self->_window_in->reserve_trn($msg->trn);
-        $self->_msg_in->[$msg->trn] = $msg;
+        $self->_window_in->trn($msg->trn)->message($msg);
+        $self->on_read->($self, $msg) if $self->has_on_read;
     };
-
-    $self->on_read->($self, $msg) if $self->has_on_read;
 
     return $msg;
 };
 
-sub wait_for_trn {
-    my ($self, $trn) = @_;
-    if ($self->_cv_out->[$trn]) {
-        $self->_cv_out->[$trn]->recv;
-        undef $self->_cv_out->[$trn];
-    };
+sub wait_for_free_trn {
+    my ($self, $n) = @_;
+    $self->_window_out->trn($n)->wait_for_free
+        if $self->_window_out->trn($n);
 };
 
-sub wait_for_all_trns {
+sub wait_for_all_free_trns {
     my ($self) = @_;
-    for (my $trn = 0; $trn < $self->_window_out->window; $trn++) {
-        $self->wait_for_trn($trn);
+    for (my $n = 0; $n < $self->_window_out->window; $n++) {
+        $self->wait_for_free_trn($n);
     };
 };
 
-sub wait_for_any_trn {
+sub wait_for_any_free_trn {
     my ($self) = @_;
     $self->_cv_out_any->recv if $self->_cv_out_any;
 };
 
 sub _on_timeout_in {
-    my ($self, $trn) = @_;
-    my $msg = $self->_msg_in->[$trn];
+    my ($self, $n) = @_;
+
+    AE::log debug => '_on_timeout_in %02d', $n;
+
+    my $msg = $self->_window_in->trn($n)->message;
 
     return $self->on_timeout->($self, read => $msg) if $self->has_on_timeout;
 
@@ -206,8 +201,11 @@ sub _on_timeout_in {
 };
 
 sub _on_timeout_out {
-    my ($self, $trn) = @_;
-    my $msg = $self->_msg_out->[$trn];
+    my ($self, $n) = @_;
+
+    AE::log debug => '_on_timeout_out %02d', $n;
+
+    my $msg = $self->_window_out->trn($n)->message;
 
     return $self->on_timeout->($self, write => $msg) if $self->has_on_timeout;
 

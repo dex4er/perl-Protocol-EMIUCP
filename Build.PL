@@ -17,6 +17,7 @@ my $build = Module::Build->new(
     requires                => {
         'perl'                      => 5.006,
         'constant'                  => 1.04,   # use constant { LIST }
+        'AnyEvent'                  => 0,
         'Encode'                    => 0,
         'Exporter'                  => 5.566,  # use Exporter qw(import)
         'Mouse'                     => 0,
@@ -24,7 +25,6 @@ my $build = Module::Build->new(
     },
     recommends              => {
         'DateTime::Format::EMIUCP'  => 0.0300, # ::DDT, ::DSCTS, ::SCTS, ::VP
-        'AnyEvent'                  => 0,
     },
     build_requires          => {
         'Test::More'                => 0,

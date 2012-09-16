@@ -23,7 +23,10 @@ die "Usage: $0 PeerAddr=ip:port field=value field=value...\n" unless @ARGV;
 my %opts = map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { /^[A-Z]/ } @ARGV;
 my %fields = map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { not /^[^=]*_description=/ } grep { /^[a-z]/ } @ARGV;
 
-my $sock = IO::Socket::INET->new(%opts) or die "Can't connect EMI-UCP server: $!";
+my $sock = IO::Socket::INET->new(
+    Blocking => 0,
+    %opts,
+) or die "Can't connect EMI-UCP server: $!";
 
 my $msg = Protocol::EMIUCP::Message->new(%fields);
 
@@ -41,8 +44,8 @@ my $conn = Protocol::EMIUCP::Connection->new(
 $conn->open_session;
 
 for (my $i = 1; $i <= ($opts{Requests}||1); $i++) {
-    $conn->wait_for_any_trn;
+    $conn->wait_for_any_free_trn;
     $conn->write_message($msg)
 };
 
-$conn->wait_for_all_trns;
+$conn->wait_for_all_free_trns;

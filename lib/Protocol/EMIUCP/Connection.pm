@@ -51,7 +51,10 @@ has '_sess' => (
     isa       => 'Protocol::EMIUCP::Session',
     is        => 'ro',
     builder   => '_build_sess',
-    handles   => [qw( write_message open_session wait_for_trn wait_for_all_trns wait_for_any_trn )],
+    handles   => [qw(
+        write_message open_session
+        wait_for_free_trn wait_for_all_free_trns wait_for_any_free_trn
+    )],
 );
 
 use AnyEvent;
@@ -114,6 +117,7 @@ sub _build_sess {
         },
         on_timeout => sub {
             my ($sess, $what, $msg) = @_;
+            AE::log debug => '_build_sess on_timeout %s', $self->has_message ? $self->message->as_string : '';
             AE::log info => "??? [%s]", $msg->as_string;
         },
     );
