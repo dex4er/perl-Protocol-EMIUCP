@@ -62,7 +62,6 @@ has 'timer' => (
 
 has 'cv' => (
     is        => 'ro',
-    clearer   => 'clear_cv',
     default   => sub { AE::cv },
 );
 
@@ -72,18 +71,17 @@ sub free {
     AE::log debug => 'free %s', $self->message ? $self->message->as_string : '';
 
     $self->on_free->($self) if $self->has_on_free;
+    $self->cv->send;
     $self->clear_timer;
     $self->clear_message;
-    $self->cv->send;
 
-    AE::log debug => 'free send %s', $self->message ? $self->message->as_string : '';
+    AE::log debug => 'free finished %s', $self->message ? $self->message->as_string : '';
 };
 
 sub wait_for_free {
     my ($self) = @_;
 
     AE::log debug => 'wait_for_free %s', $self->message ? $self->message->as_string : '';
-    return unless $self->cv;
 
     $self->cv->recv;
 
@@ -93,6 +91,7 @@ sub wait_for_free {
 sub DEMOLISH {
     my ($self) = @_;
     AE::log debug => 'DEMOLISH %s', $self->message ? $self->message->as_string : '';
+    warn "DEMOLISH $self" if defined ${^GLOBAL_PHASE} and ${^GLOBAL_PHASE} eq 'DESTRUCT';
     $self->free;
 };
 
