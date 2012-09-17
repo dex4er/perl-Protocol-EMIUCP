@@ -57,7 +57,7 @@ has 'timer' => (
         AE::timer $self->timeout, 0, sub {
             AE::log debug => 'timer on_timeout %s', $self->message ? $self->message->as_string : '';
             $self->on_timeout->($self) if $self->has_on_timeout;
-            $self->free;
+            $self->free if defined $self;
         };
     },
 );
