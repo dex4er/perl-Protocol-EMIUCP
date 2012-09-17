@@ -29,7 +29,8 @@ has 'timeout' => (
 has 'message' => (
     does      => 'Protocol::EMIUCP::Message::Role',
     is        => 'rw',
-    clearer   => 'clear_message',
+    predicate => '_has_message',
+    clearer   => '_clear_message',
 );
 
 has 'on_timeout' => (
@@ -48,7 +49,8 @@ has 'on_free' => (
 
 has 'timer' => (
     is        => 'ro',
-    clearer   => 'clear_timer',
+    predicate => '_has_timer',
+    clearer   => '_clear_timer',
     default   => sub {
         my ($self) = @_;
         weaken $self;
@@ -69,11 +71,12 @@ sub free {
     my ($self) = @_;
 
     AE::log debug => 'free %s', $self->message ? $self->message->as_string : '';
+    return unless $self->_has_timer;
 
     $self->on_free->($self) if $self->has_on_free;
     $self->cv->send;
-    $self->clear_timer;
-    $self->clear_message;
+    $self->_clear_timer;
+    $self->_clear_message;
 
     AE::log debug => 'free finished %s', $self->message ? $self->message->as_string : '';
 };
