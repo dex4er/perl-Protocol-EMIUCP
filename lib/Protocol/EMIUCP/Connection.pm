@@ -51,10 +51,11 @@ has '_sess' => (
     isa       => 'Protocol::EMIUCP::Session',
     is        => 'ro',
     builder   => '_build_sess',
-    handles   => [qw(
-        write_message open_session
-        wait_for_free_slot wait_for_all_free_slots wait_for_any_free_slot
-    )],
+    handles   => qr(^
+        open_session |
+        write_message |
+        wait_for_\w+
+    $)x,
 );
 
 use AnyEvent;

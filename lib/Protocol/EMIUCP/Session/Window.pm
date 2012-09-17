@@ -49,6 +49,18 @@ has '_count_free_slots' => (
     default   => sub { $_[0]->window },
 );
 
+has '_cv_free_any_slot' => (
+    is        => 'rw',
+    predicate => '_has_cv_free_any_slot',
+    clearer   => '_clear_cv_free_any_slot',
+);
+
+has '_cv_free_all_slots' => (
+    is        => 'rw',
+    predicate => '_has_cv_free_all_slots',
+    clearer   => '_clear_cv_free_all_slots',
+);
+
 sub slot {
     my ($self, $trn) = @_;
     return $self->_slots->[$trn];
@@ -68,8 +80,9 @@ sub reserve_slot {
     }
     else {
         FIND: {
+            my $slots = $self->_slots;
             for ($trn=0; $trn < 100; $trn++) {
-                if (not defined $self->_slots->[$trn]) {
+                if (not defined $slots->[$trn]) {
                     last FIND;
                 };
             };
@@ -78,6 +91,11 @@ sub reserve_slot {
     };
 
     $self->_count_free_slots($self->_count_free_slots - 1);
+
+    AE::log debug => '_count_free_slots %d', $self->_count_free_slots;
+    $self->_cv_free_any_slot(AE::cv) if $self->_count_free_slots == 0;
+    $self->_cv_free_all_slots(AE::cv) if $self->_count_free_slots == $self->window - 1;
+
     $self->_slots->[$trn] = Protocol::EMIUCP::Session::Slot->new(
         $self->_build_args,
         on_timeout => sub {
@@ -102,7 +120,17 @@ sub free_slot {
     undef $self->_slots->[$trn];
     $self->_count_free_slots($self->_count_free_slots + 1);
 
-    AE::log debug => 'free_slot return %02d', $trn;
+    AE::log debug => '_count_free_slots %d', $self->_count_free_slots;
+    if ($self->_count_free_slots == 1) {
+        $self->_cv_free_any_slot->send;
+        #$self->_clear_cv_free_any_slot;
+    };
+    if ($self->_count_free_slots == $self->window) {
+        $self->_cv_free_all_slots->send;
+        #$self->_clear_cv_free_all_slots;
+    };
+
+    AE::log debug => 'free_slot end %02d', $trn;
 
     return $trn;
 };
@@ -110,6 +138,25 @@ sub free_slot {
 sub is_free_slot {
     my ($self) = @_;
     return $self->_count_free_slots > 0;
+};
+
+sub wait_for_free_slot {
+    my ($self, $trn) = @_;
+    $self->slot($trn)->wait_for_free if $self->slot($trn);
+};
+
+sub wait_for_any_free_slot {
+    my ($self) = @_;
+    AE::log debug => 'wait_for_any_free_slot';
+    AE::log debug => '_has_cv_free_any_slot' if $self->_has_cv_free_any_slot;
+    $self->_cv_free_any_slot->recv if $self->_has_cv_free_any_slot;
+};
+
+sub wait_for_all_free_slots {
+    my ($self) = @_;
+    AE::log debug => 'wait_for_all_free_slots';
+    AE::log debug => '_has_cv_free_all_slots' if $self->_has_cv_free_all_slots;
+    $self->_cv_free_all_slots->recv if $self->_has_cv_free_all_slots;
 };
 
 1;

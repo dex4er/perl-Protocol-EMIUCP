@@ -46,8 +46,8 @@ my $conn = Protocol::EMIUCP::Connection->new(
 $conn->open_session;
 
 for (my $i = 1; $i <= ($opts{Requests}||1); $i++) {
-    $conn->wait_for_any_free_slot;
-    $conn->write_message($msg)
+    $conn->wait_for_any_free_out_slot;
+    $conn->write_message($msg);
 };
 
 $conn->wait_for_all_free_slots;

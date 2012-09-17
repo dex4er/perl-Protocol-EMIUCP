@@ -88,6 +88,11 @@ has '_window_in' => (
             },
         );
     },
+    handles   => {
+        wait_for_free_in_slot      => 'wait_for_free_slot',
+        wait_for_any_free_in_slot  => 'wait_for_any_free_slot',
+        wait_for_all_free_in_slots => 'wait_for_all_free_slots',
+    },
 );
 
 has '_window_out' => (
@@ -103,17 +108,18 @@ has '_window_out' => (
             },
         );
     },
-);
-
-has '_cv_out_any' => (
-    is        => 'rw',
+    handles   => {
+        wait_for_free_out_slot      => 'wait_for_free_slot',
+        wait_for_any_free_out_slot  => 'wait_for_any_free_slot',
+        wait_for_all_free_out_slots => 'wait_for_all_free_slots',
+    },
 );
 
 sub open_session {
     my ($self) = @_;
     if ($self->has_o60 or $self->has_pwd) {
         my $msg_with_msg = $self->write_message($self->o60);
-        $self->wait_for_free_slot($msg_with_msg->trn);
+        $self->wait_for_free_out_slot($msg_with_msg->trn);
     };
 };
 
@@ -130,7 +136,6 @@ sub write_message {
         my $trn = $self->_window_out->reserve_slot;
         my $msg_with_trn = $msg->clone( trn => $trn );
         $self->_window_out->slot($trn)->message($msg_with_trn);
-        $self->_cv_out_any(AE::cv) if not $self->_window_out->is_free_slot;
         $self->on_write->($self, $msg_with_trn) if $self->has_on_write;
         return $msg_with_trn;
     }
@@ -153,7 +158,6 @@ sub read_message {
     if ($msg->r) {
         $self->on_read->($self, $msg) if $self->has_on_read;
         $self->_window_out->free_slot($msg->trn);
-        $self->_cv_out_any->send if $self->_cv_out_any;
     }
     else {
         $self->_window_in->reserve_slot($msg->trn);
@@ -162,24 +166,6 @@ sub read_message {
     };
 
     return $msg;
-};
-
-sub wait_for_free_slot {
-    my ($self, $trn) = @_;
-    $self->_window_out->slot($trn)->wait_for_free
-        if $self->_window_out->slot($trn);
-};
-
-sub wait_for_all_free_slots {
-    my ($self) = @_;
-    for (my $trn = 0; $trn < $self->_window_out->window; $trn++) {
-        $self->wait_for_free_slot($trn);
-    };
-};
-
-sub wait_for_any_free_slot {
-    my ($self) = @_;
-    $self->_cv_out_any->recv if $self->_cv_out_any;
 };
 
 sub _on_timeout_in {
@@ -214,6 +200,12 @@ sub _on_timeout_out {
         sm   => ' Timeout for EMI-UCP operation',
     );
     $self->on_read->($rpl);
+};
+
+sub wait_for_all_free_slots {
+    my ($self) = @_;
+    $self->wait_for_all_free_out_slots;
+    $self->wait_for_all_free_in_slots;
 };
 
 1;
