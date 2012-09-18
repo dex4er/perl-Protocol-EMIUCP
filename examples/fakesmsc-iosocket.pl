@@ -55,7 +55,7 @@ while (my $fh = $opts{Listen} ? $server->accept : $server) {
                             if $e->o;
                     }
                     elsif ($msg and $msg->o) {
-                        printf "<<< [%s]\n", $msg->as_string;
+                        printf "%s <<< [%s]\n", scalar localtime, $msg->as_string;
                         # Reply only for Operation
                         if ($msg->ot =~ /^(01|51|60)$/) {
                             # OT allowed by SMSC
@@ -78,7 +78,7 @@ while (my $fh = $opts{Listen} ? $server->accept : $server) {
                     };
                 };
                 if ($rpl) {
-                    printf ">>> [%s]\n", $rpl->as_string;
+                    printf "%s >>> [%s]\n", scalar localtime, $rpl->as_string;
                     $wbuf .= sprintf "\x02%s\x03", $rpl->as_string;
                 };
             };
