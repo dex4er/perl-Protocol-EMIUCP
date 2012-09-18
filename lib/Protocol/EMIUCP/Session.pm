@@ -118,8 +118,8 @@ has '_window_out' => (
 sub open_session {
     my ($self) = @_;
     if ($self->has_o60 or $self->has_pwd) {
-        my $msg_with_msg = $self->write_message($self->o60);
-        $self->wait_for_free_out_slot($msg_with_msg->trn);
+        my $msg_with_trn = $self->write_message($self->o60);
+        $self->wait_for_free_out_slot($msg_with_trn->trn);
     };
 };
 
