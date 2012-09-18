@@ -64,6 +64,8 @@ use AnyEvent::Handle;
 sub _build_hdl {
     my ($self) = @_;
 
+    AE::log debug => '_build_hdl';
+
     return AnyEvent::Handle->new(
         fh       => $self->fh,
         on_error => sub {
@@ -108,6 +110,8 @@ sub _build_hdl {
 
 sub _build_sess {
     my ($self) = @_;
+
+    AE::log debug => '_build_sess';
 
     return Protocol::EMIUCP::Session->new(
         $self->_build_args,
