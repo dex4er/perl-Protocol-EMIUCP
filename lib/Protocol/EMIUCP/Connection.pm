@@ -51,8 +51,9 @@ has '_sess' => (
     isa       => 'Protocol::EMIUCP::Session',
     is        => 'ro',
     builder   => '_build_sess',
+    clearer   => '_clear_sess',
     handles   => qr(^
-        open_session |
+        login_session |
         write_message |
         wait_for_\w+
     $)x,
@@ -126,6 +127,11 @@ sub _build_sess {
             AE::log info => "??? [%s]", $msg->as_string;
         },
     );
+};
+
+sub close_session {
+    my ($self) = @_;
+    $self->_clear_sess;
 };
 
 1;

@@ -164,13 +164,6 @@ sub wait_for_all_free_slots {
     $self->_cv_free_all_slots->recv if $self->_has_cv_free_all_slots;
 };
 
-sub free {
-    my ($self) = @_;
-    AE::log debug => 'free';
-    $self->_clear_cv_free_all_slots;
-    $self->_clear_cv_free_any_slot;
-};
-
 sub DEMOLISH {
     my ($self) = @_;
     AE::log debug => 'DEMOLISH';

@@ -23,6 +23,8 @@ use Protocol::EMIUCP::Session::Window;
 
 with qw(Protocol::EMIUCP::OO::Role::BuildArgs);
 
+use Scalar::Util qw(weaken);
+
 use Protocol::EMIUCP::Message::Types;
 use Mouse::Util::TypeConstraints;
 
@@ -81,6 +83,7 @@ has '_window_in' => (
     clearer   => '_clear_window_in',
     default   => sub {
         my ($self) = @_;
+        weaken $self;
         Protocol::EMIUCP::Session::Window->new(
             $self->_build_args,
             on_timeout => sub {
@@ -102,6 +105,7 @@ has '_window_out' => (
     clearer   => '_clear_window_out',
     default   => sub {
         my ($self) = @_;
+        weaken $self;
         Protocol::EMIUCP::Session::Window->new(
             $self->_build_args,
             on_timeout => sub {
@@ -117,7 +121,7 @@ has '_window_out' => (
     },
 );
 
-sub open_session {
+sub login_session {
     my ($self) = @_;
     if ($self->has_o60 or $self->has_pwd) {
         my $msg_with_trn = $self->write_message($self->o60);
@@ -208,15 +212,6 @@ sub wait_for_all_free_slots {
     my ($self) = @_;
     $self->wait_for_all_free_out_slots;
     $self->wait_for_all_free_in_slots;
-};
-
-sub free {
-    my ($self) = @_;
-    AE::log debug => 'free';
-    $self->_window_in->free;
-    $self->_clear_window_in;
-    $self->_window_out->free;
-    $self->_clear_window_out;
 };
 
 sub DEMOLISH {

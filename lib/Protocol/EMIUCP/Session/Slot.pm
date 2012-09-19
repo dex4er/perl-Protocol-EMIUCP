@@ -75,8 +75,6 @@ sub free {
 
     $self->on_free->($self) if $self->has_on_free;
     $self->cv->send;
-    $self->_clear_timer;
-    $self->_clear_message;
 
     AE::log debug => 'free finished %s', $self->message ? $self->message->as_string : '';
 };
@@ -95,7 +93,6 @@ sub DEMOLISH {
     my ($self) = @_;
     AE::log debug => 'DEMOLISH %s', $self->message ? $self->message->as_string : '';
     warn "DEMOLISH $self" if defined ${^GLOBAL_PHASE} and ${^GLOBAL_PHASE} eq 'DESTRUCT';
-    $self->free;
 };
 
 1;
