@@ -78,6 +78,7 @@ has 'on_timeout' => (
 has '_window_in' => (
     isa       => 'Protocol::EMIUCP::Session::Window',
     is        => 'ro',
+    clearer   => '_clear_window_in',
     default   => sub {
         my ($self) = @_;
         Protocol::EMIUCP::Session::Window->new(
@@ -98,6 +99,7 @@ has '_window_in' => (
 has '_window_out' => (
     isa       => 'Protocol::EMIUCP::Session::Window',
     is        => 'ro',
+    clearer   => '_clear_window_out',
     default   => sub {
         my ($self) = @_;
         Protocol::EMIUCP::Session::Window->new(
@@ -206,6 +208,21 @@ sub wait_for_all_free_slots {
     my ($self) = @_;
     $self->wait_for_all_free_out_slots;
     $self->wait_for_all_free_in_slots;
+};
+
+sub free {
+    my ($self) = @_;
+    AE::log debug => 'free';
+    $self->_window_in->free;
+    $self->_clear_window_in;
+    $self->_window_out->free;
+    $self->_clear_window_out;
+};
+
+sub DEMOLISH {
+    my ($self) = @_;
+    AE::log debug => 'DEMOLISH';
+    warn "DEMOLISH $self" if defined ${^GLOBAL_PHASE} and ${^GLOBAL_PHASE} eq 'DESTRUCT';
 };
 
 1;

@@ -122,7 +122,7 @@ sub _build_sess {
         },
         on_timeout => sub {
             my ($sess, $what, $msg) = @_;
-            AE::log debug => '_build_sess on_timeout %s', $self->has_message ? $self->message->as_string : '';
+            AE::log debug => "_build_sess on_timeout @_";
             AE::log info => "??? [%s]", $msg->as_string;
         },
     );
