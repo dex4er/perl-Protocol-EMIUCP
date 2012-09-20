@@ -19,6 +19,7 @@ use Mouse;
 our $VERSION = '0.01';
 
 use Protocol::EMIUCP::Message;
+use Protocol::EMIUCP::Message::Exception;
 use Protocol::EMIUCP::Session::Window;
 
 with qw(Protocol::EMIUCP::OO::Role::BuildArgs);
@@ -139,6 +140,10 @@ sub write_message {
     AE::log debug => 'write_message %s', $msg->as_string;
 
     if ($msg->o) {
+        Protocol::EMIUCP::Message::Exception->throw(
+            message => 'The operation does not support windowing',
+            emiucp_string => $msg->as_string,
+        ) if $self->_window_out->is_reserved_slot and not ($msg->ot >= 51 and $msg->ot <= 59);
         my $trn = $self->_window_out->reserve_slot;
         my $msg_with_trn = $msg->clone( trn => $trn );
         $self->_window_out->slot($trn)->message($msg_with_trn);
@@ -166,6 +171,10 @@ sub read_message {
         $self->_window_out->free_slot($msg->trn);
     }
     else {
+        Protocol::EMIUCP::Message::Exception->throw(
+            message => 'The operation does not support windowing',
+            emiucp_string => $msg->as_string,
+        ) if $self->_window_in->is_reserved_slot and not ($msg->ot >= 51 and $msg->ot <= 59);
         $self->_window_in->reserve_slot($msg->trn);
         $self->_window_in->slot($msg->trn)->message($msg);
         $self->on_read->($self, $msg) if $self->has_on_read;
