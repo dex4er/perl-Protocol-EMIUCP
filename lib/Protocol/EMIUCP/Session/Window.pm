@@ -74,7 +74,7 @@ sub reserve_slot {
 
     Protocol::EMIUCP::Session::Slot::Exception->throw(
         message => 'No free slot found',
-    ) unless $self->is_free_slot;
+    ) unless $self->has_free_slot;
 
     if (defined $trn) {
         Protocol::EMIUCP::Session::Slot::Exception->throw(
@@ -141,12 +141,12 @@ sub free_slot {
     return $trn;
 };
 
-sub is_free_slot {
+sub has_free_slot {
     my ($self) = @_;
     return $self->count_free_slots > 0;
 };
 
-sub is_reserved_slot {
+sub has_reserved_slot {
     my ($self) = @_;
     return $self->count_free_slots < $self->window;
 };

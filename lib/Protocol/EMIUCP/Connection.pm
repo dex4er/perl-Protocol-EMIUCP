@@ -82,6 +82,7 @@ sub _build_hdl {
                 AE::log info => "<<< [%s]", $str;
                 my $msg = eval { Protocol::EMIUCP::Message->new_from_string($str) };
                 if ($msg) {
+                    # TODO session exception
                     $self->_sess->read_message($msg);
                     $self->on_message->($self, $msg) if $self->has_on_message;
                 }
