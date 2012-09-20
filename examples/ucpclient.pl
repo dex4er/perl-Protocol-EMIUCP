@@ -52,4 +52,12 @@ for (my $i = 1; $i <= ($opts{Requests}||1); $i++) {
 
 $conn->wait_for_all_free_slots;
 
+if ($opts{Wait}) {
+    my $cv = AE::cv;
+    my $timer = AE::timer $opts{Wait}, 0, sub {
+        $cv->send;
+    };
+    $cv->recv;
+};
+
 $conn->close_session;
