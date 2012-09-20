@@ -42,9 +42,10 @@ has '_slots' => (
     default   => sub { [] },
 );
 
-has '_count_free_slots' => (
+has 'count_free_slots' => (
     isa       => 'Int',
-    is        => 'rw',
+    is        => 'ro',
+    writer    => '_set_count_free_slots',
     lazy      => 1,
     default   => sub { $_[0]->window },
 );
@@ -95,11 +96,11 @@ sub reserve_slot {
         };
     };
 
-    $self->_count_free_slots($self->_count_free_slots - 1);
+    $self->_set_count_free_slots($self->count_free_slots - 1);
 
-    AE::log debug => '_count_free_slots %d', $self->_count_free_slots;
-    $self->_cv_free_any_slot(AE::cv) if $self->_count_free_slots == 0;
-    $self->_cv_free_all_slots(AE::cv) if $self->_count_free_slots == $self->window - 1;
+    AE::log debug => 'count_free_slots %d', $self->count_free_slots;
+    $self->_cv_free_any_slot(AE::cv) if $self->count_free_slots == 0;
+    $self->_cv_free_all_slots(AE::cv) if $self->count_free_slots == $self->window - 1;
 
     $self->_slots->[$trn] = Protocol::EMIUCP::Session::Slot->new(
         $self->_build_args,
@@ -125,13 +126,13 @@ sub free_slot {
 
     $self->_slots->[$trn]->free;
     undef $self->_slots->[$trn];
-    $self->_count_free_slots($self->_count_free_slots + 1);
+    $self->_set_count_free_slots($self->count_free_slots + 1);
 
-    AE::log debug => '_count_free_slots %d', $self->_count_free_slots;
-    if ($self->_count_free_slots == 1) {
+    AE::log debug => 'count_free_slots %d', $self->count_free_slots;
+    if ($self->count_free_slots == 1) {
         $self->_cv_free_any_slot->send;
     };
-    if ($self->_count_free_slots == $self->window) {
+    if ($self->count_free_slots == $self->window) {
         $self->_cv_free_all_slots->send;
     };
 
@@ -142,7 +143,12 @@ sub free_slot {
 
 sub is_free_slot {
     my ($self) = @_;
-    return $self->_count_free_slots > 0;
+    return $self->count_free_slots > 0;
+};
+
+sub is_reserved_slot {
+    my ($self) = @_;
+    return $self->count_free_slots < $self->window;
 };
 
 sub wait_for_free_slot {
