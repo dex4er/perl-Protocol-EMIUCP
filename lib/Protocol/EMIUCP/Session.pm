@@ -133,9 +133,10 @@ sub login_session {
 sub write_message {
     my ($self, $msg) = @_;
 
-    # TODO exception
-    confess "$msg is not an EMI-UCP message"
-        unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
+    Protocol::EMIUCP::OO::Argument::Exception->throw(
+        message => "Not an EMI-UCP message",
+        argument => $msg,
+    ) unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
 
     AE::log debug => 'write_message %s', $msg->as_string;
 
@@ -160,9 +161,10 @@ sub write_message {
 sub read_message {
     my ($self, $msg) = @_;
 
-    # TODO exception
-    confess "$msg is not an EMI-UCP message"
-        unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
+    Protocol::EMIUCP::OO::Argument::Exception->throw(
+        message => "Not an EMI-UCP message",
+        argument => $msg,
+    ) unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
 
     AE::log debug => 'read_message %s', $msg->as_string;
 
