@@ -39,6 +39,7 @@ has 'on_timeout' => (
 has '_slots' => (
     isa       => 'ArrayRef[Protocol::EMIUCP::Session::Slot]',
     is        => 'ro',
+    clearer   => '_clear_slots',
     default   => sub { [] },
 );
 
@@ -168,6 +169,11 @@ sub wait_for_all_free_slots {
     AE::log debug => 'wait_for_all_free_slots';
     AE::log debug => '_has_cv_free_all_slots' if $self->_has_cv_free_all_slots;
     $self->_cv_free_all_slots->recv if $self->_has_cv_free_all_slots;
+};
+
+sub free {
+    my ($self) = @_;
+    $self->_clear_slots;
 };
 
 sub DEMOLISH {

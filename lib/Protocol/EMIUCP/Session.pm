@@ -225,6 +225,14 @@ sub wait_for_all_free_slots {
     $self->wait_for_all_free_in_slots;
 };
 
+sub free {
+    my ($self) = @_;
+    $self->_window_in->free;
+    $self->_clear_window_in;
+    $self->_window_out->free;
+    $self->_clear_window_out;
+};
+
 sub DEMOLISH {
     my ($self) = @_;
     AE::log debug => 'DEMOLISH';
