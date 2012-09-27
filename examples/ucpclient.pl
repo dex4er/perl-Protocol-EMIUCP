@@ -20,6 +20,8 @@ use Scalar::Util qw(blessed);
 
 die "Usage: $0 host port field=value field=value...\n" unless @ARGV;
 
+$ENV{PERL_ANYEVENT_LOG} = 'filter=note' unless defined $ENV{PERL_ANYEVENT_LOG};
+
 my ($host, $port, @args) = @ARGV;
 
 my %opts = (PeerAddr => "$host:$port", map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { /^[A-Z]/ } @args);

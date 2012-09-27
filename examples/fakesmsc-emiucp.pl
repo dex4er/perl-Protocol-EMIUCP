@@ -20,6 +20,8 @@ use Scalar::Util qw(blessed);
 
 die "Usage: $0 0.0.0.0 12345\n" unless @ARGV;
 
+$ENV{PERL_ANYEVENT_LOG} = 'filter=note' unless defined $ENV{PERL_ANYEVENT_LOG};
+
 my ($host, $port) = @ARGV;
 
 my $cv = AE::cv;
@@ -28,8 +30,8 @@ tcp_server $host, $port, sub {
     my ($fh) = @_;
 
     my $conn = Protocol::EMIUCP::Connection->new(
-        window => 100,
-        fh => $fh,
+        fh         => $fh,
+        window     => 100,
         on_message => sub {
             my ($self, $msg) = @_;
             if ($msg->o) {

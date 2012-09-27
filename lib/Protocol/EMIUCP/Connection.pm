@@ -80,7 +80,7 @@ sub _build_hdl {
                 my ($hdl, $data) = @_;
 
                 my $str = $1;
-                AE::log notice => "<<< [%s]", $str;
+                AE::log note => "<<< [%s]", $str;
                 my $msg = eval { Protocol::EMIUCP::Message->new_from_string($str) };
                 if ($msg) {
                     # TODO session exception
@@ -120,13 +120,13 @@ sub _build_sess {
         $self->_build_args,
         on_write => sub {
             my ($sess, $msg) = @_;
-            AE::log notice => ">>> [%s]", $msg->as_string;
+            AE::log note => ">>> [%s]", $msg->as_string;
             $self->_hdl->push_write(sprintf "\x02%s\x03", $msg->as_string) if $msg;
         },
         on_timeout => sub {
             my ($sess, $what, $msg) = @_;
             AE::log trace => "_build_sess on_timeout @_";
-            AE::log notice => "??? [%s]", $msg->as_string;
+            AE::log note => "??? [%s]", $msg->as_string;
         },
     );
 };
