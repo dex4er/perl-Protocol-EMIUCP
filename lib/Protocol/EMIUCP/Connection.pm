@@ -55,6 +55,7 @@ has '_sess' => (
     handles   => qr(^
         login_session |
         write_message |
+        wait |
         wait_for_\w+
     $)x,
 );
@@ -65,7 +66,7 @@ use AnyEvent::Handle;
 sub _build_hdl {
     my ($self) = @_;
 
-    AE::log debug => '_build_hdl';
+    AE::log trace => '_build_hdl';
 
     return AnyEvent::Handle->new(
         fh       => $self->fh,
@@ -79,7 +80,7 @@ sub _build_hdl {
                 my ($hdl, $data) = @_;
 
                 my $str = $1;
-                AE::log info => "<<< [%s]", $str;
+                AE::log notice => "<<< [%s]", $str;
                 my $msg = eval { Protocol::EMIUCP::Message->new_from_string($str) };
                 if ($msg) {
                     # TODO session exception
@@ -113,19 +114,19 @@ sub _build_hdl {
 sub _build_sess {
     my ($self) = @_;
 
-    AE::log debug => '_build_sess';
+    AE::log trace => '_build_sess';
 
     return Protocol::EMIUCP::Session->new(
         $self->_build_args,
         on_write => sub {
             my ($sess, $msg) = @_;
-            AE::log info => ">>> [%s]", $msg->as_string;
+            AE::log notice => ">>> [%s]", $msg->as_string;
             $self->_hdl->push_write(sprintf "\x02%s\x03", $msg->as_string) if $msg;
         },
         on_timeout => sub {
             my ($sess, $what, $msg) = @_;
-            AE::log debug => "_build_sess on_timeout @_";
-            AE::log info => "??? [%s]", $msg->as_string;
+            AE::log trace => "_build_sess on_timeout @_";
+            AE::log notice => "??? [%s]", $msg->as_string;
         },
     );
 };

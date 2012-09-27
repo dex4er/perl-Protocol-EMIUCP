@@ -55,7 +55,7 @@ has 'timer' => (
         my ($self) = @_;
         weaken $self;
         AE::timer $self->timeout, 0, sub {
-            AE::log debug => 'timer on_timeout %s', $self->message ? $self->message->as_string : '';
+            AE::log trace => 'timer on_timeout %s', $self->message ? $self->message->as_string : '';
             $self->on_timeout->($self) if $self->has_on_timeout;
             $self->free if defined $self;
         };
@@ -70,28 +70,28 @@ has 'cv' => (
 sub free {
     my ($self) = @_;
 
-    AE::log debug => 'free %s', $self->message ? $self->message->as_string : '';
+    AE::log trace => 'free %s', $self->message ? $self->message->as_string : '';
     return unless $self->_has_timer;
 
     $self->on_free->($self) if $self->has_on_free;
     $self->cv->send;
 
-    AE::log debug => 'free finished %s', $self->message ? $self->message->as_string : '';
+    AE::log trace => 'free finished %s', $self->message ? $self->message->as_string : '';
 };
 
 sub wait_for_free {
     my ($self) = @_;
 
-    AE::log debug => 'wait_for_free %s', $self->message ? $self->message->as_string : '';
+    AE::log trace => 'wait_for_free %s', $self->message ? $self->message->as_string : '';
 
     $self->cv->recv;
 
-    AE::log debug => 'wait_for_free recv %s', $self->message ? $self->message->as_string : '';
+    AE::log trace => 'wait_for_free recv %s', $self->message ? $self->message->as_string : '';
 };
 
 sub DEMOLISH {
     my ($self) = @_;
-    AE::log debug => 'DEMOLISH %s', $self->message ? $self->message->as_string : '';
+    AE::log trace => 'DEMOLISH %s', $self->message ? $self->message->as_string : '';
     warn "DEMOLISH $self" if defined ${^GLOBAL_PHASE} and ${^GLOBAL_PHASE} eq 'DESTRUCT';
 };
 

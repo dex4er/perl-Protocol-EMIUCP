@@ -71,7 +71,7 @@ sub slot {
 sub reserve_slot {
     my ($self, $trn) = @_;
 
-    AE::log debug => 'reserve_slot %s', defined $trn ? sprintf '%02d', $trn : '';
+    AE::log trace => 'reserve_slot %s', defined $trn ? sprintf '%02d', $trn : '';
 
     Protocol::EMIUCP::Session::Slot::Exception->throw(
         message => 'No free slot found',
@@ -99,14 +99,14 @@ sub reserve_slot {
 
     $self->_set_count_free_slots($self->count_free_slots - 1);
 
-    AE::log debug => 'count_free_slots %d', $self->count_free_slots;
+    AE::log trace => 'count_free_slots %d', $self->count_free_slots;
     $self->_cv_free_any_slot(AE::cv) if $self->count_free_slots == 0;
     $self->_cv_free_all_slots(AE::cv) if $self->count_free_slots == $self->window - 1;
 
     $self->_slots->[$trn] = Protocol::EMIUCP::Session::Slot->new(
         $self->_build_args,
         on_timeout => sub {
-            AE::log debug => 'reserve_slot on_timeout %02d', $trn;
+            AE::log trace => 'reserve_slot on_timeout %02d', $trn;
             $self->on_timeout->($self, $trn) if $self->has_on_timeout;
             $self->free_slot($trn);
         },
@@ -118,7 +118,7 @@ sub reserve_slot {
 sub free_slot {
     my ($self, $trn) = @_;
 
-    AE::log debug => 'free_slot %02d', $trn;
+    AE::log trace => 'free_slot %02d', $trn;
 
     Protocol::EMIUCP::Session::Slot::Exception->throw(
         message => 'No such slot is reserved',
@@ -129,7 +129,7 @@ sub free_slot {
     undef $self->_slots->[$trn];
     $self->_set_count_free_slots($self->count_free_slots + 1);
 
-    AE::log debug => 'count_free_slots %d', $self->count_free_slots;
+    AE::log trace => 'count_free_slots %d', $self->count_free_slots;
     if ($self->count_free_slots == 1) {
         $self->_cv_free_any_slot->send;
     };
@@ -137,7 +137,7 @@ sub free_slot {
         $self->_cv_free_all_slots->send;
     };
 
-    AE::log debug => 'free_slot end %02d', $trn;
+    AE::log trace => 'free_slot end %02d', $trn;
 
     return $trn;
 };
@@ -159,15 +159,15 @@ sub wait_for_free_slot {
 
 sub wait_for_any_free_slot {
     my ($self) = @_;
-    AE::log debug => 'wait_for_any_free_slot';
-    AE::log debug => '_has_cv_free_any_slot' if $self->_has_cv_free_any_slot;
+    AE::log trace => 'wait_for_any_free_slot';
+    AE::log trace => '_has_cv_free_any_slot' if $self->_has_cv_free_any_slot;
     $self->_cv_free_any_slot->recv if $self->_has_cv_free_any_slot;
 };
 
 sub wait_for_all_free_slots {
     my ($self) = @_;
-    AE::log debug => 'wait_for_all_free_slots';
-    AE::log debug => '_has_cv_free_all_slots' if $self->_has_cv_free_all_slots;
+    AE::log trace => 'wait_for_all_free_slots';
+    AE::log trace => '_has_cv_free_all_slots' if $self->_has_cv_free_all_slots;
     $self->_cv_free_all_slots->recv if $self->_has_cv_free_all_slots;
 };
 
@@ -178,7 +178,7 @@ sub free {
 
 sub DEMOLISH {
     my ($self) = @_;
-    AE::log debug => 'DEMOLISH';
+    AE::log trace => 'DEMOLISH';
     warn "DEMOLISH $self" if defined ${^GLOBAL_PHASE} and ${^GLOBAL_PHASE} eq 'DESTRUCT';
 };
 

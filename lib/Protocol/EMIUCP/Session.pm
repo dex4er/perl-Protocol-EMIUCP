@@ -24,6 +24,7 @@ use Protocol::EMIUCP::Session::Exception;
 
 with qw(Protocol::EMIUCP::OO::Role::BuildArgs);
 
+use AnyEvent;
 use Scalar::Util qw(weaken);
 
 use Protocol::EMIUCP::Message::Types;
@@ -138,7 +139,7 @@ sub write_message {
         argument => $msg,
     ) unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
 
-    AE::log debug => 'write_message %s', $msg->as_string;
+    AE::log trace => 'write_message %s', $msg->as_string;
 
     if ($msg->o) {
         Protocol::EMIUCP::Session::Exception->throw(
@@ -166,7 +167,7 @@ sub read_message {
         argument => $msg,
     ) unless blessed $msg and $msg->does('Protocol::EMIUCP::Message::Role');
 
-    AE::log debug => 'read_message %s', $msg->as_string;
+    AE::log trace => 'read_message %s', $msg->as_string;
 
     if ($msg->r) {
         $self->on_read->($self, $msg) if $self->has_on_read;
@@ -188,7 +189,7 @@ sub read_message {
 sub _on_timeout_in {
     my ($self, $trn) = @_;
 
-    AE::log debug => '_on_timeout_in %02d', $trn;
+    AE::log trace => '_on_timeout_in %02d', $trn;
 
     my $msg = $self->_window_in->slot($trn)->message;
 
@@ -205,7 +206,7 @@ sub _on_timeout_in {
 sub _on_timeout_out {
     my ($self, $trn) = @_;
 
-    AE::log debug => '_on_timeout_out %02d', $trn;
+    AE::log trace => '_on_timeout_out %02d', $trn;
 
     my $msg = $self->_window_out->slot($trn)->message;
 
@@ -221,8 +222,23 @@ sub _on_timeout_out {
 
 sub wait_for_all_free_slots {
     my ($self) = @_;
+
+    AE::log info => 'waiting for all free slots';
+
     $self->wait_for_all_free_out_slots;
     $self->wait_for_all_free_in_slots;
+};
+
+sub wait {
+    my ($self, $time) = @_;
+
+    AE::log info => 'waiting for %d second%s', $time, $time > 1 ? 's' : '';
+
+    my $cv = AE::cv;
+    my $timer = AE::timer $time, 0, sub {
+        $cv->send;
+    };
+    $cv->recv;
 };
 
 sub free {
@@ -235,7 +251,7 @@ sub free {
 
 sub DEMOLISH {
     my ($self) = @_;
-    AE::log debug => 'DEMOLISH';
+    AE::log trace => 'DEMOLISH';
     warn "DEMOLISH $self" if defined ${^GLOBAL_PHASE} and ${^GLOBAL_PHASE} eq 'DESTRUCT';
 };
 
