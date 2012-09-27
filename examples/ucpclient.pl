@@ -40,9 +40,21 @@ my $conn = Protocol::EMIUCP::Connection->new(
         window  => $opts{Window},
     ) : (),
     defined $opts{Pwd} ? (
-        login   => defined $opts{Login} ? $opts{Login} : $fields{oadc},
-        pwd     => $opts{Pwd},
+        login => defined $opts{Login} ? $opts{Login} : $fields{oadc},
+        pwd   => $opts{Pwd},
     ) : (),
+    on_message => sub {
+        my ($self, $msg) = @_;
+        if ($msg->o) {
+            # Not allowed by client
+            my $rpl = $msg->new_response(
+                nack => 1,
+                ec => EC_OPERATION_NOT_ALLOWED,
+                sm => ' ucpclient does not support this operation',
+            );
+            $self->write_message($rpl);
+        };
+    },
 );
 
 $conn->login_session;
