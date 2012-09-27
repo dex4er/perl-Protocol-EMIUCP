@@ -98,7 +98,7 @@ sub _build_hdl {
                             r    => 'R',
                             nack => 'N',
                             ec   => EC_SYNTAX_ERROR,
-                            sm   => sprintf ' %s: %s', $e->message, $e->error,
+                            sm   => sprintf(' %s: %s', $e->message, $e->error),
                         );
                         $self->write_message($rpl);
                     };
