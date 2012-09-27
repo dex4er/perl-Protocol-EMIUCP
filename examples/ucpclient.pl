@@ -14,6 +14,7 @@ use Protocol::EMIUCP::Connection;
 use Protocol::EMIUCP::Message;
 
 use AnyEvent;
+use IO::File;
 use IO::Socket::INET;
 
 use Scalar::Util qw(blessed);
@@ -31,8 +32,6 @@ my $sock = IO::Socket::INET->new(
     %opts,
 ) or die "Can't connect EMI-UCP server: $!";
 $sock->blocking(0) or die "Can't set socket to non-blocking: $!'";
-
-my $msg = Protocol::EMIUCP::Message->new(%fields);
 
 my $conn = Protocol::EMIUCP::Connection->new(
     fh          => $sock,
@@ -59,13 +58,30 @@ my $conn = Protocol::EMIUCP::Connection->new(
 
 $conn->login_session;
 
-for (my $i = 1; $i <= ($opts{Requests}||1); $i++) {
-    $conn->wait_for_any_free_out_slot;
-    $conn->write_message($msg);
+if ($opts{AdcFile}) {
+    my $fh = IO::File->new($opts{AdcFile})
+        or die "Can not open file `$opts{AdcFile}': $!";
+    while (my $adc = $fh->getline) {
+        chomp $adc;
+        next unless $adc =~ /^\d+$/;
+        my $msg = Protocol::EMIUCP::Message->new(%fields, adc => $adc);
+        $conn->wait_for_any_free_out_slot;
+        $conn->write_message($msg);
+    };
+}
+else {
+    my $msg = Protocol::EMIUCP::Message->new(%fields);
+
+    for (my $i = 1; $i <= ($opts{Requests}||1); $i++) {
+        $conn->wait_for_any_free_out_slot;
+        $conn->write_message($msg);
+    };
 };
 
 $conn->wait_for_all_free_slots;
 
 $conn->wait($opts{Wait}) if $opts{Wait};
 
-$conn->close_session;
+END {
+    $conn->close_session;
+}
