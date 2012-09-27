@@ -34,6 +34,7 @@ coerce  'EMIUCP_Num05'   => from 'Int'  => via   { sprintf "%05d", $_ };
 subtype 'EMIUCP_Hex02'   => as   'Str'  => where { /^[\dA-F]{2}$/ };
 subtype 'EMIUCP_Hex16'   => as   'Str'  => where { /^[\dA-F]{2,16}$/ and length($_) % 2 == 0 };
 subtype 'EMIUCP_Hex22'   => as   'Str'  => where { /^[\dA-F]{2,22}$/ and length($_) % 2 == 0 };
+subtype 'EMIUCP_Hex32'   => as   'Str'  => where { /^[\dA-F]{2,32}$/ and length($_) % 2 == 0 };
 
 subtype 'EMIUCP_Hex400'  => as   'Str'  => where { /^[\dA-F]{2,400}$/ and length($_) % 2 == 0 };
 subtype 'EMIUCP_Hex640'  => as   'Str'  => where { /^[\dA-F]{2,640}$/ and length($_) % 2 == 0 };

@@ -9,7 +9,8 @@ use Protocol::EMIUCP::Encode qw( from_hex_to_utf8 from_utf8_to_hex );
 use Protocol::EMIUCP::Message::Field;
 
 has_field 'pwd' => (
-    isa       => 'EMIUCP_Hex16',
+    # TODO: what is real type of pwd field?
+    isa       => 'EMIUCP_Hex32',
     lazy      => 1,
     default   => undef,
 );
