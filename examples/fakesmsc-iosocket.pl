@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 # The simplest fake SMSC
+# which uses low-level IO modules
 #
 # Example:
 #     fakesmsc-iosocket.pl localhost 5000

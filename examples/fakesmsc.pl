@@ -1,9 +1,10 @@
 #!/usr/bin/perl
 
 # The simplest fake SMSC
+# which uses Protocol::EMIUCP::Connection module
 #
 # Example:
-#     fakesmsc-emiucp.pl localhost 5000
+#     fakesmsc.pl localhost 5000
 
 use strict;
 use warnings;

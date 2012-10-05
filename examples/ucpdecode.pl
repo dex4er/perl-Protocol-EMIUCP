@@ -1,5 +1,10 @@
 #!/usr/bin/perl
 
+# Decoder of EMI-UCP message
+#
+# Example:
+#     ucpdecode.pl 00/00070/O/51/507998000/123/////////////////3//54455354/////////////19
+
 use lib 'lib', '../lib';
 
 use Protocol::EMIUCP;

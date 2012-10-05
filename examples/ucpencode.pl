@@ -1,5 +1,10 @@
 #!/usr/bin/perl
 
+# Encoder of EMI-UCP message
+#
+# Example:
+#     ucpencode.pl o=1 ot=51 adc=507998000 oadc=123 mt=3 amsg_utf8="TEST"
+
 use lib 'lib', '../lib';
 
 use Protocol::EMIUCP;
