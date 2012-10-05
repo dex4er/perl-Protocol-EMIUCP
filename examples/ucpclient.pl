@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# The simplest fake SMSC
+# The simple EMI-UCP protocol client
 #
 # Example:
 #     ucpclient.pl 127.0.0.1 12345 ot=51 adc=123 oadc=456 amsg=TEST
@@ -58,9 +58,9 @@ my $conn = Protocol::EMIUCP::Connection->new(
 
 $conn->login_session;
 
-if ($opts{AdcFile}) {
-    my $fh = IO::File->new($opts{AdcFile})
-        or die "Can not open file `$opts{AdcFile}': $!";
+if ($opts{AdcFromFile}) {
+    my $fh = IO::File->new($opts{AdcFromFile})
+        or die "Can not open file `$opts{AdcFromFile}': $!";
     while (my $adc = $fh->getline) {
         chomp $adc;
         next unless $adc =~ /^\d+$/;
