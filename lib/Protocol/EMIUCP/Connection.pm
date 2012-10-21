@@ -131,7 +131,7 @@ sub _build_sess {
     );
 };
 
-sub close_session {
+sub DISPOSE {
     my ($self) = @_;
     $self->_clear_sess;
 };

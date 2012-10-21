@@ -57,7 +57,7 @@ has 'timer' => (
         AE::timer $self->timeout, 0, sub {
             AE::log trace => 'timer on_timeout %s', $self->message ? $self->message->as_string : '';
             $self->on_timeout->($self) if $self->has_on_timeout;
-            $self->free if defined $self;
+            $self->DISPOSE if defined $self;
         };
     },
 );
@@ -67,16 +67,16 @@ has 'cv' => (
     default   => sub { AE::cv },
 );
 
-sub free {
+sub DISPOSE {
     my ($self) = @_;
 
-    AE::log trace => 'free %s', $self->message ? $self->message->as_string : '';
+    AE::log trace => 'DISPOSE %s', $self->message ? $self->message->as_string : '';
     return unless $self->_has_timer;
 
     $self->on_free->($self) if $self->has_on_free;
     $self->cv->send;
 
-    AE::log trace => 'free finished %s', $self->message ? $self->message->as_string : '';
+    AE::log trace => 'DISPOSE finished %s', $self->message ? $self->message->as_string : '';
 };
 
 sub wait_for_free {

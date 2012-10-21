@@ -83,5 +83,5 @@ $conn->wait_for_all_free_slots;
 $conn->wait($opts{Wait}) if $opts{Wait};
 
 END {
-    $conn->close_session if $conn;
+    $conn->DISPOSE if $conn;
 }

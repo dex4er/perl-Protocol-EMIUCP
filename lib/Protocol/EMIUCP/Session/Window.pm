@@ -125,7 +125,7 @@ sub free_slot {
         trn     => $trn,
     ) unless defined $self->_slots->[$trn];
 
-    $self->_slots->[$trn]->free;
+    $self->_slots->[$trn]->DISPOSE;
     undef $self->_slots->[$trn];
     $self->_set_count_free_slots($self->count_free_slots + 1);
 
@@ -171,7 +171,7 @@ sub wait_for_all_free_slots {
     $self->_cv_free_all_slots->recv if $self->_has_cv_free_all_slots;
 };
 
-sub free {
+sub DISPOSE {
     my ($self) = @_;
     $self->_clear_slots;
 };

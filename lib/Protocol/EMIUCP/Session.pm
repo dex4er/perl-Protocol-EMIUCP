@@ -241,11 +241,11 @@ sub wait {
     $cv->recv;
 };
 
-sub free {
+sub DISPOSE {
     my ($self) = @_;
-    $self->_window_in->free;
+    $self->_window_in->DISPOSE;
     $self->_clear_window_in;
-    $self->_window_out->free;
+    $self->_window_out->DISPOSE;
     $self->_clear_window_out;
 };
 
