@@ -12,11 +12,11 @@ sub import {
     foreach my $field (qw( dcs dst ec lpid mt nt npid onpi opid otoa oton pid rpl styp )) {
         my $class = "Protocol::EMIUCP::Message::Role::Field::$field";
         load_class($class);
-        $class->import(caller => caller);
+        $class->import(caller => caller());
     }
 };
 
-sub _find_new_class_from_args {
+sub find_new_class_from_args {
     my ($class, $args) = @_;
 
     no warnings 'numeric';
@@ -39,10 +39,10 @@ sub _find_new_class_from_args {
     return $new_class;
 };
 
-sub _parse_args_from_string {
+sub find_new_class_from_string {
     my ($class, $str) = @_;
 
-    $str =~ m{ ^ \d{2} / \d{5} / ( [OR] ) / ( \d{2} ) / (?: ( [AN] ) / )? .* / [0-9A-F]{2} $ }x
+    $str =~ m{ ^ (?: \d{2} )? / (?: \d{5} )? / ( [OR] ) / ( \d{2} ) / (?: ( [AN] ) / )? .* / (?: [0-9A-F]{2} )? $ }x
         or Protocol::EMIUCP::Message::Exception->throw(
                message => "Invalid EMI-UCP message", emiucp_string => $str
            );
@@ -58,26 +58,31 @@ sub _parse_args_from_string {
         $args{nack} = $3 if $3 eq 'N';
     };
 
-    return \%args;
+    return $class->find_new_class_from_args(\%args);
 };
 
-# TODO BUILDARGS
+sub parse_string {
+    my ($class, $str) = @_;
+    return $class->find_new_class_from_string($str)->parse_string($str);
+};
+
+# TODO new_message ?
 sub new {
     my ($class, %args) = @_;
-    return eval { $class->_find_new_class_from_args(\%args)->new(%args) }
+    return eval { $class->find_new_class_from_args(\%args)->new(%args) }
         || Protocol::EMIUCP::Message::Exception->throw(
-               message => 'Cannot create EMI-UCP message'
+               message => 'Cannot create EMI-UCP message',
+               %args,
            );
 };
 
 sub new_from_string {
     my ($class, $str) = @_;
-    my $args = $class->_parse_args_from_string($str);
-    return eval { $class->_find_new_class_from_args($args)->new_from_string($str) }
+    return eval { $class->find_new_class_from_string($str)->new_from_string($str) }
         || Protocol::EMIUCP::Message::Exception->throw(
                message => 'Invalid EMI-UCP message',
                emiucp_string => $str,
-               %$args,
+               eval { %{$class->parse_string($str)} },
            );
 };
 

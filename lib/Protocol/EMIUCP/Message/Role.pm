@@ -37,7 +37,7 @@ sub BUILD {
 
 sub new_from_string {
     my ($class, $str) = @_;
-    return $class->new( %{ $class->_parse_string($str) } );
+    return $class->new( %{ $class->parse_string($str) } );
 };
 
 requires 'list_data_field_names';
@@ -89,7 +89,7 @@ sub list_field_names {
     }
 };
 
-sub _parse_string {
+sub parse_string {
     my ($class, $str) = @_;
     my %args;
     my @fields = split '/', $str;

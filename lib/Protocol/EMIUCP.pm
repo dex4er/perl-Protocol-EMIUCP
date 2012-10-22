@@ -23,5 +23,10 @@ sub new_message_from_string {
     Protocol::EMIUCP::Message->new_from_string($str);
 };
 
+sub parse_message_from_string {
+    my ($class, $str) = @_;
+    Protocol::EMIUCP::Message->parse_string($str);
+};
+
 
 1;
