@@ -1,12 +1,14 @@
 package Protocol::EMIUCP::Message;
 
-use Mouse;
+use strict;
+use warnings;
 
 our $VERSION = '0.01';
 
 use Protocol::EMIUCP::Message::Exception;
 
 use Mouse::Util qw(load_class);
+use Carp qw(confess);
 
 sub import {
     foreach my $field (qw( dcs dst ec lpid mt nt npid onpi opid otoa oton pid rpl styp )) {
