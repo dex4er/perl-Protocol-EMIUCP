@@ -26,6 +26,8 @@ has 'timeout' => (
     default   => 15,
 );
 
+no Mouse::Util::TypeConstraints;
+
 has 'message' => (
     does      => 'Protocol::EMIUCP::Message::Role',
     is        => 'rw',
@@ -94,5 +96,9 @@ sub DEMOLISH {
     AE::log trace => 'DEMOLISH %s', $self->message ? $self->message->as_string : '';
     warn "DEMOLISH $self" if defined ${^GLOBAL_PHASE} and ${^GLOBAL_PHASE} eq 'DESTRUCT';
 };
+
+__PACKAGE__->meta->make_immutable;
+
+no Mouse;
 
 1;

@@ -40,4 +40,6 @@ subtype 'EMIUCP_Hex400'  => as   'Str'  => where { /^[\dA-F]{2,400}$/ and length
 subtype 'EMIUCP_Hex640'  => as   'Str'  => where { /^[\dA-F]{2,640}$/ and length($_) % 2 == 0 };
 subtype 'EMIUCP_Hex1403' => as   'Str'  => where { /^[\dA-F]{2,1403}$/ };
 
+no Mouse::Util::TypeConstraints;
+
 1;

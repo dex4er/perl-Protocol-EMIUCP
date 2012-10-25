@@ -136,4 +136,8 @@ sub DISPOSE {
     $self->_clear_sess;
 };
 
+__PACKAGE__->meta->make_immutable;
+
+no Mouse;
+
 1;

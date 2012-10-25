@@ -18,4 +18,8 @@ has '+string_attributes' => (
     default   => sub { [qw( message emiucp_string error )] },
 );
 
+__PACKAGE__->meta->make_immutable;
+
+no Mouse;
+
 1;

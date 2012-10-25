@@ -25,7 +25,7 @@ use AnyEvent;
 use Mouse::Util::TypeConstraints;
 
 has 'window' => (
-    isa       => subtype( as 'Int', where { $_ > 0 && $_ <= 100 } ),
+    isa       => subtype( as 'Int' => where { $_ > 0 && $_ <= 100 } ),
     is        => 'ro',
     default   => 1,
 );
@@ -181,5 +181,10 @@ sub DEMOLISH {
     AE::log trace => 'DEMOLISH';
     warn "DEMOLISH $self" if defined ${^GLOBAL_PHASE} and ${^GLOBAL_PHASE} eq 'DESTRUCT';
 };
+
+__PACKAGE__->meta->make_immutable;
+
+no Mouse::Util::TypeConstraints;
+no Moose;
 
 1;

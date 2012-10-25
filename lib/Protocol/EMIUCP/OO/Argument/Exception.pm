@@ -14,4 +14,8 @@ has '+string_attributes' => (
     default   => sub { [qw( message argument error )] },
 );
 
+__PACKAGE__->meta->make_immutable;
+
+no Mouse;
+
 1;

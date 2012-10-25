@@ -28,7 +28,6 @@ use AnyEvent;
 use Scalar::Util qw(weaken);
 
 use Protocol::EMIUCP::Message::Types;
-use Mouse::Util::TypeConstraints;
 
 has 'login' => (
     isa       => 'EMIUCP_Num16',
@@ -254,5 +253,9 @@ sub DEMOLISH {
     AE::log trace => 'DEMOLISH';
     warn "DEMOLISH $self" if defined ${^GLOBAL_PHASE} and ${^GLOBAL_PHASE} eq 'DESTRUCT';
 };
+
+__PACKAGE__->meta->make_immutable;
+
+no Mouse;
 
 1;
