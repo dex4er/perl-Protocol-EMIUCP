@@ -8,10 +8,11 @@
 use strict;
 use warnings;
 
+use if $^O eq 'MSWin32' => 'POSIX::strftime::GNU';
+
 use Protocol::EMIUCP::Connection;
 use Protocol::EMIUCP::Message;
 
-use AnyEvent;
 use IO::File;
 use IO::Socket::INET;
 

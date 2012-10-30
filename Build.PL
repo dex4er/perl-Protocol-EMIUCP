@@ -26,6 +26,7 @@ my $build = Module::Build::My->new(
     },
     recommends              => {
         'DateTime::Format::EMIUCP'  => 0.0300, # ::DDT, ::DSCTS, ::SCTS, ::VP
+        'POSIX::strftime::GNU'      => 0,
     },
     build_requires          => {
         'Test::More'                => 0,
