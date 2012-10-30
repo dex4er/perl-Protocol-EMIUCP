@@ -14,6 +14,6 @@ has '+string_attributes' => (
 
 __PACKAGE__->meta->make_immutable;
 
-no Moose;
+no Mouse;
 
 1;

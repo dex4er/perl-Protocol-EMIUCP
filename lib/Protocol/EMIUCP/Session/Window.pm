@@ -185,6 +185,6 @@ sub DEMOLISH {
 __PACKAGE__->meta->make_immutable;
 
 no Mouse::Util::TypeConstraints;
-no Moose;
+no Mouse;
 
 1;
