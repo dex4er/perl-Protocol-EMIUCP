@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# The simplest fake SMSC
+# The simplest fake SMSC server
 # which uses Protocol::EMIUCP::Connection module
 #
 # Example:
@@ -8,8 +8,6 @@
 
 use strict;
 use warnings;
-
-use lib 'lib', '../lib';
 
 use Protocol::EMIUCP::Connection;
 use Protocol::EMIUCP::Message;

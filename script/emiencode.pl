@@ -5,8 +5,6 @@
 # Example:
 #     ucpencode.pl o=1 ot=51 adc=507998000 oadc=123 mt=3 amsg_utf8="TEST"
 
-use lib 'lib', '../lib';
-
 use Protocol::EMIUCP;
 
 die "Usage: $0 field=value field=value\n" unless @ARGV;

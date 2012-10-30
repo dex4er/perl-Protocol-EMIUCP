@@ -8,8 +8,6 @@
 use strict;
 use warnings;
 
-use lib 'lib', '../lib';
-
 use Protocol::EMIUCP::Connection;
 use Protocol::EMIUCP::Message;
 
