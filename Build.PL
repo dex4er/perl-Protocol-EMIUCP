@@ -5,13 +5,14 @@ use 5.006;
 use strict;
 use warnings;
 
-use Module::Build;
+use lib 'inc';
+use Module::Build::My;
 
 my $module = 'Protocol::EMIUCP';
 
 (my $dist = $module) =~ s/::/-/g;
 
-my $build = Module::Build->new(
+my $build = Module::Build::My->new(
     module_name             => $module,
     license                 => 'perl',
     requires                => {
@@ -29,6 +30,7 @@ my $build = Module::Build->new(
     build_requires          => {
         'Test::More'                => 0,
     },
+    script_files            => 'script',
     auto_configure_requires => 0,
     create_makefile_pl      => 'traditional',
     create_readme           => 1,
