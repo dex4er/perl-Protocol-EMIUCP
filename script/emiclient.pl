@@ -8,7 +8,7 @@
 use strict;
 use warnings;
 
-use if $^O eq 'MSWin32' => 'POSIX::strftime::GNU';
+use if $^O =~ /^(MSWin32|cygwin|interix)$/ => 'POSIX::strftime::GNU';
 
 use Protocol::EMIUCP::Connection;
 use Protocol::EMIUCP::Message;
