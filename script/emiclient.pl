@@ -3,7 +3,7 @@
 # The simple EMI-UCP protocol client
 #
 # Example:
-#     ucpclient.pl 127.0.0.1 12345 ot=51 adc=123 oadc=456 amsg=TEST
+#     ucpclient.pl 127.0.0.1 12345 ot=51 adc=123 oadc=456 amsg=TEST Window=20 Requests=100
 
 use strict;
 use warnings;
@@ -18,7 +18,7 @@ use IO::Socket::INET;
 
 use Scalar::Util qw(blessed);
 
-die "Usage: $0 host port field=value field=value...\n" unless @ARGV;
+die "Usage: $0 host port field=value field=value Opt=value...\n" unless @ARGV;
 
 $ENV{PERL_ANYEVENT_LOG} = 'filter=note' unless defined $ENV{PERL_ANYEVENT_LOG};
 
@@ -48,7 +48,7 @@ my $conn = Protocol::EMIUCP::Connection->new(
             my $rpl = $msg->new_response(
                 nack => 1,
                 ec => EC_OPERATION_NOT_ALLOWED,
-                sm => ' ucpclient does not support this operation',
+                sm => 'emiclient does not support this operation',
             );
             $self->write_message($rpl);
         };
