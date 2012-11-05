@@ -107,6 +107,7 @@ sub _build_hdl {
         },
         on_eof   => sub {
             $self->_hdl->destroy;
+            AE::log info => "*** Connection closed";
         },
     );
 };

@@ -9,13 +9,14 @@
 use strict;
 use warnings;
 
-use if $^O =~ /^(MSWin32|cygwin|interix)$/ => 'POSIX::strftime::GNU';
+use if $^O =~ /^(MSWin32|cygwin|interix)$/, maybe => 'POSIX::strftime::GNU';
 
 use Protocol::EMIUCP::Connection;
 use Protocol::EMIUCP::Message;
 
 use AnyEvent;
 use AnyEvent::Socket;
+use AnyEvent::Log;
 
 use Scalar::Util qw(blessed);
 
@@ -27,8 +28,12 @@ my ($host, $port) = @ARGV;
 
 my $cv = AE::cv;
 
+AE::log info => "*** Listen on $host:$port";
+
 tcp_server $host, $port, sub {
-    my ($fh) = @_;
+    my ($fh, $host, $port) = @_;
+
+    AE::log info => "*** Connection from $host:$port";
 
     my $conn = Protocol::EMIUCP::Connection->new(
         fh         => $fh,
