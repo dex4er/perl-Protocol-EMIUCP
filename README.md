@@ -36,7 +36,7 @@ Download the Perl runtime environment, eg. [http://strawberryperl.com/](http://s
 Install additional modules:
 
     $ sudo apt-get install libanyevent-perl libmousex-strictconstructor-perl
-    $ sudo apt-get install liblocal-lib-perl cpanm
+    $ sudo apt-get install liblocal-lib-perl cpanminus
     $ cpanm https://github.com/downloads/dex4er/perl-Protocol-EMIUCP/Protocol-EMIUCP-0.01-20121106-2.tar.gz
 
 Set up environment:
