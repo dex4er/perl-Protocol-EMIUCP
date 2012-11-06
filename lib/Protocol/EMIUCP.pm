@@ -62,6 +62,7 @@ sub parse_message_from_string {
 
 =head1 SEE ALSO
 
+L<emiclient>, L<emiserver>, L<emiencode>, L<emidecore>, L<emisplit>,
 L<Protocol::EMIUCP::Message>, L<http://en.wikipedia.org/wiki/EMI_(protocol)>
 
 =head1 BUGS

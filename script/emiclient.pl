@@ -1,14 +1,35 @@
 #!/usr/bin/perl
 
-# The simple EMI-UCP protocol client
-#
-# Example:
-#     ucpclient.pl 127.0.0.1 12345 ot=51 adc=123 oadc=456 amsg=TEST Window=20 Requests=100
+=head1 NAME
+
+emiclient - simple EMI-UCP protocol client
+
+=head1 SYNOPSIS
+
+B<emiclient> I<host> I<port>
+field=value field=value ...
+Option=value Option=value ...
+
+Examples:
+
+  $ ucpclient.pl 127.0.0.1 12345 adc=123 oadc=456 amsg=TEST
+  Window=20 Requests=100
+
+=head1 DESCRIPTION
+
+This is command-line EMI-UCP client which connects to given I<host> and I<port>.
+
+By default the O/51 message is sent.
+
+=cut
+
 
 use strict;
 use warnings;
 
-BEGIN { eval { require POSIX::strftime::GNU; POSIX::strftime::GNU->import } if $^O =~ /^(MSWin32|cygwin|interix)$/ }
+our $VERSION = '0.01';
+
+BEGIN { eval { require POSIX::strftime::GNU; POSIX::strftime::GNU->import } }
 
 use Protocol::EMIUCP::Connection;
 use Protocol::EMIUCP::Message;
@@ -18,14 +39,15 @@ use IO::Socket::INET;
 
 use Scalar::Util qw(blessed);
 
-die "Usage: $0 host port field=value field=value Opt=value...\n" unless @ARGV;
-
-$ENV{PERL_ANYEVENT_LOG} = 'filter=note' unless defined $ENV{PERL_ANYEVENT_LOG};
-
 my ($host, $port, @args) = @ARGV;
 
+die "Usage: $0 host port field=value field=value Opt=value...\n" unless defined $host and defined $port;
+
 my %opts = (PeerAddr => "$host:$port", map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { /^[A-Z]/ } @args);
-my %fields = map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { not /^[^=]*_description=/ } grep { /^[a-z]/ } @args;
+my %fields = (o => 1, ot => 51, map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { not /^[^=]*_description=/ } grep { /^[a-z]/ } @args);
+
+$ENV{PERL_ANYEVENT_LOG} = 'filter=' . (defined $opts{LogLevel} ? $opts{LogLevel} : 'note')
+    unless defined $ENV{PERL_ANYEVENT_LOG};
 
 my $sock = IO::Socket::INET->new(
     %opts,
@@ -84,3 +106,70 @@ $conn->wait($opts{Wait}) if $opts{Wait};
 END {
     $conn->DISPOSE if $conn;
 }
+
+=head1 OPTIONS
+
+=over
+
+=item LocalAddr
+
+Local host bind address (hostname[:port])
+
+=item ReuseAddr
+
+Set SO_REUSEADDR before binding
+
+=item Proto, Type, MultiHomed, ...
+
+See L<IO::Socket::INET> options for C<new> constructor
+
+=item Window
+
+Window size for O5x operations (default: 1)
+
+=item Login
+
+Login for O60 authorization (default: oadc field)
+
+=item Pwd
+
+Password for O60 authorization (undefined means no authorization is required)
+
+=item AdcFromFile
+
+The file name for list of numbers. The message will be sent to each recipient
+(adc field) from this file (one number per line).
+
+=item Requests
+
+Requests number for the same message
+
+=item LogLevel
+
+Log level: fatal, alert, critical, error, warn, note, info, debug, trace
+(default: note). Ignored if C<PERL_ANYEVENT_LOG> environment variable is
+already set. See L<AnyEvent::Log> for details.
+
+=back
+
+=head1 SEE ALSO
+
+L<emiserver>, L<emiencode>, L<emidecore>, L<emisplit>,
+L<http://github.com/dex4er/perl-Protocol-EMIUCP>.
+
+=head1 BUGS
+
+This tool has unstable features and can change in future.
+
+=head1 AUTHOR
+
+Piotr Roszatycki <dexter@cpan.org>
+
+=head1 LICENSE
+
+Copyright (c) 2012 Piotr Roszatycki <dexter@cpan.org>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as perl itself.
+
+See L<http://dev.perl.org/licenses/artistic.html>

@@ -222,7 +222,7 @@ sub _on_timeout_out {
 sub wait_for_all_free_slots {
     my ($self) = @_;
 
-    AE::log info => 'waiting for all free slots';
+    AE::log debug => 'waiting for all free slots';
 
     $self->wait_for_all_free_out_slots;
     $self->wait_for_all_free_in_slots;
@@ -231,7 +231,7 @@ sub wait_for_all_free_slots {
 sub wait {
     my ($self, $time) = @_;
 
-    AE::log info => 'waiting for %d second%s', $time, $time > 1 ? 's' : '';
+    AE::log debug => 'waiting for %d second%s', $time, $time > 1 ? 's' : '';
 
     my $cv = AE::cv;
     my $timer = AE::timer $time, 0, sub {
