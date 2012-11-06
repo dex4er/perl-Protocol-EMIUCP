@@ -18,7 +18,6 @@ my $build = Module::Build::My->new(
     requires                => {
         'perl'                      => 5.006,
         'constant'                  => 1.04,   # use constant { LIST }
-        'maybe'                     => 0,
         'AnyEvent'                  => 0,
         'Encode'                    => 0,
         'Exporter'                  => 5.566,  # use Exporter qw(import)

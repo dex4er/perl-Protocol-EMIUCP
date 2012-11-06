@@ -8,7 +8,7 @@
 use strict;
 use warnings;
 
-use if $^O =~ /^(MSWin32|cygwin|interix)$/, maybe => 'POSIX::strftime::GNU';
+BEGIN { eval { require POSIX::strftime::GNU; POSIX::strftime::GNU->import } if $^O =~ /^(MSWin32|cygwin|interix)$/ }
 
 use Protocol::EMIUCP::Connection;
 use Protocol::EMIUCP::Message;
