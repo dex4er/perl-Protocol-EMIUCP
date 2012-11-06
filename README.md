@@ -29,7 +29,7 @@ class.
 Download the Perl runtime environment, eg. [http://strawberryperl.com/](http://strawberryperl.com/) and install additional modules:
 
     C:\> cpanm POSIX::strftime::GNU
-    C:\> cpanm https://github.com/downloads/dex4er/perl-Protocol-EMIUCP/Protocol-EMIUCP-0.01-20121106-1.tar.gz
+    C:\> cpanm https://github.com/downloads/dex4er/perl-Protocol-EMIUCP/Protocol-EMIUCP-0.01-20121106-2.tar.gz
 
 ## Ubuntu
 
@@ -37,7 +37,7 @@ Install additional modules:
 
     $ sudo apt-get install libanyevent-perl libmousex-strictconstructor-perl
     $ sudo apt-get install liblocal-lib-perl cpanm
-    $ cpanm https://github.com/downloads/dex4er/perl-Protocol-EMIUCP/Protocol-EMIUCP-0.01-20121106-1.tar.gz
+    $ cpanm https://github.com/downloads/dex4er/perl-Protocol-EMIUCP/Protocol-EMIUCP-0.01-20121106-2.tar.gz
 
 Set up environment:
 
