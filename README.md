@@ -24,6 +24,7 @@ class.
 
 # SEE ALSO
 
+[emiclient](http://search.cpan.org/perldoc?emiclient), [emiserver](http://search.cpan.org/perldoc?emiserver), [emiencode](http://search.cpan.org/perldoc?emiencode), [emidecode](http://search.cpan.org/perldoc?emidecode), [emisplit](http://search.cpan.org/perldoc?emisplit),
 [Protocol::EMIUCP::Message](http://search.cpan.org/perldoc?Protocol::EMIUCP::Message), [http://en.wikipedia.org/wiki/EMI\_(protocol)](http://en.wikipedia.org/wiki/EMI\_(protocol))
 
 # BUGS

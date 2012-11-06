@@ -12,17 +12,16 @@ Option=value Option=value ...
 
 Examples:
 
-  $ ucpclient.pl 127.0.0.1 12345 adc=123 oadc=456 amsg=TEST
-  Window=20 Requests=100
+  $ emiclient 127.0.0.1 12345 adc=507998000 oadc=123 mt=3 amsg_utf8=TEST
 
 =head1 DESCRIPTION
 
-This is command-line EMI-UCP client which connects to given I<host> and I<port>.
+This is a command-line EMI-UCP client which connects to given I<host> and
+I<port>.
 
 By default the O/51 message is sent.
 
 =cut
-
 
 use strict;
 use warnings;
@@ -111,6 +110,20 @@ END {
 
 =over
 
+=item host
+
+Remote host address
+
+=item port
+
+Remote port address
+
+=item field
+
+Any EMI-UCP field which makes a request message. By default the O/51 message
+is sent (C<o=1> C<ot=51> fields are set). The C<checksum> and C<len> are
+calculated automatically and can be ommited.
+
 =item LocalAddr
 
 Local host bind address (hostname[:port])
@@ -125,15 +138,15 @@ See L<IO::Socket::INET> options for C<new> constructor
 
 =item Window
 
-Window size for O5x operations (default: 1)
+Window size for O/5x operations (default: 1)
 
 =item Login
 
-Login for O60 authorization (default: oadc field)
+Login for O/60 authorization (default: oadc field)
 
 =item Pwd
 
-Password for O60 authorization (undefined means no authorization is required)
+Password for O/60 authorization (undefined means no authorization is required)
 
 =item AdcFromFile
 
@@ -154,7 +167,7 @@ already set. See L<AnyEvent::Log> for details.
 
 =head1 SEE ALSO
 
-L<emiserver>, L<emiencode>, L<emidecore>, L<emisplit>,
+L<emiserver>, L<emiencode>, L<emidecode>, L<emisplit>,
 L<http://github.com/dex4er/perl-Protocol-EMIUCP>.
 
 =head1 BUGS

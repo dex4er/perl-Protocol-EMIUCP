@@ -20,6 +20,7 @@ DESCRIPTION
     class.
 
 SEE ALSO
+    emiclient, emiserver, emiencode, emidecode, emisplit,
     Protocol::EMIUCP::Message, http://en.wikipedia.org/wiki/EMI_(protocol)
 
 BUGS
