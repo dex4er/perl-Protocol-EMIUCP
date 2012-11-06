@@ -22,6 +22,28 @@ client or server.
 The __Protocol::EMIUCP__ package joins a few more pacakges in one factory
 class.
 
+# INSTALLING
+
+## Windows
+
+Download the Perl runtime environment, eg. [http://strawberryperl.com/](http://strawberryperl.com/) and install additional modules:
+
+    C:\> cpanm POSIX::strftime::GNU
+    C:\> cpanm https://github.com/downloads/dex4er/perl-Protocol-EMIUCP/Protocol-EMIUCP-0.01-20121106-1.tar.gz
+
+## Ubuntu
+
+Install additional modules:
+
+    $ sudo apt-get install libanyevent-perl libmousex-strictconstructor-perl
+    $ sudo apt-get install liblocal-lib-perl cpanm
+    $ cpanm https://github.com/downloads/dex4er/perl-Protocol-EMIUCP/Protocol-EMIUCP-0.01-20121106-1.tar.gz
+
+Set up environment:
+
+    $ export PERL5LIB=~/perl5/lib/perl5
+    $ export PATH=~/perl5/bin:$PATH
+
 # SEE ALSO
 
 [emiclient](http://search.cpan.org/perldoc?emiclient), [emiserver](http://search.cpan.org/perldoc?emiserver), [emiencode](http://search.cpan.org/perldoc?emiencode), [emidecode](http://search.cpan.org/perldoc?emidecode), [emisplit](http://search.cpan.org/perldoc?emisplit),
