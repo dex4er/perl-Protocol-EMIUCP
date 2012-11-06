@@ -36,6 +36,8 @@ use Protocol::EMIUCP::Message;
 use IO::File;
 use IO::Socket::INET;
 
+use AnyEvent::Log;
+
 use Scalar::Util qw(blessed);
 
 my ($host, $port, @args) = @ARGV;
@@ -45,7 +47,7 @@ die "Usage: $0 host port field=value field=value Opt=value...\n" unless defined 
 my %opts = (PeerAddr => "$host:$port", map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { /^[A-Z]/ } @args);
 my %fields = (o => 1, ot => 51, map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { not /^[^=]*_description=/ } grep { /^[a-z]/ } @args);
 
-$ENV{PERL_ANYEVENT_LOG} = 'filter=' . (defined $opts{LogLevel} ? $opts{LogLevel} : 'note')
+$AnyEvent::Log::FILTER->level(defined $opts{LogLevel} ? $opts{LogLevel} : 'note')
     unless defined $ENV{PERL_ANYEVENT_LOG};
 
 my $sock = IO::Socket::INET->new(
@@ -156,6 +158,10 @@ The file name for list of numbers. The message will be sent to each recipient
 =item Requests
 
 Requests number for the same message
+
+=item Wait
+
+Waits number of seconds before exiting program.
 
 =item LogLevel
 

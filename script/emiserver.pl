@@ -12,7 +12,7 @@ Option=value Option=value ...
 
 Examples:
 
-  $ emiserver 0.0.0.0 12345 Reply=PING
+  $ emiserver 0.0.0.0 12345 Reply=PING mt=3 amsg_utf8=PONG
 
 =head1 DESCRIPTION
 
@@ -45,17 +45,17 @@ my ($host, $port, @args) = @ARGV;
 
 die "Usage: $0 host port field=value field=value Opt=value...\n" unless defined $host and defined $port;
 
-$ENV{PERL_ANYEVENT_LOG} = 'filter=' . (defined $opts{LogLevel} ? $opts{LogLevel} : 'note')
-    unless defined $ENV{PERL_ANYEVENT_LOG};
-
 my %opts = map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { /^[A-Z]/ } @args;
-my %fields = (o => 1, ot => 51, map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { not /^[^=]*_description=/ } grep { /^[a-z]/ } @args);
+my %fields = (o => 1, ot => 52, map { /^(.*?)=(.*)$/ and ($1 => $2) } grep { not /^[^=]*_description=/ } grep { /^[a-z]/ } @args);
+
+$AnyEvent::Log::FILTER->level(defined $opts{LogLevel} ? $opts{LogLevel} : 'note')
+    unless defined $ENV{PERL_ANYEVENT_LOG};
 
 my $cv = AE::cv;
 
 AE::log info => "*** Listen on $host:$port";
 
-my $scts = sub {
+my $make_scts = sub {
     my @t = localtime;
     $t[5] %= 100;
     return sprintf '%02d%02d%02d%02d%02d%02d', @t[3,4,5,2,1,0];
@@ -70,7 +70,7 @@ tcp_server $host, $port, sub {
 
     my $conn = Protocol::EMIUCP::Connection->new(
         fh         => $fh,
-        window     => 100,
+        window     => $opts{Window} || 100,
         on_message => sub {
             my ($self, $msg) = @_;
 
@@ -89,7 +89,7 @@ tcp_server $host, $port, sub {
                     }
                     if ($msg->ot =~ /^(01|51)$/) {
                         # OT allowed by SMSC
-                        Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, r => 1, ack => 1, sm => $msg->oadc . ':' . $scts->());
+                        Protocol::EMIUCP::Message->new(trn => $msg->trn, ot => $msg->ot, r => 1, ack => 1, sm => $msg->oadc . ':' . $make_scts->());
                     }
                     else {
                         # Not allowed by SMSC
@@ -108,12 +108,10 @@ tcp_server $host, $port, sub {
                 if ($msg->o and $msg->ot eq 51) {
                     if ($msg->nrq) {
                         $self->write_message(Protocol::EMIUCP::Message->new(
-                            ot => 53,
-                            o => 1,
                             adc => $msg->oadc,
                             oadc => $msg->adc,
-                            scts => $scts->(),
-                            dscts => $scts->(),
+                            scts => $make_scts->(),
+                            dscts => $make_scts->(),
                             dst => $fields{Rsn} ? 0 : 2,
                             rsn => $fields{Rsn} || '000',
                             mt => 3,
@@ -121,16 +119,16 @@ tcp_server $host, $port, sub {
                                 ? sprintf("Message for %s, with identifier %s could not be delivered because of  Unknown problem (code %03d)", $fields{rsn}||0)
                                 : POSIX::strftime("Message for %%s, with identifier %%s was delivered at %Y-%m-%d %H:%M:%S.", localtime),
                             %fields,
+                            ot => 53,
+                            o => 1,
                         ));
                     };
 
-                    if ($opts{Reply} and $msg->amsg =~ /$opts{Reply}/) {
+                    if ($opts{Reply} and $msg->amsg_utf8 =~ /$opts{Reply}/) {
                         $self->write_message(Protocol::EMIUCP::Message->new(
-                            ot => 52,
-                            o => 1,
                             adc => $msg->oadc,
                             oadc => $msg->adc,
-                            scts => $scts->(),
+                            scts => $make_scts->(),
                             %fields,
                         ));
                     };
@@ -163,7 +161,7 @@ details.
 
 =item Window
 
-Window size for O/5x operations (default: 1)
+Window size for O/5x operations (default: 100)
 
 =item Login
 
@@ -175,7 +173,7 @@ Password for O/60 authorization. If not set, all O/60 requests are accepted.
 
 =item Reply
 
-Regexp for incoming message (C<amsg> field) which triggers reply message.
+Regexp for incoming message (C<amsg> field) which triggers O/52 reply message.
 Reply message is combined from fields parameters.
 
 =item Rsn
