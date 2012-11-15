@@ -94,7 +94,6 @@ sub wait_for_free {
 sub DEMOLISH {
     my ($self) = @_;
     AE::log trace => 'DEMOLISH %s', $self->message ? $self->message->as_string : '';
-    warn "DEMOLISH $self" if defined ${^GLOBAL_PHASE} and ${^GLOBAL_PHASE} eq 'DESTRUCT';
 };
 
 __PACKAGE__->meta->make_immutable;

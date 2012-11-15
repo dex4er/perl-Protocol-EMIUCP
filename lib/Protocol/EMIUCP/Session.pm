@@ -251,7 +251,6 @@ sub DISPOSE {
 sub DEMOLISH {
     my ($self) = @_;
     AE::log trace => 'DEMOLISH';
-    warn "DEMOLISH $self" if defined ${^GLOBAL_PHASE} and ${^GLOBAL_PHASE} eq 'DESTRUCT';
 };
 
 __PACKAGE__->meta->make_immutable;
