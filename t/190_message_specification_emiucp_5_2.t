@@ -7,11 +7,11 @@ use Carp ();
 
 $SIG{__WARN__} = sub { local $Carp::CarpLevel = 1; Carp::confess("Warning: ", @_) };
 
-use Test::More;
-
 use constant HAVE_DATETIME => !! eval { require DateTime::Format::EMIUCP };
 
-BEGIN { use_ok 'Protocol::EMIUCP::Message' };
+use Test::More tests => HAVE_DATETIME ? 598 : 580;
+
+use Protocol::EMIUCP::Message;
 
 sub test_message ($$$;$$) {
     my ($class, $str, $fields, $args, $code) = @_;
@@ -494,5 +494,3 @@ do {
     $args{ec} = eval 'EC_CHECKSUM_ERROR';
     test_message 'Protocol::EMIUCP::Message::R_60_N', $str, \%fields, \%args;
 };
-
-done_testing();
