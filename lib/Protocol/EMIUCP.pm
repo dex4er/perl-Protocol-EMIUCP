@@ -75,7 +75,7 @@ Install additional modules:
 
   $ sudo apt-get install libanyevent-perl libmousex-strictconstructor-perl
   $ sudo apt-get install liblocal-lib-perl cpanminus
-  $ cpanm https://github.com/downloads/dex4er/perl-Protocol-EMIUCP/Protocol-EMIUCP-0.01-20130124-1.tar.gz
+  $ cpanm https://github.com/downloads/dex4er/perl-Protocol-EMIUCP/archive/20130124-1.tar.gz
 
 Set up environment:
 
